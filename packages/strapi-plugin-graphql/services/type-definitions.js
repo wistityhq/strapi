@@ -380,7 +380,7 @@ const buildCollectionType = model => {
     if (actionExists(resolverOpts)) {
       _.merge(localSchema, {
         query: {
-          [`${singularName}(id: ID!)`]: model.globalId,
+          [`${singularName}(id: ID!)`]: `${model.globalId}!`,
         },
         resolvers: {
           Query: {
@@ -399,7 +399,7 @@ const buildCollectionType = model => {
     if (actionExists(resolverOpts)) {
       _.merge(localSchema, {
         query: {
-          [`${pluralName}(sort: String, limit: Int, start: Int, where: JSON)`]: `[${model.globalId}]`,
+          [`${pluralName}(sort: String, limit: Int, start: Int, where: JSON)`]: `[${model.globalId}!]!`,
         },
         resolvers: {
           Query: {
