@@ -65,7 +65,6 @@ describe('Migration - draft and publish', () => {
           ids: data.dogs.map(({ id }) => id),
         },
       });
-
       await modelsUtils.deleteContentTypes(['dog']);
     }, 60000);
 
@@ -75,11 +74,8 @@ describe('Migration - draft and publish', () => {
           url: '/content-manager/collection-types/application::dog.dog',
           method: 'GET',
         });
-
         expect(body.results.length).toBe(2);
-
         const sortedBody = sortDogs(body.results);
-
         sortedBody.forEach((dog, index) => {
           expect(dog).toMatchObject(data.dogs[index]);
           expect(dog.published_at).toBeUndefined();
@@ -88,7 +84,6 @@ describe('Migration - draft and publish', () => {
 
       test('Published_at is equal to created_at after enabling the feature', async () => {
         const schema = await modelsUtils.getContentTypeSchema('dog');
-
         await modelsUtils.modifyContentType({
           ...schema,
           attributes: _.merge(schema.attributes, tableModification1),
@@ -101,15 +96,12 @@ describe('Migration - draft and publish', () => {
         });
 
         expect(body.results.length).toBe(2);
-
         const sortedBody = sortDogs(body.results);
-
         sortedBody.forEach((dog, index) => {
           expect(dog).toMatchObject(data.dogs[index]);
           expect(dog.published_at).toBe(dog.createdAt || dog.created_at);
           expect(!isNaN(new Date(dog.published_at).valueOf())).toBe(true);
         });
-
         data.dogs = sortedBody;
       });
     });
@@ -120,17 +112,14 @@ describe('Migration - draft and publish', () => {
           method: 'POST',
           url: `/content-manager/collection-types/application::dog.dog/${data.dogs[1].id}/actions/unpublish`,
         });
-
         data.dogs[1] = res.body;
 
         const schema = await modelsUtils.getContentTypeSchema('dog');
-
         await modelsUtils.modifyContentType({
           ...schema,
           draftAndPublish: false,
           attributes: _.merge(schema.attributes, tableModification2),
         });
-
         // drafts should have been deleted with the migration, so we remove them
         data.dogs = data.dogs.filter(dog => !_.isNil(dog.published_at));
 
@@ -138,7 +127,6 @@ describe('Migration - draft and publish', () => {
           url: '/content-manager/collection-types/application::dog.dog',
           method: 'GET',
         });
-
         expect(body.results.length).toBe(1);
         expect(body.results[0]).toMatchObject(_.pick(data.dogs[0], ['name']));
         expect(body.results[0].published_at).toBeUndefined();

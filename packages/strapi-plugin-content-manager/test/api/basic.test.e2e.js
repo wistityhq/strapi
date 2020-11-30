@@ -35,6 +35,7 @@ describe('CM API - Basic', () => {
     rq = createAuthRequest(token);
 
     modelsUtils = createModelsUtils({ rq });
+
     await modelsUtils.createContentTypes([product]);
   }, 60000);
 

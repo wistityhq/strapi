@@ -24,7 +24,7 @@
     "node-machine-id": "^1.1.10",
     "ora": "^3.4.0",
     "tar": "6.0.5",
-    "uuid": "^3.3.2"
+    "uuid": "8.3.1"
   },
   "scripts": {
     "test": "echo \"no tests yet\""

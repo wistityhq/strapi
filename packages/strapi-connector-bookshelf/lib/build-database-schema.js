@@ -183,7 +183,7 @@ const buildColType = ({ name, attribute, table, tableExists = false, definition,
     case 'time':
       return table.time(name, 3);
     case 'datetime':
-      return table.datetime(name);
+      return table.datetime(name, { precision: 3 });
     case 'timestamp':
       return table.timestamp(name);
     case 'currentTimestamp': {

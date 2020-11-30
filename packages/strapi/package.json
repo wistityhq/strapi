@@ -64,7 +64,8 @@
     "strapi-generate-plugin": "3.3.4",
     "strapi-generate-policy": "3.3.4",
     "strapi-generate-service": "3.3.4",
-    "strapi-utils": "3.3.4"
+    "strapi-utils": "3.3.4",
+    "uuid": "8.3.1"
   },
   "scripts": {
     "postinstall": "node lib/utils/success.js"

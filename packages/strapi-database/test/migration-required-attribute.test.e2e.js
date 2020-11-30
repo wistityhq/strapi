@@ -75,7 +75,6 @@ describe('Migration - required attribute', () => {
 
     test('Cannot create an entry with null after migration', async () => {
       // remove null values otherwise the migration would fail
-
       const { body } = await rq({
         method: 'PUT',
         url: `/content-manager/collection-types/application::dog.dog/${data.dogs[0].id}`,

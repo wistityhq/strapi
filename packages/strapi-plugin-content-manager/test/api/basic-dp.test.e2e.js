@@ -52,6 +52,7 @@ describe('CM API - Basic + draftAndPublish', () => {
     rq = createAuthRequest(token);
 
     modelsUtils = createModelsUtils({ rq });
+
     await modelsUtils.createComponent(compo);
     await modelsUtils.createContentTypes([productWithDP]);
   }, 60000);

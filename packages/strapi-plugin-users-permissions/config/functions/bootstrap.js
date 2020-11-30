@@ -8,7 +8,7 @@
  * run jobs, or perform some special logic.
  */
 const _ = require('lodash');
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 
 const usersPermissionsActions = require('../users-permissions-actions');
 

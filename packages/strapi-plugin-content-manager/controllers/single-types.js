@@ -48,8 +48,11 @@ module.exports = {
     const { user, userAbility } = ctx.state;
     const { model } = ctx.params;
     const { body } = ctx.request;
+    const { lockUid } = ctx.query;
+    let lock;
 
     const entityManager = getService('entity-manager');
+    const editingLockService = getService('editing-lock');
     const permissionChecker = getService('permission-checker').create({ userAbility, model });
 
     if (permissionChecker.cannot.create() && permissionChecker.cannot.update()) {
@@ -70,6 +73,13 @@ module.exports = {
 
     const sanitizeFn = pipe([pickWritables, pickPermittedFields, setCreator]);
 
+    if (lockUid) {
+      await editingLockService.validateAndExtendLock({ model, uid: lockUid });
+    } else {
+      const lockResult = await editingLockService.setLock({ model, user }, { force: true });
+      lock = lockResult.lock;
+    }
+
     await wrapBadRequest(async () => {
       if (!entity) {
         const newEntity = await entityManager.create(sanitizeFn(body), model);
@@ -86,13 +96,20 @@ module.exports = {
       const updatedEntity = await entityManager.update(entity, sanitizeFn(body), model);
       ctx.body = permissionChecker.sanitizeOutput(updatedEntity);
     })();
+
+    if (!lockUid) {
+      await editingLockService.unlock({ model, uid: lock.uid }, { force: true });
+    }
   },
 
   async delete(ctx) {
-    const { userAbility } = ctx.state;
+    const { userAbility, user } = ctx.state;
     const { model } = ctx.params;
+    const { lockUid } = ctx.query;
+    let lock;
 
     const entityManager = getService('entity-manager');
+    const editingLockService = getService('editing-lock');
     const permissionChecker = getService('permission-checker').create({ userAbility, model });
 
     if (permissionChecker.cannot.delete()) {
@@ -109,16 +126,30 @@ module.exports = {
       return ctx.forbidden();
     }
 
+    if (lockUid) {
+      await editingLockService.validateAndExtendLock({ model, uid: lockUid });
+    } else {
+      const lockResult = await editingLockService.setLock({ model, user }, { force: true });
+      lock = lockResult.lock;
+    }
+
     const deletedEntity = await entityManager.delete(entity, model);
+
+    if (!lockUid) {
+      await editingLockService.unlock({ model, uid: lock.uid }, { force: true });
+    }
 
     ctx.body = permissionChecker.sanitizeOutput(deletedEntity);
   },
 
   async publish(ctx) {
-    const { userAbility } = ctx.state;
+    const { userAbility, user } = ctx.state;
     const { model } = ctx.params;
+    const { lockUid } = ctx.query;
+    let lock;
 
     const entityManager = getService('entity-manager');
+    const editingLockService = getService('editing-lock');
     const permissionChecker = getService('permission-checker').create({ userAbility, model });
 
     if (permissionChecker.cannot.publish()) {
@@ -135,16 +166,30 @@ module.exports = {
       return ctx.forbidden();
     }
 
+    if (lockUid) {
+      await editingLockService.validateAndExtendLock({ model, uid: lockUid });
+    } else {
+      const lockResult = await editingLockService.setLock({ model, user }, { force: true });
+      lock = lockResult.lock;
+    }
+
     const publishedEntity = await entityManager.publish(entity, model);
+
+    if (!lockUid) {
+      await editingLockService.unlock({ model, uid: lock.uid }, { force: true });
+    }
 
     ctx.body = permissionChecker.sanitizeOutput(publishedEntity);
   },
 
   async unpublish(ctx) {
-    const { userAbility } = ctx.state;
+    const { userAbility, user } = ctx.state;
     const { model } = ctx.params;
+    const { lockUid } = ctx.query;
+    let lock;
 
     const entityManager = getService('entity-manager');
+    const editingLockService = getService('editing-lock');
     const permissionChecker = getService('permission-checker').create({ userAbility, model });
 
     if (permissionChecker.cannot.unpublish()) {
@@ -161,7 +206,18 @@ module.exports = {
       return ctx.forbidden();
     }
 
+    if (lockUid) {
+      await editingLockService.validateAndExtendLock({ model, uid: lockUid });
+    } else {
+      const lockResult = await editingLockService.setLock({ model, user }, { force: true });
+      lock = lockResult.lock;
+    }
+
     const unpublishedEntity = await entityManager.unpublish(entity, model);
+
+    if (!lockUid) {
+      await editingLockService.unlock({ model, uid: lock.uid }, { force: true });
+    }
 
     ctx.body = permissionChecker.sanitizeOutput(unpublishedEntity);
   },

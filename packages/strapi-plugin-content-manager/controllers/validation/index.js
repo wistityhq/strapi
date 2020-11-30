@@ -20,7 +20,7 @@ const validateKind = kind => {
     .oneOf(TYPES)
     .nullable()
     .validate(kind)
-    .catch(error => Promise.reject(formatYupErrors(error)));
+    .catch(handleError);
 };
 
 const validateBulkDeleteInput = (data = {}) => {
@@ -88,6 +88,51 @@ const validateUIDField = (contentTypeUID, field) => {
   }
 };
 
+const validateLockInputSchema = yup
+  .object()
+  .shape({
+    metadata: yup.object().shape({
+      lastActivityDate: yup.date(),
+    }),
+    force: yup.boolean(),
+  })
+  .noUnknown();
+
+const validateLockInput = data => {
+  return validateLockInputSchema
+    .validate(data, { strict: true, abortEarly: false })
+    .catch(handleError);
+};
+
+const validateExtendLockInputSchema = yup
+  .object()
+  .shape({
+    uid: yup.string().required(),
+    metadata: yup.object().shape({
+      lastActivityDate: yup.date(),
+    }),
+  })
+  .noUnknown();
+
+const validateExtendLockInput = data => {
+  return validateExtendLockInputSchema
+    .validate(data, { strict: true, abortEarly: false })
+    .catch(handleError);
+};
+
+const validateUnlockInputSchema = yup
+  .object()
+  .shape({
+    uid: yup.string().required(),
+  })
+  .noUnknown();
+
+const validateUnlockInput = data => {
+  return validateUnlockInputSchema
+    .validate(data, { strict: true, abortEarly: false })
+    .catch(handleError);
+};
+
 module.exports = {
   createModelConfigurationSchema,
   validateKind,
@@ -95,4 +140,7 @@ module.exports = {
   validateGenerateUIDInput,
   validateCheckUIDAvailabilityInput,
   validateUIDField,
+  validateLockInput,
+  validateExtendLockInput,
+  validateUnlockInput,
 };

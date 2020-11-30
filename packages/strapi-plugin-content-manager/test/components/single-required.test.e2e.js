@@ -12,7 +12,6 @@ describe.each([
   ['GENERATED API', '/withcomponents'],
 ])('[%s] => Non repeatable and required component', (_, path) => {
   const hasPagination = path.includes('/content-manager');
-
   beforeAll(async () => {
     const token = await registerAndLogin();
     const authRq = createAuthRequest(token);

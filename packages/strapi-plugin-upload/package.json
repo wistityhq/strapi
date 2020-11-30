@@ -40,7 +40,7 @@
     "strapi-provider-upload-local": "3.3.4",
     "strapi-utils": "3.3.4",
     "stream-to-array": "^2.3.0",
-    "uuid": "^3.2.1"
+    "uuid": "8.3.1"
   },
   "author": {
     "name": "A Strapi developer",

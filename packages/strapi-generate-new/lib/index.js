@@ -5,7 +5,7 @@ const os = require('os');
 const crypto = require('crypto');
 const chalk = require('chalk');
 const { machineIdSync } = require('node-machine-id');
-const uuid = require('uuid/v4');
+const { v4: uuid } = require('uuid');
 const sentry = require('@sentry/node');
 
 const hasYarn = require('./utils/has-yarn');

@@ -5,9 +5,11 @@ const _ = require('lodash');
 const { registerAndLogin } = require('../../../../test/helpers/auth');
 const createModelsUtils = require('../../../../test/helpers/models');
 const { createAuthRequest } = require('../../../../test/helpers/request');
+const createLockUtils = require('../../../../test/helpers/editing-lock');
 
 let rq;
 let modelsUtils;
+let lockUtils;
 let data = {
   productsWithDz: [],
 };
@@ -53,6 +55,8 @@ describe('Core API - Basic + dz', () => {
     rq = createAuthRequest(token);
 
     modelsUtils = createModelsUtils({ rq });
+    lockUtils = createLockUtils({ rq });
+
     await modelsUtils.createComponent(compo);
     await modelsUtils.createContentTypes([productWithDz]);
   }, 60000);
@@ -120,10 +124,16 @@ describe('Core API - Basic + dz', () => {
         },
       ],
     };
+
+    const lockUid = await lockUtils.getLockUid(
+      'application::product-with-dz.product-with-dz',
+      data.productsWithDz[0].id
+    );
     const res = await rq({
       method: 'PUT',
       url: `/content-manager/collection-types/application::product-with-dz.product-with-dz/${data.productsWithDz[0].id}`,
       body: product,
+      qs: { lockUid },
     });
 
     expect(res.statusCode).toBe(200);
@@ -134,9 +144,14 @@ describe('Core API - Basic + dz', () => {
   });
 
   test('Delete product with compo', async () => {
+    const lockUid = await lockUtils.getLockUid(
+      'application::product-with-dz.product-with-dz',
+      data.productsWithDz[0].id
+    );
     const res = await rq({
       method: 'DELETE',
       url: `/content-manager/collection-types/application::product-with-dz.product-with-dz/${data.productsWithDz[0].id}`,
+      qs: { lockUid },
     });
 
     expect(res.statusCode).toBe(200);

@@ -201,6 +201,7 @@ if (edition === 'EE') {
       const { id } = localTestData.entry;
       const modelName = getModelName();
       const rq = getUserRequest(1);
+
       const res = await rq({
         method: 'DELETE',
         url: `/content-manager/collection-types/application::${modelName}.${modelName}/${id}`,

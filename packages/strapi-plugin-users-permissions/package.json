@@ -37,7 +37,7 @@
     "request": "^2.83.0",
     "strapi-helper-plugin": "3.3.4",
     "strapi-utils": "3.3.4",
-    "uuid": "^3.1.0"
+    "uuid": "8.3.1"
   },
   "devDependencies": {
     "koa": "^2.8.0"

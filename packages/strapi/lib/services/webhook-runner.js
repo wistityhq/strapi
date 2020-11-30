@@ -15,7 +15,7 @@ const defaultConfiguration = {
 
 class WebhookRunner {
   constructor({ eventHub, logger, configuration = {} }) {
-    debug('Initialized webhook runer');
+    debug('Initialized webhook runner');
     this.eventHub = eventHub;
     this.logger = logger;
     this.webhooksMap = new Map();
@@ -62,9 +62,7 @@ class WebhookRunner {
   async executeListener({ event, info }) {
     debug(`Executing webhook for event '${event}'`);
     const webhooks = this.webhooksMap.get(event) || [];
-    const activeWebhooks = webhooks.filter(
-      webhook => webhook.isEnabled === true
-    );
+    const activeWebhooks = webhooks.filter(webhook => webhook.isEnabled === true);
 
     for (const webhook of activeWebhooks) {
       await this.run(webhook, event, info).catch(error => {
@@ -76,13 +74,14 @@ class WebhookRunner {
 
   run(webhook, event, info = {}) {
     const { url, headers } = webhook;
+    const sanitizedInfo = _.pick(info, ['model', 'entry', 'media']);
 
     return fetch(url, {
       method: 'post',
       body: JSON.stringify({
         event,
         created_at: new Date(),
-        ...info,
+        ...sanitizedInfo,
       }),
       headers: {
         ...this.config.defaultHeaders,
@@ -136,9 +135,7 @@ class WebhookRunner {
     debug(`Unregistering webhook '${webhook.id}'`);
 
     this.webhooksMap.forEach((webhooks, event) => {
-      const filteredWebhooks = webhooks.filter(
-        value => value.id !== webhook.id
-      );
+      const filteredWebhooks = webhooks.filter(value => value.id !== webhook.id);
 
       // Cleanup hanging listeners
       if (filteredWebhooks.length === 0) {

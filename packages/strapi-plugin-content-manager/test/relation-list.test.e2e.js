@@ -105,18 +105,20 @@ async function createFixtures({ publishAProduct = false } = {}) {
 }
 
 async function deleteFixtures() {
-  for (let shop of data.shops) {
-    await rq({
-      method: 'DELETE',
-      url: `/content-manager/collection-types/application::shop.shop/${shop.id}`,
-    });
-  }
-  for (let product of data.products) {
-    await rq({
-      method: 'DELETE',
-      url: `/content-manager/collection-types/application::product.product/${product.id}`,
-    });
-  }
+  await rq({
+    method: 'POST',
+    url: '/content-manager/collection-types/application::shop.shop/actions/bulkDelete',
+    body: {
+      ids: data.shops.map(({ id }) => id),
+    },
+  });
+  await rq({
+    method: 'POST',
+    url: '/content-manager/collection-types/application::product.product/actions/bulkDelete',
+    body: {
+      ids: data.products.map(({ id }) => id),
+    },
+  });
 }
 
 describe('Relation-list route', () => {

@@ -86,6 +86,7 @@ module.exports = ({ db, eventHub, entityValidator }) => ({
     }
 
     eventHub.emit(ENTRY_CREATE, {
+      modelUID: model,
       model: modelDef.modelName,
       entry: sanitizeEntity(entry, { model: modelDef }),
     });
@@ -117,6 +118,7 @@ module.exports = ({ db, eventHub, entityValidator }) => ({
     }
 
     eventHub.emit(ENTRY_UPDATE, {
+      modelUID: model,
       model: modelDef.modelName,
       entry: sanitizeEntity(entry, { model: modelDef }),
     });
@@ -135,6 +137,7 @@ module.exports = ({ db, eventHub, entityValidator }) => ({
 
     const modelDef = db.getModel(model);
     eventHub.emit(ENTRY_DELETE, {
+      modelUID: model,
       model: modelDef.modelName,
       entry: sanitizeEntity(entry, { model: modelDef }),
     });

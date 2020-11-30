@@ -16,6 +16,7 @@ const emitEvent = (event, fn) => async (entity, model) => {
   const modelDef = strapi.getModel(model);
 
   strapi.eventHub.emit(event, {
+    modelUID: model,
     model: modelDef.modelName,
     entry: sanitizeEntity(result, { model: modelDef }),
   });

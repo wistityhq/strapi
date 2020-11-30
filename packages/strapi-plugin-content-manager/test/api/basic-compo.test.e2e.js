@@ -11,6 +11,8 @@ let modelsUtils;
 let data = {
   productsWithCompo: [],
 };
+const modelUid = 'application::product-with-compo.product-with-compo';
+const baseUrl = `/content-manager/collection-types/${modelUid}`;
 
 const compo = {
   name: 'compo',
@@ -53,6 +55,7 @@ describe('CM API - Basic + compo', () => {
     rq = createAuthRequest(token);
 
     modelsUtils = createModelsUtils({ rq });
+
     await modelsUtils.createComponent(compo);
     await modelsUtils.createContentTypes([productWithCompo]);
   }, 60000);
@@ -73,7 +76,7 @@ describe('CM API - Basic + compo', () => {
     };
     const res = await rq({
       method: 'POST',
-      url: '/content-manager/collection-types/application::product-with-compo.product-with-compo',
+      url: baseUrl,
       body: product,
     });
 
@@ -86,7 +89,7 @@ describe('CM API - Basic + compo', () => {
   test('Read product with compo', async () => {
     const res = await rq({
       method: 'GET',
-      url: '/content-manager/collection-types/application::product-with-compo.product-with-compo',
+      url: baseUrl,
     });
 
     expect(res.statusCode).toBe(200);
@@ -107,7 +110,7 @@ describe('CM API - Basic + compo', () => {
     };
     const res = await rq({
       method: 'PUT',
-      url: `/content-manager/collection-types/application::product-with-compo.product-with-compo/${data.productsWithCompo[0].id}`,
+      url: `${baseUrl}/${data.productsWithCompo[0].id}`,
       body: product,
     });
 
@@ -121,7 +124,7 @@ describe('CM API - Basic + compo', () => {
   test('Delete product with compo', async () => {
     const res = await rq({
       method: 'DELETE',
-      url: `/content-manager/collection-types/application::product-with-compo.product-with-compo/${data.productsWithCompo[0].id}`,
+      url: `${baseUrl}/${data.productsWithCompo[0].id}`,
     });
 
     expect(res.statusCode).toBe(200);
@@ -139,7 +142,7 @@ describe('CM API - Basic + compo', () => {
       };
       const res = await rq({
         method: 'POST',
-        url: '/content-manager/collection-types/application::product-with-compo.product-with-compo',
+        url: baseUrl,
         body: product,
       });
 
@@ -158,7 +161,7 @@ describe('CM API - Basic + compo', () => {
       };
       const res = await rq({
         method: 'POST',
-        url: '/content-manager/collection-types/application::product-with-compo.product-with-compo',
+        url: baseUrl,
         body: product,
       });
 
@@ -179,7 +182,7 @@ describe('CM API - Basic + compo', () => {
       };
       const res = await rq({
         method: 'POST',
-        url: '/content-manager/collection-types/application::product-with-compo.product-with-compo',
+        url: baseUrl,
         body: product,
       });
 
@@ -199,7 +202,7 @@ describe('CM API - Basic + compo', () => {
       };
       const res = await rq({
         method: 'POST',
-        url: '/content-manager/collection-types/application::product-with-compo.product-with-compo',
+        url: baseUrl,
         body: product,
       });
 

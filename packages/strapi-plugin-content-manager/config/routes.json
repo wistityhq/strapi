@@ -253,6 +253,130 @@
           ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.delete"]]
         ]
       }
+    },
+    {
+      "method": "POST",
+      "path": "/collection-types/:model/:id/actions/lock",
+      "handler": "editing-lock.lock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/collection-types/:model/:id/actions/extend-lock",
+      "handler": "editing-lock.extendLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/collection-types/:model/:id/actions/unlock",
+      "handler": "editing-lock.unlock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/collection-types/:model/:id/actions/lock",
+      "handler": "editing-lock.getLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          ["plugins::content-manager.hasPermissions", ["plugins::content-manager.explorer.update"]]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/single-types/:model/actions/lock",
+      "handler": "editing-lock.lock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          [
+            "plugins::content-manager.hasPermissions",
+            [
+              "plugins::content-manager.explorer.update",
+              "plugins::content-manager.explorer.create"
+            ],
+            { "hasAtLeastOne": true }
+          ]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/single-types/:model/actions/extend-lock",
+      "handler": "editing-lock.extendLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          [
+            "plugins::content-manager.hasPermissions",
+            [
+              "plugins::content-manager.explorer.update",
+              "plugins::content-manager.explorer.create"
+            ],
+            { "hasAtLeastOne": true }
+          ]
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/single-types/:model/actions/unlock",
+      "handler": "editing-lock.unlock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          [
+            "plugins::content-manager.hasPermissions",
+            [
+              "plugins::content-manager.explorer.update",
+              "plugins::content-manager.explorer.create"
+            ],
+            { "hasAtLeastOne": true }
+          ]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/single-types/:model/actions/lock",
+      "handler": "editing-lock.getLock",
+      "config": {
+        "policies": [
+          "routing",
+          "admin::isAuthenticatedAdmin",
+          [
+            "plugins::content-manager.hasPermissions",
+            [
+              "plugins::content-manager.explorer.update",
+              "plugins::content-manager.explorer.create"
+            ],
+            { "hasAtLeastOne": true }
+          ]
+        ]
+      }
     }
   ]
 }

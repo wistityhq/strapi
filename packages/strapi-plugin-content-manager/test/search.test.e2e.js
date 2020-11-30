@@ -131,12 +131,13 @@ async function createFixtures() {
 }
 
 async function deleteFixtures() {
-  for (let bed of data.beds) {
-    await rq({
-      method: 'DELETE',
-      url: `/content-manager/collection-types/application::bed.bed/${bed.id}`,
-    });
-  }
+  await rq({
+    method: 'POST',
+    url: '/content-manager/collection-types/application::bed.bed/actions/bulkDelete',
+    body: {
+      ids: data.beds.map(({ id }) => id),
+    },
+  });
 }
 
 describe('Search query', () => {

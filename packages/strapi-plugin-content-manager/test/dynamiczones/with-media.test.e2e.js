@@ -157,6 +157,7 @@ describe.each([
 
       expect(newImgRes.statusCode).toBe(200);
       const newMediaId = newImgRes.body[0].id;
+
       const updateRes = await rq.put(`/${res.body.id}`, {
         body: {
           field: [

@@ -12,7 +12,6 @@ describe.each([
   ['GENERATED API', '/withcomponents'],
 ])('[%s] => Non repeatable and Not required component', (_, path) => {
   const hasPagination = path.includes('/content-manager');
-
   beforeAll(async () => {
     const token = await registerAndLogin();
     const authRq = createAuthRequest(token);
@@ -274,9 +273,7 @@ describe.each([
         },
       });
 
-      const updateRes = await rq.put(`/${res.body.id}`, {
-        body: {},
-      });
+      const updateRes = await rq.put(`/${res.body.id}`, { body: {} });
 
       expect(updateRes.statusCode).toBe(200);
       expect(updateRes.body).toMatchObject({
