@@ -57,12 +57,22 @@ import history from './utils/history';
 
 import plugins from './plugins';
 
+import itly from './itly';
+import TelemetryPlugin from './telemetry-plugin';
+
 const strapi = Strapi();
 
 const initialState = {};
 const store = configureStore(initialState, history);
 const { dispatch } = store;
 const MOUNT_NODE = document.getElementById('app') || document.createElement('div');
+
+itly.load({
+  context: {
+    projectType: PROJECT_TYPE,
+  },
+  plugins: [new TelemetryPlugin(store)],
+});
 
 Object.keys(plugins).forEach(current => {
   const registerPlugin = plugin => {

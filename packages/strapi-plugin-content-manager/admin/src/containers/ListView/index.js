@@ -52,6 +52,7 @@ function ListView({
   data,
   didDeleteData,
   emitEvent,
+  itly,
   entriesToDelete,
   isLoading,
   location: { pathname },
@@ -495,7 +496,7 @@ function ListView({
           onClick: () => {
             const trackerProperty = hasDraftAndPublish ? { status: 'draft' } : {};
 
-            emitEvent('willCreateEntry', trackerProperty);
+            itly.willCreateEntry(trackerProperty);
             push({
               pathname: `${pathname}/create`,
             });
@@ -545,6 +546,7 @@ function ListView({
         count={count}
         entriesToDelete={entriesToDelete}
         emitEvent={emitEvent}
+        itly={itly}
         firstSortableElement={getFirstSortableElement()}
         label={label}
         onChangeBulk={onChangeBulk}
@@ -670,6 +672,7 @@ ListView.propTypes = {
   data: PropTypes.array.isRequired,
   didDeleteData: PropTypes.bool.isRequired,
   emitEvent: PropTypes.func.isRequired,
+  itly: PropTypes.object.isRequired,
   entriesToDelete: PropTypes.array.isRequired,
   isLoading: PropTypes.bool.isRequired,
   layouts: PropTypes.object,

@@ -56,6 +56,7 @@ import {
 import makeSelectAdmin from './selectors';
 import Wrapper from './Wrapper';
 import Content from './Content';
+import itly from '../../itly';
 
 export class Admin extends React.Component {
   // eslint-disable-line react/prefer-stateless-function
@@ -266,6 +267,7 @@ export class Admin extends React.Component {
       <GlobalContextProvider
         autoReload={autoReload}
         emitEvent={this.emitEvent}
+        itly={itly}
         currentEnvironment={currentEnvironment}
         currentLocale={locale}
         disableGlobalOverlayBlocker={disableGlobalOverlayBlocker}

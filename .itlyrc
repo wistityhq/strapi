@@ -1,0 +1,68 @@
+{
+  CompanyId: '46f8e8fa-e6ce-4826-87cd-611bc6e0be53',
+  SourceId: 'e8ba04a0-b7a6-4414-a954-916f18fca3b2',
+  Path: './packages/strapi-admin/admin/src/itly',
+  Version: '4.0.0',
+  Events: [
+    {
+      id: '713325c2-0c4e-4d38-b82f-63e06ded179b',
+      name: 'didCreateEntry',
+      description: 'When the entry has been created with success',
+      properties: [],
+      sources: [
+        {
+          id: 'e8ba04a0-b7a6-4414-a954-916f18fca3b2',
+          name: 'strapi-admin',
+        },
+      ],
+    },
+    {
+      id: 'a9187f23-0243-4cce-b717-5a145c7a5077',
+      name: 'didEditEntry',
+      description: 'When the entry has been edited with success',
+      properties: [],
+      sources: [
+        {
+          id: 'e8ba04a0-b7a6-4414-a954-916f18fca3b2',
+          name: 'strapi-admin',
+        },
+      ],
+    },
+    {
+      id: '95070aa7-7b88-4987-b5df-47a9a6927a1f',
+      name: 'didInitializeAdministration',
+      description: null,
+      properties: [],
+      sources: [
+        {
+          id: 'e8ba04a0-b7a6-4414-a954-916f18fca3b2',
+          name: 'strapi-admin',
+        },
+      ],
+    },
+    {
+      id: '506f5d1d-6e76-43e3-8ffc-4cd6cfcd1572',
+      name: 'willCreateEntry',
+      description: 'When a user starts to create a new entry after clicking on the "Add New X" button',
+      properties: [],
+      sources: [
+        {
+          id: 'e8ba04a0-b7a6-4414-a954-916f18fca3b2',
+          name: 'strapi-admin',
+        },
+      ],
+    },
+    {
+      id: '83f949a9-d1df-4a3b-a1ae-34edfbbf8fc3',
+      name: 'willEditEntry',
+      description: 'When a user clicks on the Save button while editing an existing entry',
+      properties: [],
+      sources: [
+        {
+          id: 'e8ba04a0-b7a6-4414-a954-916f18fca3b2',
+          name: 'strapi-admin',
+        },
+      ],
+    },
+  ],
+}

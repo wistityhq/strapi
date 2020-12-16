@@ -1488,6 +1488,23 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/schema/-/schema-0.1.2.tgz#26520bf09abe4a5644cd5414e37125a8954241dd"
   integrity sha512-tsAQNx32a8CoFhjhijUIhI4kccIAgmGhy8LZMZgGfmXcpMbPRUqn5LWmgRttILi6yeGmBJd2xsPkFMs0PzgPCw==
 
+"@itly/plugin-iteratively@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@itly/plugin-iteratively/-/plugin-iteratively-1.6.0.tgz#329f055602e6caa9a5447b834bd1f05d1c8a85a4"
+  integrity sha512-stbmuPFuCjZXOOgr23NY/fDt9/aSwmcrw5eFdc26AWRk9qVWfd12EY8x1t5892p15+zVXcDpNVCdoeoydICMnw==
+
+"@itly/plugin-schema-validator@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@itly/plugin-schema-validator/-/plugin-schema-validator-1.6.0.tgz#3c7085119c86641636d3efb0266f47adbc9fcd7f"
+  integrity sha512-sTZdVMSgXS8piO9kD8qEbAO0lw0qwJk7pF70qMDMGjIkvx6Ew3VQlStEL8t2cQDZBST7SjxetccONAldyCl/zg==
+  dependencies:
+    ajv "^6.12.2"
+
+"@itly/sdk@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@itly/sdk/-/sdk-1.6.0.tgz#87aaac690ea8d18c4f8c21044fde67f05ba68752"
+  integrity sha512-fhiOEf8wrZg3wWUISiLtxQ8V4MtgLwR6DvlQhInnWBG8ONISE1TIPm8hhWCwzj024Ak2kntgs47pCWjJAe0rHw==
+
 "@jest/console@^26.6.2":
   version "26.6.2"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-26.6.2.tgz#4e04bc464014358b03ab4937805ee36a0aeb98f2"
@@ -3784,6 +3801,16 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.3, ajv@^6.12.4:
   version "6.12.5"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.5.tgz#19b0e8bae8f476e5ba666300387775fb1a00a4da"
   integrity sha512-lRF8RORchjpKG50/WFf8xmg7sgCLFiYNNnqdKflk63whMQcWR5ngGjiSXkL9bjxy6B2npOK2HSMN49jEBMSkag==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    fast-json-stable-stringify "^2.0.0"
+    json-schema-traverse "^0.4.1"
+    uri-js "^4.2.2"
+
+ajv@^6.12.2:
+  version "6.12.6"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
+  integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
   dependencies:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"

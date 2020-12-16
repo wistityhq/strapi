@@ -83,7 +83,7 @@ const EditViewDataManagerProvider = ({
     return dynamicZoneFields;
   }, [currentContentTypeLayout]);
 
-  const { emitEvent, formatMessage } = useGlobalContext();
+  const { itly, emitEvent, formatMessage } = useGlobalContext();
   const emitEventRef = useRef(emitEvent);
   const userPermissions = useUser();
   const generatedPermissions = useMemo(() => generatePermissionsObject(slug), [slug]);
@@ -445,7 +445,7 @@ const EditViewDataManagerProvider = ({
       }
 
       if (!isCreatingEntry) {
-        emitEvent('willEditEntry', trackerProperty);
+        itly.willEditEntry(trackerProperty);
       }
 
       try {
@@ -461,7 +461,12 @@ const EditViewDataManagerProvider = ({
           false,
           false
         );
-        emitEvent(isCreatingEntry ? 'didCreateEntry' : 'didEditEntry', trackerProperty);
+
+        if (isCreatingEntry) {
+          itly.didCreateEntry(trackerProperty);
+        } else {
+          itly.didEditEntry(trackerProperty);
+        }
 
         setStatus('resolved');
 

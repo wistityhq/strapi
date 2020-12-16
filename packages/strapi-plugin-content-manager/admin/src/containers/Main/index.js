@@ -43,7 +43,7 @@ function Main({
   models,
   resetProps,
 }) {
-  const { emitEvent } = useGlobalContext();
+  const { emitEvent, itly } = useGlobalContext();
   const {
     params: { slug },
   } = useRouteMatch('/plugins/content-manager/:contentType/:slug');
@@ -113,6 +113,7 @@ function Main({
       deleteLayout={deleteLayout}
       deleteLayouts={deleteLayouts}
       emitEvent={emitEvent}
+      itly={itly}
       components={components}
       componentsAndModelsMainPossibleMainFields={componentsAndModelsMainPossibleMainFields}
       layouts={layouts}
@@ -146,6 +147,7 @@ function Main({
                   deleteLayout={deleteLayout}
                   deleteLayouts={deleteLayouts}
                   emitEvent={emitEvent}
+                  itly={itly}
                   components={components}
                   componentsAndModelsMainPossibleMainFields={
                     componentsAndModelsMainPossibleMainFields

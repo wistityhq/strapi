@@ -28,6 +28,7 @@ import Theme from '../Theme';
 import { Content, Wrapper } from './components';
 import { getDataSucceeded } from './actions';
 import NewNotification from '../NewNotification';
+import itly from '../../itly';
 
 function App(props) {
   const getDataRef = useRef();
@@ -62,25 +63,7 @@ function App(props) {
     const getData = async () => {
       try {
         const { data } = await request('/admin/init', { method: 'GET' });
-
-        const { uuid } = data;
-
-        if (uuid) {
-          try {
-            fetch('https://analytics.strapi.io/track', {
-              method: 'POST',
-              body: JSON.stringify({
-                event: 'didInitializeAdministration',
-                uuid,
-              }),
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-          } catch (e) {
-            // Silent.
-          }
-        }
+        itly.didInitializeAdministration();
 
         getDataRef.current(data);
         setState({ isLoading: false, hasAdmin: data.hasAdmin });
