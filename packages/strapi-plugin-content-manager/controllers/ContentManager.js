@@ -70,11 +70,16 @@ module.exports = {
 
     const isAvailable = await uidService.checkUIDAvailability({ contentTypeUID, field, value });
 
+    const contentType = strapi.contentTypes[contentTypeUID];
+    const { attributes } = contentType;
+    const { regex } = attributes[field];
+
     ctx.body = {
       isAvailable,
-      suggestion: !isAvailable
-        ? await uidService.findUniqueUID({ contentTypeUID, field, value })
-        : null,
+      suggestion:
+        !isAvailable && _.isEmpty(regex)
+          ? await uidService.findUniqueUID({ contentTypeUID, field, value })
+          : null,
     };
   },
 

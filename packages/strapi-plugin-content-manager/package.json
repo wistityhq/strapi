@@ -33,6 +33,7 @@
     "markdown-it-sub": "^1.0.0",
     "markdown-it-sup": "^1.0.0",
     "pluralize": "^8.0.0",
+    "randexp": "0.5.3",
     "react": "^16.13.1",
     "react-dom": "^16.9.0",
     "react-fast-compare": "^3.2.0",

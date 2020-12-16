@@ -84,6 +84,17 @@ const getTypeShape = (attribute, { modelType, attributes } = {}) => {
             }
           )
           .test(isValidUID),
+        regex: yup
+          .string()
+          .test('isValidRegex', 'cannot define a Regex if the targetField is set', function(value) {
+            const { targetField } = this.parent;
+            if (_.isNil(targetField) || _.isNil(value)) {
+              return true;
+            }
+
+            return false;
+          })
+          .test(isValidRegExpPattern),
         minLength: validators.minLength,
         maxLength: validators.maxLength.max(256).test(maxLengthIsGreaterThanOrEqualToMinLength),
         options: yup.object().shape({

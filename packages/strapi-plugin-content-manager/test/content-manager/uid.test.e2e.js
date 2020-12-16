@@ -2,10 +2,12 @@
 const { registerAndLogin } = require('../../../../test/helpers/auth');
 const createModelsUtils = require('../../../../test/helpers/models');
 const { createAuthRequest } = require('../../../../test/helpers/request');
+const Randexp = require('randexp');
 
 let modelsUtils;
 let rq;
 let uid = 'application::uid-model.uid-model';
+const testRegexPattern = '^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$';
 
 describe('Content Manager single types', () => {
   beforeAll(async () => {
@@ -24,6 +26,10 @@ describe('Content Manager single types', () => {
         slug: {
           type: 'uid',
           targetField: 'title',
+        },
+        slugRegex: {
+          type: 'uid',
+          regex: testRegexPattern,
         },
         otherField: {
           type: 'integer',
@@ -171,6 +177,21 @@ describe('Content Manager single types', () => {
 
       expect(secondRes.statusCode).toBe(200);
       expect(secondRes.body.data).toBe('this-is-a-super-title-1');
+    });
+
+    test('Generates a random field based on Regex', async () => {
+      const res = await rq({
+        url: `/content-manager/explorer/uid/generate`,
+        method: 'POST',
+        body: {
+          contentTypeUID: uid,
+          field: 'slugRegex',
+          data: {},
+        },
+      });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.data).toMatch(new RegExp(testRegexPattern));
     });
 
     test('Avoids collisions with already generated uids', async () => {
@@ -339,11 +360,13 @@ describe('Content Manager single types', () => {
 
     test('Gives a suggestion when not available', async () => {
       // create data
+      const slugRegex = new Randexp(testRegexPattern).gen();
       await rq({
         url: `/content-manager/explorer/${uid}`,
         method: 'POST',
         body: {
           slug: 'custom-slug',
+          slugRegex: slugRegex,
         },
       });
 
@@ -361,6 +384,23 @@ describe('Content Manager single types', () => {
       expect(res.body).toEqual({
         isAvailable: false,
         suggestion: 'custom-slug-1',
+      });
+
+      //ignore suggestion if Regexp is defined
+      const secondRes = await rq({
+        url: `/content-manager/explorer/uid/check-availability`,
+        method: 'POST',
+        body: {
+          contentTypeUID: uid,
+          field: 'slugRegex',
+          value: slugRegex,
+        },
+      });
+
+      expect(secondRes.statusCode).toBe(200);
+      expect(secondRes.body).toEqual({
+        isAvailable: false,
+        suggestion: null,
       });
     });
   });

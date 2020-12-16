@@ -318,6 +318,15 @@ const forms = {
             dominant: yup.boolean().nullable(),
             unique: yup.boolean().nullable(),
           });
+        case 'uid':
+          return yup.object().shape({
+            ...commonShape,
+            ...fieldsThatSupportMaxAndMinLengthShape,
+            regex: yup
+              .string()
+              .isValidRegExpPattern(getTrad('error.validation.regex'))
+              .nullable(),
+          });
         default:
           return yup.object().shape({
             ...commonShape,
@@ -505,6 +514,21 @@ const forms = {
         } else if (type === 'uid') {
           const uidItems = [
             [{ ...fields.default, disabled: Boolean(data.targetField), type: 'text' }],
+            [
+              {
+                autoFocus: false,
+                label: {
+                  id: getTrad('form.attribute.item.text.regex'),
+                },
+                name: 'regex',
+                disabled: Boolean(data.targetField),
+                type: 'text',
+                validations: {},
+                description: {
+                  id: getTrad('form.attribute.item.text.regex.description'),
+                },
+              },
+            ],
             [fields.divider],
             [fields.private],
             [fields.required],
