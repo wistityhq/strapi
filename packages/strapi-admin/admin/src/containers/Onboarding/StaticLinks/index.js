@@ -21,7 +21,7 @@ function StaticLinks() {
       icon: 'file',
       label: formatMessage({ id: 'app.static.links.cheatsheet' }),
       destination: 'https://strapi-showcase.s3-us-west-2.amazonaws.com/CheatSheet.pdf',
-    }
+    },
   ];
 
   return (

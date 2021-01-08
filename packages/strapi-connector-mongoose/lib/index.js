@@ -91,6 +91,8 @@ module.exports = function(strapi) {
 
         if (!_.isEmpty(authenticationDatabase)) {
           connectOptions.authSource = authenticationDatabase;
+        } else {
+          connectOptions.authSource = database;
         }
 
         connectOptions.ssl = ssl === true || ssl === 'true';

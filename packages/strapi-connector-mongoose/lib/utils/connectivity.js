@@ -18,6 +18,8 @@ module.exports = async ({ connection }) => {
 
   if (authenticationDatabase) {
     connectOptions.authSource = authenticationDatabase;
+  } else {
+    connectOptions.authSource = connection.settings.database;
   }
 
   connectOptions.ssl = ssl ? true : false;
