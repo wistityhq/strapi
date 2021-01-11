@@ -82,7 +82,7 @@ module.exports = async function({ build, watchAdmin, browser }) {
       process.on('message', message => {
         switch (message) {
           case 'isKilled':
-            strapiInstance.server.destroy(() => {
+            strapiInstance.destroyServer(() => {
               process.send('kill');
             });
             break;

@@ -153,6 +153,14 @@ class Strapi {
     console.log();
   }
 
+  destroyServer (cb) {
+    if (typeof this.server.destroy === 'function') {
+      return this.server.destroy();
+    }
+
+    this.server.close(cb);
+  }
+
   initServer() {
     this.server = http.createServer(this.handleRequest.bind(this));
     // handle port in use cleanly
