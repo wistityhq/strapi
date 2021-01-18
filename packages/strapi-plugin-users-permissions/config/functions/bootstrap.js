@@ -11,6 +11,7 @@ const _ = require('lodash');
 const uuid = require('uuid/v4');
 
 const usersPermissionsActions = require('../users-permissions-actions');
+const grantConfig = require('./grant-config');
 
 module.exports = async () => {
   const pluginStore = strapi.store({
@@ -19,99 +20,6 @@ module.exports = async () => {
     name: 'users-permissions',
   });
 
-  const grantConfig = {
-    email: {
-      enabled: true,
-      icon: 'envelope',
-    },
-    discord: {
-      enabled: false,
-      icon: 'discord',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/discord/callback`,
-      scope: ['identify', 'email'],
-    },
-    facebook: {
-      enabled: false,
-      icon: 'facebook-square',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/facebook/callback`,
-      scope: ['email'],
-    },
-    google: {
-      enabled: false,
-      icon: 'google',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/google/callback`,
-      scope: ['email'],
-    },
-    github: {
-      enabled: false,
-      icon: 'github',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/github/callback`,
-      scope: ['user', 'user:email'],
-    },
-    microsoft: {
-      enabled: false,
-      icon: 'windows',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/microsoft/callback`,
-      scope: ['user.read'],
-    },
-    twitter: {
-      enabled: false,
-      icon: 'twitter',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/twitter/callback`,
-    },
-    instagram: {
-      enabled: false,
-      icon: 'instagram',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/instagram/callback`,
-    },
-    vk: {
-      enabled: false,
-      icon: 'vk',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/vk/callback`,
-      scope: ['email'],
-    },
-    twitch: {
-      enabled: false,
-      icon: 'twitch',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/twitch/callback`,
-      scope: ['user:read:email'],
-    },
-    linkedin: {
-      enabled: false,
-      icon: 'linkedin',
-      key: '',
-      secret: '',
-      callback: `${strapi.config.server.url}/auth/linkedin/callback`,
-      scope: ['r_liteprofile', 'r_emailaddress'],
-    },
-    cognito: {
-      enabled: false,
-      icon: 'aws',
-      key: '',
-      secret: '',
-      subdomain: 'my.subdomain.com',
-      callback: `${strapi.config.server.url}/auth/cognito/callback`,
-      scope: ['email', 'openid', 'profile'],
-    },
-  };
   const prevGrantConfig = (await pluginStore.get({ key: 'grant' })) || {};
   // store grant auth config to db
   // when plugin_users-permissions_grant is not existed in db
