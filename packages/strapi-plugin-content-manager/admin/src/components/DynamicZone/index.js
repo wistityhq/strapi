@@ -1,9 +1,10 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, {memo, useCallback, useMemo, useState} from 'react';
 import { get } from 'lodash';
 import isEqual from 'react-fast-compare';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
 import { NotAllowedInput } from 'strapi-helper-plugin';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import pluginId from '../../pluginId';
 import connect from './utils/connect';
 import select from './utils/select';
@@ -15,6 +16,8 @@ import DynamicZoneWrapper from './DynamicZoneWrapper';
 import Label from './Label';
 import Wrapper from './Wrapper';
 import Picker from './Picker';
+import DynamicZoneHeader from "./DynamicZoneHeader";
+import Actions from "./Actions";
 
 /* eslint-disable react/no-array-index-key */
 
@@ -26,8 +29,7 @@ const DynamicZone = ({
   isCreatingEntry,
   isFieldAllowed,
   isFieldReadable,
-  moveComponentUp,
-  moveComponentDown,
+  moveComponent,
   removeComponentFromDynamicZone,
   dynamicDisplayedComponents,
   fieldSchema,
@@ -55,13 +57,43 @@ const DynamicZone = ({
   const hasMaxError =
     hasError && get(dynamicZoneErrors, [0, 'id'], '') === 'components.Input.error.validation.max';
 
+  const [componentsExpanded, setComponentsExpanded] = useState([]);
+
+  const expandComponent = useCallback((index) => {
+    const newComponentsExpanded = [...componentsExpanded];
+    newComponentsExpanded[index] = !(componentsExpanded[index] ?? true);
+    setComponentsExpanded(newComponentsExpanded);
+  }, [componentsExpanded]);
+
+  const allComponentsExpanded = useCallback(() => {
+    return componentsExpanded.every((componentExpanded) => componentExpanded);
+  }, [componentsExpanded]);
+
+  const expandAllComponents = useCallback(() => {
+    setComponentsExpanded(componentsExpanded.map(() => !allComponentsExpanded()));
+  }, [componentsExpanded, allComponentsExpanded]);
+
+  const handleMoveComponent = useCallback((name, index, offset) => {
+    const newComponentsExpanded = [...componentsExpanded];
+    newComponentsExpanded.splice(index + offset, 0, newComponentsExpanded.splice(index, 1)[0]);
+    setComponentsExpanded(newComponentsExpanded);
+    moveComponent(name, index, offset);
+  }, [componentsExpanded, moveComponent]);
+
+  const handleRemoveComponentFromDynamicZone = useCallback((name, index) => {
+    const newComponentsExpanded = [...componentsExpanded];
+    newComponentsExpanded.splice(index, 1);
+    setComponentsExpanded(newComponentsExpanded);
+    removeComponentFromDynamicZone(name, index);
+  }, [componentsExpanded, removeComponentFromDynamicZone]);
+
   const handleAddComponent = useCallback(
     componentUid => {
       setIsOpen(false);
-
+      setComponentsExpanded([...componentsExpanded, true]);
       addComponentToDynamicZone(name, componentUid, hasError);
     },
-    [addComponentToDynamicZone, hasError, name]
+    [addComponentToDynamicZone, hasError, name, componentsExpanded]
   );
 
   const handleClickOpenPicker = () => {
@@ -91,10 +123,15 @@ const DynamicZone = ({
   return (
     <DynamicZoneWrapper>
       {dynamicDisplayedComponentsLength > 0 && (
-        <Label>
-          <p>{metadatas.label}</p>
-          <p>{metadatas.description}</p>
-        </Label>
+        <DynamicZoneHeader>
+          <Label>
+            <p>{metadatas.label}</p>
+            <p>{metadatas.description}</p>
+          </Label>
+          <Actions>
+            <FontAwesomeIcon icon={allComponentsExpanded() ? 'eye-slash' : 'eye'} onClick={expandAllComponents} />
+          </Actions>
+        </DynamicZoneHeader>
       )}
 
       {/* List of displayed components */}
@@ -111,11 +148,13 @@ const DynamicZone = ({
               componentUid={componentUid}
               key={index}
               index={index}
+              lastIndex={dynamicDisplayedComponentsLength - 1}
               isFieldAllowed={isFieldAllowed}
-              moveComponentDown={moveComponentDown}
-              moveComponentUp={moveComponentUp}
+              moveComponent={handleMoveComponent}
+              expandComponent={expandComponent}
+              isExpanded={componentsExpanded[index]}
               name={name}
-              removeComponentFromDynamicZone={removeComponentFromDynamicZone}
+              removeComponentFromDynamicZone={handleRemoveComponentFromDynamicZone}
               showDownIcon={showDownIcon}
               showUpIcon={showUpIcon}
             />
@@ -193,8 +232,7 @@ DynamicZone.propTypes = {
     description: PropTypes.string,
     label: PropTypes.string,
   }).isRequired,
-  moveComponentUp: PropTypes.func.isRequired,
-  moveComponentDown: PropTypes.func.isRequired,
+  moveComponent: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   removeComponentFromDynamicZone: PropTypes.func.isRequired,
 };

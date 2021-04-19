@@ -92,7 +92,7 @@ const reducer = (state, action) => {
             state.getIn(['modifiedData', ...action.pathToComponent, action.dragIndex])
           );
       });
-    case 'MOVE_COMPONENT_UP':
+    case 'MOVE_COMPONENT':
       return state
         .update('shouldCheckErrors', v => {
           if (action.shouldCheckErrors) {
@@ -105,24 +105,7 @@ const reducer = (state, action) => {
           return list
             .delete(action.currentIndex)
             .insert(
-              action.currentIndex - 1,
-              state.getIn(['modifiedData', action.dynamicZoneName, action.currentIndex])
-            );
-        });
-    case 'MOVE_COMPONENT_DOWN':
-      return state
-        .update('shouldCheckErrors', v => {
-          if (action.shouldCheckErrors) {
-            return !v;
-          }
-
-          return v;
-        })
-        .updateIn(['modifiedData', action.dynamicZoneName], list => {
-          return list
-            .delete(action.currentIndex)
-            .insert(
-              action.currentIndex + 1,
+              action.currentIndex + action.offset,
               state.getIn(['modifiedData', action.dynamicZoneName, action.currentIndex])
             );
         });

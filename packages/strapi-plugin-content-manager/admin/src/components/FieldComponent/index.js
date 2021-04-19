@@ -16,6 +16,7 @@ import ComponentIcon from './ComponentIcon';
 import Label from './Label';
 import Reset from './ResetComponent';
 import Wrapper from './Wrapper';
+import ExpandComponent from "./ExpandComponent";
 
 const FieldComponent = ({
   componentFriendlyName,
@@ -33,6 +34,7 @@ const FieldComponent = ({
   hasChildrenAllowedFields,
   hasChildrenReadableFields,
   isReadOnly,
+  isExpanded,
   componentValue,
   removeComponentFromField,
 }) => {
@@ -69,45 +71,49 @@ const FieldComponent = ({
           </div>
         </ComponentIcon>
       )}
-      <Label>
-        {label}&nbsp;
-        {isRepeatable && `(${componentValueLength})`}
-      </Label>
-      {showResetComponent && (
-        <Reset
-          onClick={e => {
-            e.preventDefault();
-            e.stopPropagation();
-            removeComponentFromField(name, componentUid);
-          }}
-        >
-          <FormattedMessage id={`${pluginId}.components.reset-entry`} />
-          <div />
-        </Reset>
-      )}
-      {!isRepeatable && !isInitialized && (
-        <ComponentInitializer componentUid={componentUid} name={name} isReadOnly={isReadOnly} />
-      )}
+      <ExpandComponent isExpanded={isExpanded}>
+        <Label>
+          {label}&nbsp;
+          {isRepeatable && `(${componentValueLength})`}
+        </Label>
+        {showResetComponent && (
+          <Reset
+            onClick={e => {
+              e.preventDefault();
+              e.stopPropagation();
+              removeComponentFromField(name, componentUid);
+            }}
+          >
+            <FormattedMessage id={`${pluginId}.components.reset-entry`} />
+            <div />
+          </Reset>
+        )}
+        {!isRepeatable && !isInitialized && (
+          <ComponentInitializer componentUid={componentUid} name={name} isReadOnly={isReadOnly} />
+        )}
 
-      {!isRepeatable && isInitialized && (
-        <NonRepeatableComponent
-          componentUid={componentUid}
-          isFromDynamicZone={isFromDynamicZone}
-          name={name}
-        />
-      )}
-      {isRepeatable && (
-        <RepeatableComponent
-          componentValue={componentValue}
-          componentValueLength={componentValueLength}
-          componentUid={componentUid}
-          isNested={isNested}
-          isReadOnly={isReadOnly}
-          max={max}
-          min={min}
-          name={name}
-        />
-      )}
+        {!isRepeatable && isInitialized && (
+          <NonRepeatableComponent
+            componentUid={componentUid}
+            isFromDynamicZone={isFromDynamicZone}
+            isExpanded={isExpanded}
+            name={name}
+          />
+        )}
+        {isRepeatable && (
+          <RepeatableComponent
+            componentValue={componentValue}
+            componentValueLength={componentValueLength}
+            componentUid={componentUid}
+            isNested={isNested}
+            isReadOnly={isReadOnly}
+            isExpanded={isExpanded}
+            max={max}
+            min={min}
+            name={name}
+          />
+        )}
+      </ExpandComponent>
     </Wrapper>
   );
 };
@@ -120,6 +126,7 @@ FieldComponent.defaultProps = {
   icon: 'smile',
   isFromDynamicZone: false,
   isReadOnly: false,
+  isExpanded: true,
   isRepeatable: false,
   isNested: false,
   max: Infinity,
@@ -136,6 +143,7 @@ FieldComponent.propTypes = {
   isCreatingEntry: PropTypes.bool.isRequired,
   isFromDynamicZone: PropTypes.bool,
   isReadOnly: PropTypes.bool,
+  isExpanded: PropTypes.bool,
   isRepeatable: PropTypes.bool,
   isNested: PropTypes.bool,
   label: PropTypes.string.isRequired,

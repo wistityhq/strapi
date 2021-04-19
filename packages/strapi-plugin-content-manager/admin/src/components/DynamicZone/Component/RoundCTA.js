@@ -1,6 +1,9 @@
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
-const RoundCTA = styled.div`
+const RoundCTA = styled.div.attrs(({title}) => ({
+  title,
+}))`
   height: 31px;
   width: 31px;
   border-radius: 50%;
@@ -15,9 +18,6 @@ const RoundCTA = styled.div`
     margin: auto;
   }
   &:not(.arrow-btn) {
-    position: absolute;
-    top: -16px;
-    right: 10px;
     transition: all 200ms ease-in;
     &:hover {
       background-color: #faa684;
@@ -41,5 +41,9 @@ const RoundCTA = styled.div`
     }
   }
 `;
+
+RoundCTA.propTypes = {
+  title: PropTypes.string,
+};
 
 export default RoundCTA;

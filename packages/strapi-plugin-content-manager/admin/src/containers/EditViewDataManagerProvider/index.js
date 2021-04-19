@@ -345,28 +345,15 @@ const EditViewDataManagerProvider = ({
     [formErrors]
   );
 
-  const moveComponentDown = useCallback(
-    (dynamicZoneName, currentIndex) => {
+  const moveComponent = useCallback(
+    (dynamicZoneName, currentIndex, offset = 1) => {
       emitEventRef.current('changeComponentsOrder');
 
       dispatch({
-        type: 'MOVE_COMPONENT_DOWN',
+        type: 'MOVE_COMPONENT',
         dynamicZoneName,
         currentIndex,
-        shouldCheckErrors: shouldCheckDZErrors(dynamicZoneName),
-      });
-    },
-    [shouldCheckDZErrors]
-  );
-
-  const moveComponentUp = useCallback(
-    (dynamicZoneName, currentIndex) => {
-      emitEventRef.current('changeComponentsOrder');
-
-      dispatch({
-        type: 'MOVE_COMPONENT_UP',
-        dynamicZoneName,
-        currentIndex,
+        offset,
         shouldCheckErrors: shouldCheckDZErrors(dynamicZoneName),
       });
     },
@@ -471,9 +458,8 @@ const EditViewDataManagerProvider = ({
         status,
         layout: currentContentTypeLayout,
         modifiedData,
-        moveComponentDown,
         moveComponentField,
-        moveComponentUp,
+        moveComponent,
         moveRelation,
         onChange: handleChange,
         onPublish: handlePublish,
