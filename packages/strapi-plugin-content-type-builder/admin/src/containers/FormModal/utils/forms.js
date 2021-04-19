@@ -256,11 +256,11 @@ const forms = {
               default: yup
                 .string()
                 .nullable()
-                .matches(/^\d*$/),
+                .matches(/^[-+]?\d*$/),
               min: yup
                 .string()
                 .nullable()
-                .matches(/^\d*$/)
+                .matches(/^[-+]?\d*$/)
                 .when('max', (max, schema) => {
                   if (max) {
                     return schema.isInferior(getTrad('error.validation.minSupMax'), max);
@@ -272,7 +272,7 @@ const forms = {
               max: yup
                 .string()
                 .nullable()
-                .matches(/^\d*$/),
+                .matches(/^[-+]?\d*$/),
             });
           }
 

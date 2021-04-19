@@ -180,17 +180,17 @@ const getTypeShape = (attribute, { modelType, attributes } = {}) => {
         default: yup
           .string()
           .nullable()
-          .matches(/^\d*$/),
+          .matches(/^[-+]?\d*$/),
         required: validators.required,
         unique: validators.unique,
         min: yup
           .string()
           .nullable()
-          .matches(/^\d*$/),
+          .matches(/^[-+]?\d*$/),
         max: yup
           .string()
           .nullable()
-          .matches(/^\d*$/),
+          .matches(/^[-+]?\d*$/),
       };
     }
     case 'float': {

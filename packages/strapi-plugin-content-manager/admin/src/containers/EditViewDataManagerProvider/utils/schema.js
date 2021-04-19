@@ -255,7 +255,7 @@ const createYupSchemaAttribute = (type, validations, options) => {
   }
 
   if (type === 'biginteger') {
-    schema = yup.string().matches(/^\d*$/);
+    schema = yup.string().matches(/^[-+]?\d*$/);
   }
 
   Object.keys(validations).forEach(validation => {
