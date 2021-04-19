@@ -125,6 +125,53 @@ describe('USERS PERMISSIONS | COMPONENTS | UsersPermissions | reducer', () => {
     });
   });
 
+  describe('ON_COPY_EXISTING_ROLE', () => {
+    it('should overwrite the modified data correctly with existing role permission', () => {
+      state.modifiedData = {
+        app: {
+          find: { enabled: true, policy: '' },
+          findOne: { enabled: false, policy: '' },
+          delete: { enabled: false, policy: '' },
+        },
+        app2: {
+          find: { enabled: false, policy: '' },
+          findOne: { enabled: false, policy: '' },
+        },
+      };
+
+      const action = {
+        type: 'ON_COPY_EXISTING_ROLE',
+        value: {
+          app: {
+            find: { enabled: false, policy: '' },
+            findOne: { enabled: false, policy: '' },
+            delete: { enabled: false, policy: '' },
+          },
+          app2: {
+            find: { enabled: true, policy: '' },
+            findOne: { enabled: true, policy: '' },
+          },
+        },
+      };
+
+      const expected = produce(state, draft => {
+        draft.modifiedData = {
+          app: {
+            find: { enabled: false, policy: '' },
+            findOne: { enabled: false, policy: '' },
+            delete: { enabled: false, policy: '' },
+          },
+          app2: {
+            find: { enabled: true, policy: '' },
+            findOne: { enabled: true, policy: '' },
+          },
+        };
+      });
+
+      expect(reducer(state, action)).toEqual(expected);
+    });
+  });
+
   describe('SELECT_ACTION', () => {
     it('should set the selectedAction correctly', () => {
       state.selectedAction = 'find';

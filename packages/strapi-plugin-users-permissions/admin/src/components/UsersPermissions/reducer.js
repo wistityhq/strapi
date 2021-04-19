@@ -46,6 +46,10 @@ const reducer = (state, action) =>
         draftState.initialData = state.modifiedData;
         break;
       }
+      case 'ON_COPY_EXISTING_ROLE': {
+        set(draftState, ['modifiedData'], action.value);
+        break;
+      }
 
       case 'SELECT_ACTION': {
         const { actionToSelect } = action;

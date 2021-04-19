@@ -105,6 +105,7 @@
   "Settings.permissions.users.listview.header.description.plural": "{number} users found",
   "Settings.permissions.users.listview.header.description.singular": "{number} user found",
   "Settings.permissions.users.listview.header.title": "Users",
+  "Settings.roles.copy-role": "Copy a existing role",
   "Settings.roles.create.description": "Define the rights given to the role",
   "Settings.roles.create.title": "Create a role",
   "Settings.roles.created": "Role created",

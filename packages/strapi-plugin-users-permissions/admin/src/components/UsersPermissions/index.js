@@ -10,6 +10,7 @@ import Permissions from '../Permissions';
 import reducer, { initialState } from './reducer';
 import { UsersPermissionsProvider } from '../../contexts/UsersPermissionsContext';
 import init from './init';
+import RolePicker from '../Roles/RolePicker';
 
 const UsersPermissions = forwardRef(({ permissions, routes, policies }, ref) => {
   const { formatMessage } = useIntl();
@@ -54,12 +55,31 @@ const UsersPermissions = forwardRef(({ permissions, routes, policies }, ref) => 
     });
   }, []);
 
+  const handleRoleChange = useCallback(role => {
+    dispatch({
+      type: 'ON_COPY_EXISTING_ROLE',
+      keys: Object.keys(role.permissions),
+      value: role.permissions,
+    });
+  }, []);
+
   const providerValue = {
     ...state,
     onChange: handleChange,
     onChangeSelectAll: handleChangeSelectAll,
     onSelectedAction: handleSelectedAction,
   };
+
+  const actions = [
+    <RolePicker
+      key="copy-role"
+      label={formatMessage({
+        id: 'Settings.roles.copy-role',
+        defaultMessage: 'Copy a existing role',
+      })}
+      onChange={handleRoleChange}
+    />,
+  ];
 
   return (
     <UsersPermissionsProvider value={providerValue}>
@@ -71,6 +91,7 @@ const UsersPermissions = forwardRef(({ permissions, routes, policies }, ref) => 
           subtitle={formatMessage({
             id: getTrad('Plugins.header.description'),
           })}
+          actions={actions}
         >
           <Padded left right size="xs">
             <Permissions />

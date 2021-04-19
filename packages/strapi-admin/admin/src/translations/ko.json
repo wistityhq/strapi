@@ -46,6 +46,7 @@
   "Provider": "프로바이더(provider)",
   "ResetPasswordToken": "패스워트 토큰 재설정",
   "Role": "역할",
+  "Settings.roles.copy-role": "기존 권한 복사",
   "Username": "사용자 이름(Username)",
   "Users": "User",
   "Users & Permissions": "사용자 & 권한(permissions)",
