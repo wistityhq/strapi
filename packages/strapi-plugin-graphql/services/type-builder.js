@@ -127,7 +127,7 @@ module.exports = {
           return '[ID]';
         }
 
-        return `[${globalId}]`;
+        return `[${globalId}!]!`;
       }
 
       if (rootType === 'mutation') {
