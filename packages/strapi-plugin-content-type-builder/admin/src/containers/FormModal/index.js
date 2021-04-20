@@ -359,6 +359,7 @@ const FormModal = () => {
 
   const checkFormValidity = async () => {
     let schema;
+
     const dataToValidate =
       isCreatingComponentFromAView && state.step === '1'
         ? get(modifiedData, 'componentToCreate', {})
@@ -820,6 +821,7 @@ const FormModal = () => {
           // Here we are in step 2
           // The step 2 is also use to edit an attribute that is a component
         }
+
         addAttribute(
           modifiedData,
           state.forTarget,
@@ -1064,7 +1066,8 @@ const FormModal = () => {
     state.forTarget,
     state.targetUid,
     // We need the nested components so we know when to remove the component option
-    nestedComponents
+    nestedComponents,
+    attributes
   );
 
   // Styles
@@ -1294,10 +1297,17 @@ const FormModal = () => {
                               );
                             }
 
+                            let type = input.type;
+
+                            if (input.type === 'sorter') {
+                              type = 'text';
+                            }
+
                             return (
                               <div className={`col-${input.size || 6}`} key={input.name}>
                                 <Inputs
                                   {...input}
+                                  type={type}
                                   modifiedData={modifiedData}
                                   addComponentsToDynamicZone={handleClickAddComponentsToDynamicZone}
                                   changeMediaAllowedTypes={handleChangeMediaAllowedTypes}

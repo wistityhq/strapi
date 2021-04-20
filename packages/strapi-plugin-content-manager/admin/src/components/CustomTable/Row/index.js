@@ -1,19 +1,33 @@
-import React, { memo, useCallback, useRef } from 'react';
+import React, { memo, useCallback, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { toString } from 'lodash';
 import { useGlobalContext } from 'strapi-helper-plugin';
 import { IconLinks } from '@buffetjs/core';
 import { Duplicate } from '@buffetjs/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useDrag, useDrop } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import { useListView } from '../../../hooks';
 import { getDisplayedValue } from '../../../utils';
 import CustomInputCheckbox from '../../CustomInputCheckbox';
 import ActionContainer from './ActionContainer';
 import Cell from './Cell';
+import { TableRow } from '../styledComponents';
 
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
-function Row({ canCreate, canDelete, canUpdate, isBulkable, row, headers, goTo }) {
+function Row({
+  canCreate,
+  canDelete,
+  canUpdate,
+  isBulkable,
+  row,
+  headers,
+  goTo,
+  rowGoTo,
+  moveRow,
+  findRow,
+}) {
   const { entriesToDelete, onChangeBulk, onClickDelete } = useListView();
   const { emitEvent } = useGlobalContext();
   const emitEventRef = useRef(emitEvent);
@@ -51,8 +65,47 @@ function Row({ canCreate, canDelete, canUpdate, isBulkable, row, headers, goTo }
     },
   ].filter(icon => icon);
 
+  const originalIndex = findRow(row.id).index;
+  const [{ isDragging }, drag, preview] = useDrag({
+    item: {
+      type: 'ROW',
+      id: row.id,
+      originalIndex,
+      row,
+      // mainField,
+    },
+    collect: monitor => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [, drop] = useDrop({
+    accept: 'ROW',
+    canDrop: () => false,
+    hover({ id: draggedId }) {
+      if (draggedId !== row.id) {
+        const { index: overIndex } = findRow(row.id);
+        moveRow(draggedId, overIndex);
+      }
+    },
+  });
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
+
+  const opacity = isDragging ? 0.2 : 1;
+
   return (
-    <>
+    <TableRow
+      onClick={e => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        rowGoTo(row.id);
+      }}
+      style={{ opacity }}
+    >
       {isBulkable && (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events
         <td key="i" onClick={e => e.stopPropagation()}>
@@ -86,6 +139,9 @@ function Row({ canCreate, canDelete, canUpdate, isBulkable, row, headers, goTo }
                   cellId: key,
                   metadatas,
                   queryInfos,
+                  drag: node => {
+                    drag(drop(node));
+                  },
                 }}
               />
             )}
@@ -95,7 +151,7 @@ function Row({ canCreate, canDelete, canUpdate, isBulkable, row, headers, goTo }
       <ActionContainer>
         <IconLinks links={links} />
       </ActionContainer>
-    </>
+    </TableRow>
   );
 }
 
@@ -107,6 +163,9 @@ Row.propTypes = {
   isBulkable: PropTypes.bool.isRequired,
   row: PropTypes.object.isRequired,
   goTo: PropTypes.func.isRequired,
+  rowGoTo: PropTypes.func.isRequired,
+  moveRow: PropTypes.func.isRequired,
+  findRow: PropTypes.func.isRequired,
 };
 
 export default memo(Row);

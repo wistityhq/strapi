@@ -1,13 +1,14 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useLocation, useHistory } from 'react-router-dom';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { upperFirst, isEmpty } from 'lodash';
 import { LoadingIndicator, useGlobalContext } from 'strapi-helper-plugin';
+import { useDrop } from 'react-dnd';
 import useListView from '../../hooks/useListView';
 import { getTrad } from '../../utils';
 import State from '../State';
-import { LoadingContainer, LoadingWrapper, Table, TableEmpty, TableRow } from './styledComponents';
+import { LoadingContainer, LoadingWrapper, Table, TableEmpty } from './styledComponents';
 import ActionCollapse from './ActionCollapse';
 import Headers from './Headers';
 import Row from './Row';
@@ -21,10 +22,20 @@ const CustomTable = ({
   hasDraftAndPublish,
   isBulkable,
   showLoader,
+  handleSortChange,
 }) => {
+  const [rows, setRows] = useState(data);
   const { formatMessage } = useIntl();
   const { entriesToDelete, label, filters, _q } = useListView();
   const { emitEvent } = useGlobalContext();
+
+  const [, drop] = useDrop({ accept: 'ROW' });
+
+  useEffect(() => {
+    if (rows !== data) {
+      setRows(data);
+    }
+  }, [data, rows]);
 
   const { pathname } = useLocation();
   const { push } = useHistory();
@@ -39,7 +50,9 @@ const CustomTable = ({
             type: 'custom',
           },
           metadatas: {
-            label: formatMessage({ id: getTrad('containers.ListPage.table-headers.published_at') }),
+            label: formatMessage({
+              id: getTrad('containers.ListPage.table-headers.published_at'),
+            }),
             searchable: false,
             sortable: true,
           },
@@ -79,8 +92,47 @@ const CustomTable = ({
     tableEmptyMsgId = 'withSearch';
   }
 
+  const findRow = useCallback(
+    id => {
+      const row = rows.find(c => c.id === id);
+      const index = rows.findIndex(c => c.id === id);
+
+      return {
+        row,
+        index,
+      };
+    },
+    [rows]
+  );
+
+  const moveRow = useCallback(
+    (id, atIndex) => {
+      const { row, index } = findRow(id);
+
+      if (row) {
+        const newOrder = [...rows];
+        newOrder.splice(index, 1);
+        newOrder.splice(atIndex, 0, row);
+
+        setRows(newOrder);
+
+        const sorter = headers.find(header => header.fieldSchema.type === 'sorter');
+
+        handleSortChange(
+          newOrder.map(({ id }, index) => ({
+            id,
+            body: {
+              [sorter.name]: index,
+            },
+          }))
+        );
+      }
+    },
+    [findRow, handleSortChange, headers, rows]
+  );
+
   const content =
-    data.length === 0 ? (
+    rows.length === 0 ? (
       <TableEmpty>
         <td colSpan={colSpanLength}>
           <FormattedMessage
@@ -90,27 +142,25 @@ const CustomTable = ({
         </td>
       </TableEmpty>
     ) : (
-      data.map(row => {
-        return (
-          <TableRow
-            key={row.id}
-            onClick={e => {
-              e.preventDefault();
-              e.stopPropagation();
+      rows.map(row => {
+        if (!row) {
+          return null;
+        }
 
-              handleRowGoTo(row.id);
-            }}
-          >
-            <Row
-              canCreate={canCreate}
-              canDelete={canDelete}
-              canUpdate={canUpdate}
-              isBulkable={isBulkable && canDelete}
-              headers={headers}
-              row={row}
-              goTo={handleEditGoTo}
-            />
-          </TableRow>
+        return (
+          <Row
+            key={row.id}
+            canCreate={canCreate}
+            canDelete={canDelete}
+            canUpdate={canUpdate}
+            isBulkable={isBulkable && canDelete}
+            headers={headers}
+            row={row}
+            rowGoTo={handleRowGoTo}
+            goTo={handleEditGoTo}
+            findRow={findRow}
+            moveRow={moveRow}
+          />
         );
       })
     );
@@ -133,7 +183,7 @@ const CustomTable = ({
   return (
     <Table className="table">
       <Headers headers={headers} isBulkable={isBulkable && canDelete} />
-      <tbody>
+      <tbody ref={drop}>
         {entriesToDelete.length > 0 && <ActionCollapse colSpan={colSpanLength} />}
         {content}
       </tbody>
@@ -150,6 +200,7 @@ CustomTable.propTypes = {
   hasDraftAndPublish: PropTypes.bool.isRequired,
   isBulkable: PropTypes.bool.isRequired,
   showLoader: PropTypes.bool.isRequired,
+  handleSortChange: PropTypes.func.isRequired,
 };
 
 export default memo(CustomTable);

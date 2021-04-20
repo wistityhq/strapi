@@ -157,7 +157,10 @@ function ListView({
       const signal = abortSignal || new AbortController().signal;
 
       try {
-        const { results, pagination } = await request(endPoint, { method: 'GET', signal });
+        const { results, pagination } = await request(endPoint, {
+          method: 'GET',
+          signal,
+        });
 
         getDataSucceeded(pagination, results);
       } catch (err) {
@@ -203,6 +206,18 @@ function ListView({
       strapi.notification.error(`${pluginId}.error.record.delete`);
     }
   }, [entriesToDelete, onDeleteSeveralDataSucceeded, slug, setModalLoadingState]);
+
+  const handleSortChange = useCallback(
+    async values => {
+      values.map(async ({ id, body }) => {
+        await request(getRequestUrl(`collection-types/${slug}/${id}`), {
+          method: 'PUT',
+          body,
+        });
+      });
+    },
+    [slug]
+  );
 
   const handleConfirmDeleteData = useCallback(async () => {
     try {
@@ -438,6 +453,7 @@ function ListView({
                     canCreate={canCreate}
                     canDelete={canDelete}
                     canUpdate={canUpdate}
+                    handleSortChange={handleSortChange}
                     displayedHeaders={displayedHeaders}
                     hasDraftAndPublish={hasDraftAndPublish}
                     isBulkable={isBulkable}

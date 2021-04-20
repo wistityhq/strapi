@@ -9,6 +9,7 @@ const COLLECTION_TYPE = 'collectionType';
 const DEFAULT_TYPES = [
   // advanced types
   'media',
+  'sorter',
 
   // scalar types
   'string',

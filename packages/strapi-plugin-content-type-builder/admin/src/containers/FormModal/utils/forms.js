@@ -246,6 +246,7 @@ const forms = {
               .nullable(),
           });
         case 'number':
+        case 'sorter':
         case 'integer':
         case 'biginteger':
         case 'float':
@@ -504,7 +505,13 @@ const forms = {
           items.splice(4, 1);
         } else if (type === 'uid') {
           const uidItems = [
-            [{ ...fields.default, disabled: Boolean(data.targetField), type: 'text' }],
+            [
+              {
+                ...fields.default,
+                disabled: Boolean(data.targetField),
+                type: 'text',
+              },
+            ],
             [fields.divider],
             [fields.private],
             [fields.required],
@@ -541,6 +548,11 @@ const forms = {
               },
             ]
           );
+        }
+
+        if (type === 'sorter') {
+          items.splice(0, 1);
+          items.splice(2, 4);
         }
 
         if (type === 'dynamiczone') {
@@ -796,6 +808,30 @@ const forms = {
                       )}
                     </Fragment>
                   )),
+                  validations: {
+                    required: true,
+                  },
+                },
+              ],
+            ],
+          };
+        }
+
+        if (type === 'sorter') {
+          return {
+            items: [
+              [
+                {
+                  ...fields.name,
+                  autoFocus: false,
+                  disabled: false,
+                  type: 'sorter',
+                  label: {
+                    id: getTrad('modalForm.attributes.sorter'),
+                  },
+                  inputDescription: {
+                    id: getTrad('modalForm.attributes.sorter.description'),
+                  },
                   validations: {
                     required: true,
                   },

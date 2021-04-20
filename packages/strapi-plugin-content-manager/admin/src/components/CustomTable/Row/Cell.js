@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Tooltip } from '@buffetjs/styles';
 import MediaPreviewList from '../../MediaPreviewList';
 import RelationPreviewList from '../../RelationPreviewList';
+import Sorter from '../../Sorter';
 import Truncate from '../../Truncate';
 import Truncated from '../../Truncated';
 
@@ -21,6 +22,10 @@ const Cell = ({ options }) => {
 
   if (type === 'relation') {
     return <RelationPreviewList options={options} />;
+  }
+
+  if (type === 'sorter') {
+    return <Sorter drag={options.drag} />;
   }
 
   return (
@@ -42,6 +47,7 @@ Cell.propTypes = {
       mainField: PropTypes.object,
     }).isRequired,
     name: PropTypes.string.isRequired,
+    drag: PropTypes.func.isRequired,
     relationType: PropTypes.string,
     rowId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
     type: PropTypes.string,

@@ -264,6 +264,8 @@ const reducer = (state, action) => {
           columnName: null,
           targetColumnName: null,
         };
+      } else if (attributeType === 'sorter') {
+        dataToSet = { type: 'sorter' };
       } else {
         dataToSet = { type: attributeType, default: null };
       }
