@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from '
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators, compose } from 'redux';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, capitalize } from 'lodash';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Header } from '@buffetjs/custom';
@@ -129,6 +129,7 @@ function ListView({
   const _q = query._q || '';
 
   const label = contentType.info.label;
+  const entity = capitalize(contentType.info.name) || '';
 
   const params = useMemo(() => {
     return rawQuery || `?${stringify(initParams, { encode: false })}`;
@@ -308,7 +309,7 @@ function ListView({
             id: 'content-manager.containers.List.addAnEntry',
           },
           {
-            entity: label || 'Content Manager',
+            entity: entity || 'Content Manager',
           }
         ),
         onClick: () => {
@@ -329,7 +330,7 @@ function ListView({
         },
       },
     ];
-  }, [label, pathname, canCreate, formatMessage, hasDraftAndPublish, push]);
+  }, [entity, pathname, canCreate, formatMessage, hasDraftAndPublish, push]);
 
   const headerProps = useMemo(() => {
     /* eslint-disable indent */
@@ -491,7 +492,10 @@ ListView.propTypes = {
     contentType: PropTypes.shape({
       attributes: PropTypes.object.isRequired,
       metadatas: PropTypes.object.isRequired,
-      info: PropTypes.shape({ label: PropTypes.string.isRequired }).isRequired,
+      info: PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+      }).isRequired,
       layouts: PropTypes.shape({
         list: PropTypes.array.isRequired,
         editRelations: PropTypes.array,
