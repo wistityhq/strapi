@@ -40,4 +40,8 @@ if (projectName === undefined) {
   process.exit(1);
 }
 
-generateNewApp(projectName, program);
+generateNewApp(projectName, program).then(() => {
+  if (process.platform === 'win32') {
+    process.exit(0);
+  }
+});

@@ -102,7 +102,7 @@ const createCollectionTypeService = ({ model, strapi, utils }) => {
      */
 
     search(params) {
-      return strapi.entityService.search({ params }, { model: modelName });
+      return strapi.entityService.search({ params: getFetchParams(params) }, { model: modelName });
     },
 
     /**

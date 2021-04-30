@@ -268,7 +268,7 @@
   "app.components.listPlugins.title.plural": "{number} plugins are installed",
   "app.components.listPlugins.title.singular": "{number} plugin is installed",
   "app.components.listPluginsPage.deletePlugin.error": "An error occurred while uninstalling the plugin",
-  "app.containers.App.notification.error.init": "An error occured while requesting the API",
+  "app.containers.App.notification.error.init": "An error occurred while requesting the API",
   "app.containers.AuthPage.ForgotPasswordSuccess.text.contact-admin": "If you do not receive this link, please contact your administrator.",
   "app.containers.AuthPage.ForgotPasswordSuccess.text.email": "It can take a few minutes to receive your password recovery link.",
   "app.containers.AuthPage.ForgotPasswordSuccess.title": "Email sent",

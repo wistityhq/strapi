@@ -115,8 +115,8 @@ function createSchemaBuilder({ components, contentTypes }) {
             targetAttribute,
             columnName,
             dominant,
-            autoPopulate,
             private: isPrivate,
+            ...restOfOptions
           } = attribute;
 
           const attr = {
@@ -124,7 +124,7 @@ function createSchemaBuilder({ components, contentTypes }) {
             columnName: columnName || undefined,
             configurable: configurable === false ? false : undefined,
             private: isPrivate === true ? true : undefined,
-            autoPopulate,
+            ...restOfOptions,
           };
 
           if (!this.contentTypes.has(target)) {

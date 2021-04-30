@@ -1,6 +1,6 @@
 {
   "name": "strapi-utils",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Shared utilities for the Strapi packages",
   "homepage": "https://strapi.io",
   "keywords": [

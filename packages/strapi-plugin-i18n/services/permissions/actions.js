@@ -77,6 +77,11 @@ const syncSuperAdminPermissionsWithLocales = async () => {
   const permissionService = strapi.admin.services.permission;
 
   const superAdminRole = await roleService.getSuperAdmin();
+
+  if (!superAdminRole) {
+    return;
+  }
+
   const superAdminPermissions = await permissionService.findUserPermissions({
     roles: [superAdminRole],
   });

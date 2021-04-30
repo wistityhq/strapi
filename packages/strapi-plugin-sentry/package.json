@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-sentry",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Send Strapi error events to Sentry",
   "strapi": {
     "name": "Sentry",

@@ -201,7 +201,7 @@ const EditForm = forwardRef(
 
     const handleClickDownload = () => {
       axios
-        .get(prefixedFileURL, {
+        .get(prefixFileUrlWithBackendUrl(fileURL), {
           responseType: 'blob',
         })
         .then(({ data }) => {

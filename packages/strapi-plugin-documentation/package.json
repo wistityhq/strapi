@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-documentation",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Create an OpenAPI Document and visualize your API with SWAGGER UI.",
   "strapi": {
     "name": "Documentation",
@@ -35,7 +35,7 @@
     "redux": "^4.0.1",
     "redux-immutable": "^4.0.0",
     "reselect": "^4.0.0",
-    "strapi-helper-plugin": "3.6.0",
+    "strapi-helper-plugin": "3.6.1",
     "swagger-ui-dist": "3.47.1"
   },
   "author": {

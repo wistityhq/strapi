@@ -1,6 +1,6 @@
 {
   "name": "strapi-middleware-views",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Views middleware to enable server-side rendering for the Strapi framework",
   "homepage": "https://strapi.io",
   "keywords": [

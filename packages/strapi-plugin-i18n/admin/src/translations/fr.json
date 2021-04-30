@@ -1,9 +1,9 @@
 {
   "plugin.name": "Internationalisation",
-  "plugin.description.long": "Ce plugin permet de créer, lire et modifier votre contenu en différentes langues, et ce, depuis le Panel d'Administraion et l'API.",
-  "plugin.description.short": "Ce plugin permet de créer, lire et modifier votre contenu en différentes langues, et ce, depuis le Panel d'Administraion et l'API.",
+  "plugin.description.long": "Créez, lisez et modifiez votre contenu en différentes langues depuis le panel d'administration et votre API.",
+  "plugin.description.short": "Créez, lisez et modifiez votre contenu en différentes langues depuis le panel d'administration et votre API.",
   "Settings.list.description": "Configurer les paramètres du plugin d'internationalisation",
-  "Settings.locales.list.title.singular": "{number} Locale",
-  "Settings.locales.list.title.plural": "{number} Locales",
+  "Settings.locales.list.title.singular": "{number} locale",
+  "Settings.locales.list.title.plural": "{number} locales",
   "Settings.locales.row.default-locale": "Locale par défaut"
 }

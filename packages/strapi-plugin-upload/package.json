@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-upload",
-  "version": "3.6.0",
+  "version": "3.6.1",
   "description": "Makes it easy to upload images and files to your Strapi Application.",
   "strapi": {
     "name": "Media Library",
@@ -36,9 +36,9 @@
     "react-router-dom": "^5.0.0",
     "reactstrap": "8.4.1",
     "sharp": "0.28.1",
-    "strapi-helper-plugin": "3.6.0",
-    "strapi-provider-upload-local": "3.6.0",
-    "strapi-utils": "3.6.0",
+    "strapi-helper-plugin": "3.6.1",
+    "strapi-provider-upload-local": "3.6.1",
+    "strapi-utils": "3.6.1",
     "stream-to-array": "^2.3.0",
     "uuid": "^3.2.1"
   },
