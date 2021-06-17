@@ -32,11 +32,12 @@ module.exports = async scope => {
 
     const files = await fse.readdir(scope.rootPath);
     if (files.length > 1) {
-      stopProcess(
-        `⛔️ You can only create a Strapi app in an empty directory.\nMake sure ${chalk.green(
-          scope.rootPath
-        )} is empty.`
+      const shouldInstallInNonEmptyDirectory = await askShouldInstallInNonEmptyDirectory(
+        scope.rootPath
       );
+      if (!shouldInstallInNonEmptyDirectory) {
+        stopProcess(`⛔️ Aborted because ${chalk.green(scope.rootPath)} is not empty.`);
+      }
     }
   }
 
@@ -82,4 +83,19 @@ async function askShouldUseQuickstart() {
   ]);
 
   return answer.type === 'quick';
+}
+
+async function askShouldInstallInNonEmptyDirectory(rootPath) {
+  const answer = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'installInNonEmptyDirectory',
+      message:
+        `The target directory (${rootPath}) is not empty. This may cause problems.\n` +
+        `Do you want to install anyway?`,
+      default: false,
+    },
+  ]);
+
+  return answer.installInNonEmptyDirectory;
 }
