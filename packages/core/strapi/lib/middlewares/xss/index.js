@@ -3,6 +3,9 @@
 const convert = require('koa-convert');
 const { xssProtection } = require('koa-lusca');
 
+// FIXME
+/* eslint-disable import/extensions */
+
 module.exports = strapi => {
   return {
     initialize() {

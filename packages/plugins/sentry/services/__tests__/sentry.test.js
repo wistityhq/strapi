@@ -1,5 +1,6 @@
 'use strict';
-
+// FIXME
+/* eslint-disable import/extensions */
 const INVALID_DSN = 'an_invalid_dsn';
 const VALID_DSN = 'a_valid_dsn';
 const captureException = jest.fn();

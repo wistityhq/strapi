@@ -3,6 +3,8 @@
 const execa = require('execa');
 
 const { trackUsage, captureStderr } = require('./utils/usage');
+// FIXME
+/* eslint-disable import/extensions */
 const defaultConfigs = require('./utils/db-configs.js');
 const clientDependencies = require('./utils/db-client-dependencies.js');
 const createProject = require('./create-project');

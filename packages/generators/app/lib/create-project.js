@@ -6,6 +6,8 @@ const chalk = require('chalk');
 const execa = require('execa');
 const ora = require('ora');
 const _ = require('lodash');
+// FIXME
+/* eslint-disable import/extensions */
 
 const stopProcess = require('./utils/stop-process');
 const { trackUsage, captureStderr } = require('./utils/usage');

@@ -1,5 +1,7 @@
 'use strict';
 
+// FIXME
+/* eslint-disable import/extensions */
 const path = require('path');
 const rimraf = require('rimraf');
 const generateNew = require('../../packages/generators/app/lib/generate-new');

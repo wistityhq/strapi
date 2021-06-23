@@ -8,6 +8,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 const WebpackBar = require('webpackbar');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const isWsl = require('is-wsl');
+// FIXME
+/* eslint-disable import/extensions */
 const alias = require('./webpack.alias.js');
 const getClientEnvironment = require('./env');
 

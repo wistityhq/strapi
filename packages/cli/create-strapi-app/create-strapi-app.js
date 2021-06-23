@@ -2,6 +2,8 @@
 
 const commander = require('commander');
 const generateNewApp = require('@strapi/generate-new');
+// FIXME
+/* eslint-disable import/extensions */
 const packageJson = require('./package.json');
 
 const program = new commander.Command(packageJson.name);

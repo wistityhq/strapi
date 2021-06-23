@@ -5,6 +5,9 @@
  *
  * @description: A set of functions similar to controller's actions to avoid code duplication.
  */
+
+// FIXME
+/* eslint-disable import/extensions */
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');

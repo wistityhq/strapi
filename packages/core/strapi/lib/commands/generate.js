@@ -16,6 +16,8 @@ const { createLogger } = require('@strapi/logger');
 // Configuration
 const loadConfiguration = require('../core/app-configuration');
 
+// FIXME
+/* eslint-disable import/extensions */
 // Local Strapi dependencies.
 const packageJSON = require('../../package.json');
 

@@ -3,7 +3,8 @@
 const path = require('path');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const { DuplicateReporterPlugin } = require('duplicate-dependencies-webpack-plugin');
-
+// FIXME
+/* eslint-disable import/extensions */
 const webpackConfig = require('./webpack.config.js');
 
 module.exports = () => {

@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
+// FIXME
+/* eslint-disable import/extensions */
 const _ = require('lodash');
 const resolveCwd = require('resolve-cwd');
 const { yellow } = require('chalk');

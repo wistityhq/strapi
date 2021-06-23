@@ -14,6 +14,8 @@ module.exports = strapi => {
      */
 
     initialize() {
+      // FIXME
+      /* eslint-disable import/extensions */
       const defaults = require('./defaults.json');
 
       strapi.app.use(async (ctx, next) => {

@@ -1,5 +1,7 @@
 'use strict';
 
+// FIXME
+/* eslint-disable import/extensions */
 const { join, resolve, basename } = require('path');
 const os = require('os');
 const crypto = require('crypto');
@@ -7,7 +9,6 @@ const chalk = require('chalk');
 const { machineIdSync } = require('node-machine-id');
 const uuid = require('uuid/v4');
 const sentry = require('@sentry/node');
-
 const hasYarn = require('./utils/has-yarn');
 const checkRequirements = require('./utils/check-requirements');
 const { trackError, captureException } = require('./utils/usage');
