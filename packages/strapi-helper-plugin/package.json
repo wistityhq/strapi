@@ -50,12 +50,12 @@
     "rollup-plugin-terser": "^4.0.4"
   },
   "dependencies": {
-    "@buffetjs/core": "3.3.7-next.1",
-    "@buffetjs/custom": "3.3.7-next.1",
-    "@buffetjs/hooks": "3.3.7-next.1",
-    "@buffetjs/icons": "3.3.7-next.1",
-    "@buffetjs/styles": "3.3.7-next.1",
-    "@buffetjs/utils": "3.3.7-next.1",
+    "@buffetjs/core": "3.3.8",
+    "@buffetjs/custom": "3.3.8",
+    "@buffetjs/hooks": "3.3.8",
+    "@buffetjs/icons": "3.3.8",
+    "@buffetjs/styles": "3.3.8",
+    "@buffetjs/utils": "3.3.8",
     "@fortawesome/fontawesome-free": "^5.15.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-brands-svg-icons": "^5.15.2",
