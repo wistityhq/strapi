@@ -12,12 +12,12 @@
     "test": "echo \"no tests yet\""
   },
   "dependencies": {
-    "@buffetjs/core": "3.3.7",
-    "@buffetjs/custom": "3.3.7",
-    "@buffetjs/hooks": "3.3.7",
-    "@buffetjs/icons": "3.3.7",
-    "@buffetjs/styles": "3.3.7",
-    "@buffetjs/utils": "3.3.7",
+    "@buffetjs/core": "3.3.7-next.1",
+    "@buffetjs/custom": "3.3.7-next.1",
+    "@buffetjs/hooks": "3.3.7-next.1",
+    "@buffetjs/icons": "3.3.7-next.1",
+    "@buffetjs/styles": "3.3.7-next.1",
+    "@buffetjs/utils": "3.3.7-next.1",
     "@purest/providers": "^1.0.2",
     "bcryptjs": "^2.4.3",
     "grant-koa": "5.4.8",
