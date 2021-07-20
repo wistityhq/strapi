@@ -124,6 +124,55 @@ const getProfile = async (provider, query, callback) => {
     .get();
 
   switch (provider) {
+    case 'oauth2': {
+      const profile_url = _.get(grant['oauth2'], 'profile_url');
+      if (!profile_url) {
+        callback(new Error('Invalid profile url.'));
+      }
+
+      // generate the origin for purest
+      const origin = profile_url.replace(/^((\w+:)?\/\/[^/]*).*$/, '$1');
+      // get the path without leading slash
+      const profile_path = profile_url.replace(origin, '').substr(1);
+
+      const oauth2Config = {};
+      oauth2Config[origin] = {
+        __domain: {
+          auth: {
+            auth: { bearer: '[0]' },
+          },
+        },
+        '{endpoint}': {
+          __path: {
+            alias: '__default',
+          },
+        },
+      };
+
+      const oauth2 = purest({
+        provider: 'oauth2',
+        config: {
+          oauth2: oauth2Config,
+        },
+      });
+      oauth2
+        .query()
+        .get(profile_path)
+        .auth(access_token)
+        .request((err, res, body) => {
+          if (err) {
+            callback(err);
+          } else {
+            const email = body.email || body.mail || body.sub;
+            const username = body.username || body.user || body.sub;
+            callback(null, {
+              username,
+              email,
+            });
+          }
+        });
+      break;
+    }
     case 'discord': {
       const discord = purest({
         provider: 'discord',

@@ -52,6 +52,16 @@ const ProvidersPage = () => {
     () => providers.filter(provider => provider.enabled).length,
     [providers]
   );
+  const isGenericProvider = useMemo(() => {
+    if (!providerToEditName) {
+      return false;
+    }
+
+    const providerToEdit = providers.find(obj => obj.name === providerToEditName);
+    console.log(providerToEdit);
+
+    return has(providerToEdit, 'authorize_url');
+  }, [providers, providerToEditName]);
   const isProviderWithSubdomain = useMemo(() => {
     if (!providerToEditName) {
       return false;
@@ -97,8 +107,12 @@ const ProvidersPage = () => {
       return forms.providersWithSubdomain;
     }
 
+    if (isGenericProvider) {
+      return forms.genericProviders;
+    }
+
     return forms.providers;
-  }, [providerToEditName, isProviderWithSubdomain]);
+  }, [providerToEditName, isProviderWithSubdomain, isGenericProvider]);
 
   const handleClick = useCallback(() => {
     buttonSubmitRef.current.click();

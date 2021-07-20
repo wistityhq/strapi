@@ -3,14 +3,22 @@ import { sortBy } from 'lodash';
 const createProvidersArray = data => {
   return sortBy(
     Object.keys(data).reduce((acc, current) => {
-      const { icon: iconName, enabled, subdomain } = data[current];
+      const { icon: iconName, enabled, subdomain, authorize_url } = data[current];
       const icon = iconName === 'envelope' ? ['fas', 'envelope'] : ['fab', iconName];
 
-      if (subdomain !== undefined) {
-        acc.push({ name: current, icon, enabled, subdomain });
-      } else {
-        acc.push({ name: current, icon, enabled });
-      }
+      const provider = {
+        name: current,
+        icon,
+        enabled,
+        subdomain,
+        authorize_url,
+      };
+
+      Object.keys(provider).forEach(key =>
+        provider[key] === undefined ? delete provider[key] : {}
+      );
+
+      acc.push(provider);
 
       return acc;
     }, []),
