@@ -102,6 +102,18 @@ const reducer = (state, action) => {
 
       return state.updateIn(layoutPathEdit, () => fromJS(updatedList));
     }
+    case 'RESIZE_ITEM': {
+      const newState = state.updateIn([...layoutPathEdit, action.rowIndex, 'rowContent', action.index, 'size'], size => {
+        if ((action.offset > 0 && size >= 12) || (action.offset < 0 && size <= 1)) {
+          return size;
+        }
+
+        return size + action.offset;
+      });
+      const resizedList = fromJS(formatLayout(newState.getIn(layoutPathEdit).toJS()));
+
+      return state.updateIn(layoutPathEdit, () => resizedList);
+    }
     case 'SET_FIELD_TO_EDIT':
       return state
         .update('metaToEdit', () => action.name)

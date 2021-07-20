@@ -9,18 +9,21 @@ import DraggedFieldWithPreview from '../DraggedFieldWithPreview';
 
 import ItemTypes from '../../utils/ItemTypes';
 
-const Item = ({
-  componentUid,
-  dynamicZoneComponents,
-  itemIndex,
-  moveItem,
-  moveRow,
-  name,
-  removeField,
-  rowIndex,
-  size,
-  type,
-}) => {
+const Item = (
+  {
+    componentUid,
+    dynamicZoneComponents,
+    itemIndex,
+    moveItem,
+    moveRow,
+    resizeItem,
+    name,
+    removeField,
+    rowIndex,
+    size,
+    type,
+  }
+) => {
   const {
     goTo,
     componentLayouts,
@@ -217,6 +220,9 @@ const Item = ({
         e.stopPropagation();
         removeField(rowIndex, itemIndex);
       }}
+      onResize={(offset) => {
+        resizeItem(rowIndex, itemIndex, offset);
+      }}
       selectedItem={selectedItemName}
       showLeftCarret={showLeftCarret}
       showRightCarret={showRightCarret}
@@ -238,6 +244,7 @@ Item.propTypes = {
   dynamicZoneComponents: PropTypes.array,
   itemIndex: PropTypes.number.isRequired,
   moveItem: PropTypes.func.isRequired,
+  resizeItem: PropTypes.func.isRequired,
   moveRow: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   removeField: PropTypes.func.isRequired,

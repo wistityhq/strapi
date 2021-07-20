@@ -22,6 +22,7 @@ const DraggedFieldWithPreview = forwardRef(
       name,
       onClickEdit,
       onClickRemove,
+      onResize,
       selectedItem,
       showLeftCarret,
       showRightCarret,
@@ -44,11 +45,11 @@ const DraggedFieldWithPreview = forwardRef(
 
     const componentData = get(componentLayouts, [componentUid], {});
     const componentLayout = get(componentData, ['layouts', 'edit'], []);
-    const getWrapperWitdh = colNum => `${(1 / 12) * colNum * 100}%`;
+    const getWrapperWidth = colNum => `${(1 / 12) * colNum * 100}%`;
 
     return (
       <div
-        style={{ width: getWrapperWitdh(size) }}
+        style={{ width: getWrapperWidth(size) }}
         onDrag={() => {
           if (isFullSize && !dragStart) {
             setDragStart(true);
@@ -75,6 +76,9 @@ const DraggedFieldWithPreview = forwardRef(
                 name={name}
                 onClick={onClickEdit}
                 onRemove={onClickRemove}
+                onResize={onResize}
+                size={size}
+                isResizeable={type !== 'component' && type !== 'dynamiczone' && !!onResize}
                 ref={refs.dragRef}
                 selectedItem={selectedItem}
                 style={{ display, marginRight: 0, paddingRight: 0 }}
@@ -111,7 +115,7 @@ const DraggedFieldWithPreview = forwardRef(
                             <div
                               key={field.name}
                               style={{
-                                width: getWrapperWitdh(field.size),
+                                width: getWrapperWidth(field.size),
                                 marginBottom: '6px',
                               }}
                             >
@@ -163,6 +167,7 @@ DraggedFieldWithPreview.defaultProps = {
   label: '',
   onClickEdit: () => {},
   onClickRemove: () => {},
+  onResize: null,
   selectedItem: '',
   showLeftCarret: false,
   showRightCarret: false,
@@ -181,6 +186,7 @@ DraggedFieldWithPreview.propTypes = {
   name: PropTypes.string.isRequired,
   onClickEdit: PropTypes.func,
   onClickRemove: PropTypes.func,
+  onResize: PropTypes.func,
   selectedItem: PropTypes.string,
   showLeftCarret: PropTypes.bool,
   showRightCarret: PropTypes.bool,

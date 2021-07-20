@@ -173,6 +173,15 @@ const EditSettingsView = ({ components, mainLayout, isContentTypeView, slug, upd
     });
   };
 
+  const resizeItem = (rowIndex, index, offset) => {
+    dispatch({
+      type: 'RESIZE_ITEM',
+      index,
+      rowIndex,
+      offset,
+    });
+  };
+
   const toggleModalForm = () => {
     setIsModalFormOpen(prevState => !prevState);
   };
@@ -236,6 +245,7 @@ const EditSettingsView = ({ components, mainLayout, isContentTypeView, slug, upd
       metadatas={get(modifiedData, ['metadatas'], {})}
       moveItem={moveItem}
       moveRow={moveRow}
+      resizeItem={resizeItem}
       onAddData={name => {
         dispatch({
           type: 'ON_ADD_DATA',

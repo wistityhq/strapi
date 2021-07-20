@@ -1,38 +1,25 @@
 /* eslint-disable */
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import getColor from './utils/getColor';
+import getBackgroundColor from "./utils/getBackgroundColor";
 
 const GrabWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0;
-  padding-left: 10px;
-  border-right: 1px solid
-    ${({ isOverEditBlock, isOverRemove, isSelected }) =>
-      getColor(isOverRemove, isSelected, isOverEditBlock)};
+  flex: 0 0 30px;
+  text-align: center;
+  background-color: ${({ isOver, isSelected, isSub }) => getBackgroundColor(isOver, isSelected, isSub)};
   cursor: move;
-  z-index: 99;
-
-  ${({ isOverRemove }) =>
-    isOverRemove &&
-    css`
-      g {
-        fill: #ffa784;
-      }
-    `}
-
-  ${({ isSelected, isOverEditBlock }) =>
-    (isSelected || isOverEditBlock) &&
-    css`
-      g {
-        fill: #aed4fb;
-      }
-    `}
+  
+  svg {
+    margin: 0;
+    
+    g {
+      fill: ${({ isOver, isSelected }) => getColor(isOver, isSelected)};
+    }
+  }
 `;
 
 export default GrabWrapper;

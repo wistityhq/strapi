@@ -18,6 +18,7 @@ const FieldsReorder = ({ className }) => {
     moveRow,
     onAddData,
     removeField,
+    resizeItem,
   } = useLayoutDnd();
 
   const getComponent = useCallback(
@@ -68,6 +69,7 @@ const FieldsReorder = ({ className }) => {
                     key={name}
                     moveRow={moveRow}
                     moveItem={moveItem}
+                    resizeItem={resizeItem}
                     name={name}
                     removeField={removeField}
                     rowIndex={rowIndex}

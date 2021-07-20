@@ -1,17 +1,17 @@
 import {OVER_EDIT, OVER_GRAB, OVER_REMOVE, OVER_RESIZE} from "../constants";
 
-const getColor = (isOver, isSelected) => {
+const getBorderColor = (isOver, isSelected) => {
   if (isOver === OVER_REMOVE) {
-    return '#f64d0a';
+    return '#ffa784';
   }
   if (isOver === OVER_RESIZE) {
-    return '#34ac64';
+    return '#bafbae';
   }
   if (isSelected || isOver === OVER_EDIT || isOver === OVER_GRAB) {
-    return '#007eff';
+    return '#aed4fb';
   }
 
-  return '#b4b6ba';
+  return '#e9eaeb';
 };
 
-export default getColor;
+export default getBorderColor;
