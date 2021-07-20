@@ -5,14 +5,16 @@ const _ = require('lodash');
 const findPackagePath = require('../load/package-path');
 const loadFiles = require('../load/load-files');
 const loadConfig = require('../load/load-config-files');
+const getSupportedFileExtensions = require('../utils/getSupportedFileExtensions');
 
 const mergeRoutes = (a, b, key) =>
   _.isArray(a) && _.isArray(b) && key === 'routes' ? a.concat(b) : undefined;
 
 module.exports = async strapi => {
   const adminPath = findPackagePath('strapi-admin');
+  const fileExtensions = getSupportedFileExtensions(strapi.config);
   const [files, config] = await Promise.all([
-    loadFiles(adminPath, '!(config|node_modules|tests|ee|scripts)/*.*(js|json)'),
+    loadFiles(adminPath, `!(config|node_modules|tests|ee|scripts)/*.*(${fileExtensions})`),
     loadConfig(adminPath),
   ]);
 
@@ -27,7 +29,7 @@ module.exports = async strapi => {
   if (process.env.STRAPI_DISABLE_EE !== 'true' && strapi.EE) {
     const eeAdminPath = `${adminPath}/ee`;
     [eeFiles, eeConfig] = await Promise.all([
-      loadFiles(eeAdminPath, '!(config|tests|test)/*.*(js|json)'),
+      loadFiles(eeAdminPath, `!(config|tests|test)/*.*(${fileExtensions})`),
       loadConfig(eeAdminPath),
     ]);
   }

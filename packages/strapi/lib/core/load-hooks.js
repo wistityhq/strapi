@@ -6,15 +6,16 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const glob = require('../load/glob');
 const findPackagePath = require('../load/package-path');
+const getSupportedFileExtensions = require('../utils/getSupportedFileExtensions');
 
 /**
  * Load hooks
  */
-module.exports = async function({ installedHooks, installedPlugins, appPath }) {
+module.exports = async function(config) {
+  const { installedHooks, installedPlugins, appPath } = config;
   let hooks = {};
-
   await Promise.all([
-    loadHookDependencies(installedHooks, hooks),
+    loadHookDependencies(installedHooks, hooks, getSupportedFileExtensions(config)),
     // local middleware
     loadLocalHooks(appPath, hooks),
     // admin hooks
@@ -28,8 +29,8 @@ module.exports = async function({ installedHooks, installedPlugins, appPath }) {
   return hooks;
 };
 
-const loadHooksInDir = async (dir, hooks) => {
-  const files = await glob('*/*(index|defaults).*(js|json)', {
+const loadHooksInDir = async (dir, hooks, fileExtensions) => {
+  const files = await glob(`*/*(index|defaults).*(${fileExtensions})`, {
     cwd: dir,
   });
 
@@ -39,27 +40,28 @@ const loadHooksInDir = async (dir, hooks) => {
   });
 };
 
-const loadLocalHooks = (appPath, hooks) => loadHooksInDir(path.resolve(appPath, 'hooks'), hooks);
+const loadLocalHooks = (appPath, hooks, fileExtensions) =>
+  loadHooksInDir(path.resolve(appPath, 'hooks'), hooks, fileExtensions);
 
-const loadPluginsHooks = async (plugins, hooks) => {
+const loadPluginsHooks = async (plugins, hooks, fileExtensions) => {
   for (let pluginName of plugins) {
     const dir = path.resolve(findPackagePath(`strapi-plugin-${pluginName}`), 'hooks');
-    await loadHooksInDir(dir, hooks);
+    await loadHooksInDir(dir, hooks, fileExtensions);
   }
 };
 
-const loadAdminHooks = async hooks => {
+const loadAdminHooks = async (hooks, fileExtensions) => {
   const hooksDir = 'hooks';
   const dir = path.resolve(findPackagePath('strapi-admin'), hooksDir);
-  await loadHooksInDir(dir, hooks);
+  await loadHooksInDir(dir, hooks, fileExtensions);
 
   // load ee admin hooks if they exist
   if (process.env.STRAPI_DISABLE_EE !== 'true' && strapi.EE) {
-    await loadHooksInDir(`${dir}/../ee/${hooksDir}`, hooks);
+    await loadHooksInDir(`${dir}/../ee/${hooksDir}`, hooks, fileExtensions);
   }
 };
 
-const loadLocalPluginsHooks = async (appPath, hooks) => {
+const loadLocalPluginsHooks = async (appPath, hooks, fileExtensions) => {
   const pluginsDir = path.resolve(appPath, 'plugins');
   if (!fs.existsSync(pluginsDir)) return;
 
@@ -71,15 +73,15 @@ const loadLocalPluginsHooks = async (appPath, hooks) => {
     if (!stat.isDirectory()) continue;
 
     const dir = path.resolve(pluginsDir, pluginName, 'hooks');
-    await loadHooksInDir(dir, hooks);
+    await loadHooksInDir(dir, hooks, fileExtensions);
   }
 };
 
-const loadHookDependencies = async (installedHooks, hooks) => {
+const loadHookDependencies = async (installedHooks, hooks, fileExtensions) => {
   for (let hook of installedHooks) {
     const hookDir = path.dirname(require.resolve(`strapi-hook-${hook}`));
 
-    const files = await glob('*(index|defaults).*(js|json)', {
+    const files = await glob(`*(index|defaults).*(${fileExtensions})`, {
       cwd: hookDir,
       absolute: true,
     });
