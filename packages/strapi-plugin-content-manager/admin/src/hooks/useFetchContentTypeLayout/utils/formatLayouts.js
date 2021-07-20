@@ -14,6 +14,13 @@ const formatEditRelationsLayoutWithMetas = (contentTypeConfiguration, models) =>
       null
     );
     const targetModelSchema = getRelationModel(targetModelUID, models);
+
+    // for polymorphic relations, no `targetModelSchema` can be identified and therefore, we can stop processing the
+    // schema at this point.
+    if (!targetModelSchema) {
+      return acc;
+    }
+
     const targetModelPluginOptions = targetModelSchema.pluginOptions || {};
     const metadatas = get(contentTypeConfiguration, ['metadatas', current, 'edit'], {});
     const size = 6;
