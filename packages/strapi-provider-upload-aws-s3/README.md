@@ -28,6 +28,18 @@ module.exports = ({ env }) => ({
 });
 ```
 
+## Required AWS Policy Actions
+These are the minimum amount of permissions needed for this provider to work. 
+```
+"Action": [
+  "s3:PutObject",
+  "s3:GetObject",
+  "s3:ListBucket",
+  "s3:DeleteObject",
+  "s3:PutObjectAcl"
+],
+```
+
 ## Resources
 
 - [License](LICENSE)
