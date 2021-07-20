@@ -41,15 +41,17 @@ async function initPackageJson(rootPath, projectName) {
       {
         name: projectName,
         private: true,
+        workspaces: ['backend', 'frontend'],
         version: '0.0.0',
         scripts: {
           'develop:backend': `${packageManager} backend develop`,
-          'develop:frontend': `wait-on http://localhost:1337/admin && ${packageManager} frontend develop`,
+          'predevelop:frontend': 'wait-on http://localhost:1337/admin',
+          'develop:frontend': ` ${packageManager} frontend develop`,
           develop: 'cross-env FORCE_COLOR=1 npm-run-all -l -p develop:*',
         },
         devDependencies: {
           'npm-run-all': '4.1.5',
-          'wait-on': '5.2.1',
+          'wait-on': '5.3.0',
           'cross-env': '7.0.3',
         },
       },
