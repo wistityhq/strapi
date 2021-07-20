@@ -47,12 +47,12 @@ module.exports = {
     );
   },
 
-  verify(token) {
+  verify(token, jwtOptions = {}) {
     return new Promise(function(resolve, reject) {
       jwt.verify(
         token,
         _.get(strapi.plugins, ['users-permissions', 'config', 'jwtSecret']),
-        {},
+        jwtOptions,
         function(err, tokenPayload = {}) {
           if (err) {
             return reject(new Error('Invalid token.'));
