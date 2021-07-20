@@ -83,25 +83,30 @@ module.exports = function(strapi) {
       const isSrv = srv === true || srv === 'true';
 
       // Connect to mongo database
-      const connectOptions = {};
+      const connectOptionsDefaults = {};
 
       if (!_.isEmpty(username)) {
-        connectOptions.user = username;
+        connectOptionsDefaults.user = username;
 
         if (!_.isEmpty(password)) {
-          connectOptions.pass = password;
+          connectOptionsDefaults.pass = password;
         }
       }
 
       if (!_.isEmpty(authenticationDatabase)) {
-        connectOptions.authSource = authenticationDatabase;
+        connectOptionsDefaults.authSource = authenticationDatabase;
       }
 
-      connectOptions.ssl = ssl === true || ssl === 'true';
-      connectOptions.useNewUrlParser = true;
-      connectOptions.dbName = database;
-      connectOptions.useCreateIndex = true;
-      connectOptions.useUnifiedTopology = useUnifiedTopology || true;
+      connectOptionsDefaults.ssl = ssl === true || ssl === 'true';
+      connectOptionsDefaults.useNewUrlParser = true;
+      connectOptionsDefaults.dbName = database;
+      connectOptionsDefaults.useCreateIndex = true;
+      connectOptionsDefaults.useUnifiedTopology = useUnifiedTopology || true;
+
+      const connectOptions = {
+        ...connectOptionsDefaults,
+        ...connection.options
+      }
 
       try {
         const connectionURL = createConnectionURL({
