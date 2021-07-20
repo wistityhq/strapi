@@ -164,4 +164,13 @@ module.exports = {
       html: settings.message,
     });
   },
+
+  /**
+   * Allow username include letters, numbers, and underscores
+   * @param username
+   * @returns {Boolean}
+   */
+  validateUsername (username) {
+    return username.match(/^[a-zA-Z0-9_]+$/);
+  },
 };
