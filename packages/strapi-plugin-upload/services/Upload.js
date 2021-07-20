@@ -17,6 +17,7 @@ const {
   sanitizeEntity,
   webhook: webhookUtils,
 } = require('strapi-utils');
+const { createProvider } = require('../config/functions/bootstrap');
 
 const { MEDIA_UPDATE, MEDIA_CREATE, MEDIA_DELETE } = webhookUtils.webhookEvents;
 
@@ -125,7 +126,7 @@ module.exports = {
     });
   },
 
-  async upload({ data, files }, { user } = {}) {
+  async upload({ data, files }, { user, provider } = {}) {
     const { fileInfo, ...metas } = data;
 
     const fileArray = Array.isArray(files) ? files : [files];
@@ -134,7 +135,7 @@ module.exports = {
     const doUpload = async (file, fileInfo) => {
       const fileData = await this.enhanceFile(file, fileInfo, metas);
 
-      return this.uploadFileAndPersist(fileData, { user });
+      return this.uploadFileAndPersist(fileData, { user, provider });
     };
 
     return await Promise.all(
@@ -142,8 +143,14 @@ module.exports = {
     );
   },
 
-  async uploadFileAndPersist(fileData, { user } = {}) {
-    const config = strapi.plugins.upload.config;
+  async uploadFileAndPersist(fileData, { user, provider } = {}) {
+    const config = { ...strapi.plugins.upload.config };
+
+    let uploadProvider = strapi.plugins.upload.provider;
+    if (provider) {
+      config.provider = provider || config.provider;
+      uploadProvider = createProvider(config || {});
+    }
 
     const {
       getDimensions,
@@ -151,11 +158,11 @@ module.exports = {
       generateResponsiveFormats,
     } = strapi.plugins.upload.services['image-manipulation'];
 
-    await strapi.plugins.upload.provider.upload(fileData);
+    await uploadProvider.upload(fileData);
 
     const thumbnailFile = await generateThumbnail(fileData);
     if (thumbnailFile) {
-      await strapi.plugins.upload.provider.upload(thumbnailFile);
+      await uploadProvider.upload(thumbnailFile);
       delete thumbnailFile.buffer;
       _.set(fileData, 'formats.thumbnail', thumbnailFile);
     }
@@ -167,7 +174,7 @@ module.exports = {
 
         const { key, file } = format;
 
-        await strapi.plugins.upload.provider.upload(file);
+        await uploadProvider.upload(file);
         delete file.buffer;
 
         _.set(fileData, ['formats', key], file);
