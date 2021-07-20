@@ -9,24 +9,6 @@
 <br />
 
 <p align="center">
-  <a href="https://console.platform.sh/projects/create-project?template=https://raw.githubusercontent.com/platformsh/template-builder/master/templates/strapi/.platform.template.yaml&utm_content=strapi&utm_source=github&utm_medium=button&utm_campaign=deploy_on_platform">
-    <img src="https://assets.strapi.io/uploads/deploy_button_platform_sh_d032f646a7.png"  />
-  </a>
-
-  <a href="https://marketplace.digitalocean.com/apps/strapi">
-    <img src="https://assets.strapi.io/uploads/deploy_button_Digital_Ocean_fe2c286222.png" />
-  </a>
-
-  <a href="https://www.heroku.com/deploy/?template=https://github.com/strapi/strapi-heroku-template">
-    <img src="https://assets.strapi.io/uploads/Deploy_button_heroku_b1043fc67d.png" />
-  </a>
-
-  <a href="https://render.com/docs/deploy-strapi">
-    <img src="https://assets.strapi.io/uploads/deploy_render_e076b6f23a.png" height="44" />
-  </a>
-</p>
-
-<p align="center">
   <a href="https://www.npmjs.org/package/strapi">
     <img src="https://img.shields.io/npm/v/strapi/latest.svg" alt="NPM Version" />
   </a>
