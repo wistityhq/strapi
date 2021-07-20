@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_restaurantservices",
+  "info": {
+    "name": "restaurantservice",
+    "description": "",
+    "icon": "cannabis"
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "default": "something"
+    },
+    "media": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload"
+    },
+    "is_available": {
+      "type": "boolean",
+      "required": true,
+      "default": true
+    }
+  }
+}

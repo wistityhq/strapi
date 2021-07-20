@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "addresses",
+  "info": {
+    "name": "address",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "increments": true,
+    "timestamps": [
+      "created_at",
+      "updated_at"
+    ],
+    "comment": ""
+  },
+  "attributes": {
+    "postal_coder": {
+      "type": "string"
+    },
+    "categories": {
+      "collection": "category",
+      "via": "addresses",
+      "dominant": true
+    },
+    "cover": {
+      "model": "file",
+      "via": "related",
+      "allowedTypes": [
+        "files",
+        "images",
+        "videos"
+      ],
+      "plugin": "upload",
+      "required": false
+    },
+    "images": {
+      "collection": "file",
+      "via": "related",
+      "allowedTypes": [
+        "images"
+      ],
+      "plugin": "upload",
+      "required": false
+    },
+    "city": {
+      "type": "string",
+      "required": true,
+      "maxLength": 200
+    },
+    "likes": {
+      "collection": "like",
+      "via": "address"
+    },
+    "json": {
+      "type": "json"
+    },
+    "slug": {
+      "type": "uid"
+    }
+  }
+}

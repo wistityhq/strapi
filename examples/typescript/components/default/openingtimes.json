@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_openingtimes",
+  "info": {
+    "name": "openingtimes",
+    "description": "",
+    "icon": "calendar"
+  },
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "default": "something"
+    },
+    "time": {
+      "type": "string"
+    },
+    "dishrep": { "type": "component", "repeatable": true, "component": "default.dish" }
+  }
+}

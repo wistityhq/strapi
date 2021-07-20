@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_closingperiods",
+  "info": {
+    "name": "closingperiod",
+    "description": "",
+    "icon": "angry"
+  },
+  "attributes": {
+    "label": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "date",
+      "required": true
+    },
+    "end_date": {
+      "type": "date",
+      "required": true
+    },
+    "media": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload",
+      "required": false
+    },
+    "dish": {
+      "component": "default.dish",
+      "type": "component"
+    }
+  }
+}

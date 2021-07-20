@@ -1,0 +1,36 @@
+{
+  "collectionName": "reviews",
+  "info": {
+    "name": "review",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "increments": true,
+    "timestamps": ["created_at", "updated_at"],
+    "comment": ""
+  },
+  "attributes": {
+    "comment": {
+      "type": "text",
+      "required": true
+    },
+    "rating": {
+      "type": "integer",
+      "required": true,
+      "min": 1,
+      "max": 5
+    },
+    "likes": {
+      "via": "review",
+      "collection": "like"
+    },
+    "author": {
+      "model": "user",
+      "plugin": "users-permissions"
+    },
+    "restaurant": {
+      "model": "restaurant"
+    }
+  }
+}

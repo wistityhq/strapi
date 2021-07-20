@@ -1,0 +1,17 @@
+{
+  "info": {
+    "name": "test",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "type": {
+      "type": "string",
+      "required": true,
+      "unique": true,
+      "configurable": true
+    }
+  }
+}

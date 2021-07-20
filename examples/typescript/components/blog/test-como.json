@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_blog_test_comos",
+  "info": {
+    "name": "test comp",
+    "icon": "ad"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    }
+  }
+}

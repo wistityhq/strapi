@@ -1,0 +1,31 @@
+{
+  "kind": "collectionType",
+  "collectionName": "menusections",
+  "info": {
+    "name": "menusection",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "increments": true,
+    "timestamps": ["created_at", "updated_at"],
+    "comment": ""
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "minLength": 6
+    },
+    "dishes": {
+      "component": "default.dish",
+      "type": "component",
+      "repeatable": true,
+      "required": true
+    },
+    "menu": {
+      "model": "menu",
+      "via": "menusections"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "strapi-plugin-my-plugin",
+  "version": "0.0.0",
+  "description": "This is the description of my plugin.",
+  "private": true,
+  "strapi": {
+    "name": "my-plugin",
+    "icon": "plug",
+    "description": "Description of my plugin."
+  }
+}

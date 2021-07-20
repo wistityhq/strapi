@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_dishes",
+  "info": {
+    "name": "dish",
+    "description": "",
+    "icon": "address-book"
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": false,
+      "default": "My super dish"
+    },
+    "description": {
+      "type": "text"
+    },
+    "price": {
+      "type": "float"
+    },
+    "picture": {
+      "model": "file",
+      "via": "related",
+      "plugin": "upload",
+      "required": false
+    },
+    "very_long_description": {
+      "type": "richtext"
+    },
+    "categories": {
+      "collection": "category"
+    }
+  }
+}

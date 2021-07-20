@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "menus",
+  "info": {
+    "name": "menu",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "increments": true,
+    "timestamps": true,
+    "comment": ""
+  },
+  "attributes": {
+    "description": {
+      "type": "text"
+    },
+    "menusections": {
+      "via": "menu",
+      "collection": "menusection"
+    },
+    "restaurant": {
+      "via": "menu",
+      "model": "restaurant"
+    }
+  }
+}

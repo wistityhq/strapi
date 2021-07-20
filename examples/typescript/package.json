@@ -1,0 +1,50 @@
+{
+  "name": "typescript-example",
+  "private": true,
+  "version": "3.6.5",
+  "description": "A Strapi application.",
+  "scripts": {
+    "develop": "ts-node-dev dev.ts",
+    "develop:ce": "STRAPI_DISABLE_EE=true strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "build:ce": "STRAPI_DISABLE_EE=true strapi build",
+    "strapi": "strapi"
+  },
+  "dependencies": {
+    "knex": "0.21.18",
+    "lodash": "4.17.21",
+    "mysql": "2.18.1",
+    "pg": "8.6.0",
+    "sqlite3": "5.0.0",
+    "strapi": "file:../../packages/strapi",
+    "strapi-admin": "3.6.5",
+    "strapi-connector-bookshelf": "3.6.5",
+    "strapi-connector-mongoose": "3.6.5",
+    "strapi-middleware-views": "3.6.5",
+    "strapi-plugin-content-manager": "3.6.5",
+    "strapi-plugin-content-type-builder": "3.6.5",
+    "strapi-plugin-documentation": "3.6.5",
+    "strapi-plugin-email": "3.6.5",
+    "strapi-plugin-graphql": "3.6.5",
+    "strapi-plugin-i18n": "3.6.5",
+    "strapi-plugin-upload": "3.6.5",
+    "strapi-plugin-users-permissions": "3.6.5",
+    "strapi-provider-email-mailgun": "3.6.5",
+    "strapi-provider-upload-aws-s3": "3.6.5",
+    "strapi-provider-upload-cloudinary": "3.6.5",
+    "strapi-utils": "3.6.5"
+  },
+  "strapi": {
+    "uuid": "typescript-example"
+  },
+  "engines": {
+    "node": ">=10.16.0 <=14.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.3.5"
+  }
+}

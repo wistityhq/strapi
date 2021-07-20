@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "likes",
+  "info": {
+    "name": "like",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false,
+    "increments": true,
+    "timestamps": true,
+    "comment": ""
+  },
+  "attributes": {
+    "authore": {
+      "plugin": "users-permissions",
+      "model": "user"
+    },
+    "review": {
+      "model": "review",
+      "via": "likes"
+    },
+    "address": {
+      "via": "likes",
+      "model": "address"
+    }
+  }
+}

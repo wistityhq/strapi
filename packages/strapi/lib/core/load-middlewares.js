@@ -6,18 +6,20 @@ const fs = require('fs-extra');
 const _ = require('lodash');
 const glob = require('../load/glob');
 const findPackagePath = require('../load/package-path');
+const getSupportedFileExtensions = require('../utils/getSupportedFileExtensions');
 
 /**
  * Load middlewares
  */
 module.exports = async function(strapi) {
   const { installedMiddlewares, installedPlugins, appPath } = strapi.config;
+  const fileExtensions = getSupportedFileExtensions(strapi.config);
 
   let middlewares = {};
 
-  const loaders = createLoaders(strapi);
+  const loaders = createLoaders(strapi, fileExtensions);
 
-  await loaders.loadMiddlewareDependencies(installedMiddlewares, middlewares);
+  await loaders.loadMiddlewareDependencies(installedMiddlewares, middlewares, fileExtensions);
   // internal middlewares
   await loaders.loadInternalMiddlewares(middlewares);
   // local middleware
@@ -36,9 +38,9 @@ module.exports = async function(strapi) {
  * Build loader functions
  * @param {*} strapi - strapi instance
  */
-const createLoaders = strapi => {
+const createLoaders = (strapi, fileExtensions) => {
   const loadMiddlewaresInDir = async (dir, middlewares) => {
-    const files = await glob('*/*(index|defaults).*(js|json)', {
+    const files = await glob(`*/*(index|defaults).*(${fileExtensions})`, {
       cwd: dir,
     });
 
@@ -88,10 +90,10 @@ const createLoaders = strapi => {
     }
   };
 
-  const loadMiddlewareDependencies = async (packages, middlewares) => {
+  const loadMiddlewareDependencies = async (packages, middlewares, fileExtensions) => {
     for (let packageName of packages) {
       const baseDir = path.dirname(require.resolve(`strapi-middleware-${packageName}`));
-      const files = await glob('*(index|defaults).*(js|json)', {
+      const files = await glob(`*(index|defaults).*(${fileExtensions})`, {
         cwd: baseDir,
         absolute: true,
       });
