@@ -623,7 +623,7 @@ module.exports = {
                 properties: {
                   __component: {
                     type: 'string',
-                    enum: components,
+                    enum: [component],
                   },
                 },
               },
