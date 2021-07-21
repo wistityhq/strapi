@@ -1,7 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
-const { getCommonBeginning } = require('./string-formatting');
+const { getCommonPath } = require('./string-formatting');
 
 const getConfigUrls = (serverConfig, forAdminBuild = false) => {
   // Defines serverUrl value
@@ -46,7 +46,7 @@ const getConfigUrls = (serverConfig, forAdminBuild = false) => {
     new URL(adminUrl).origin === new URL(serverUrl).origin &&
     !forAdminBuild
   ) {
-    adminPath = adminUrl.replace(getCommonBeginning(serverUrl, adminUrl), '');
+    adminPath = adminUrl.replace(getCommonPath(serverUrl, adminUrl), '');
     adminPath = `/${_.trim(adminPath, '/')}`;
   } else if (adminUrl.startsWith('http')) {
     adminPath = new URL(adminUrl).pathname;

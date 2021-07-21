@@ -1,6 +1,6 @@
 'use strict';
 
-const { escapeQuery, stringIncludes, stringEquals } = require('../string-formatting');
+const { escapeQuery, stringIncludes, stringEquals, getCommonBeginning, getCommonPath } = require('../string-formatting');
 
 describe('string-formatting', () => {
   describe('Escape Query', () => {
@@ -64,4 +64,32 @@ describe('string-formatting', () => {
       expect(result).toBe(expectedResult);
     });
   });
+
+  describe('getCommonBeginning', () => {
+    const tests = [
+      [['abcd', 'abc', 'ab'], 'ab'],
+      [['abcd', 'abc'], 'abc'],
+      [['ab/cd', 'ab/c'], 'ab/c'],
+      [['abc', 'abc'], 'abc'],
+    ];
+    test.each(tests)('%p has common beginning: %p', (a, expectedResult) => {
+      const result = getCommonBeginning(...a);
+      expect(result).toBe(expectedResult);
+    });
+  });
+
+  describe('getCommonPath', () => {
+    const tests = [
+      [['abc', 'ab'], ''],
+      [['http://ab.com/cd', 'http://ab.com/c'], 'http://ab.com'],
+      [['http://ab.com/admin', 'http://ab.com/api'], 'http://ab.com'],
+      [['http://ab.com/admin', 'http://ab.com/admin/'], 'http://ab.com/admin'],
+      [['http://ab.com/admin', 'http://ab.com/admin'], 'http://ab.com/admin'],
+    ];
+    test.each(tests)('%p has common path: %p', (a, expectedResult) => {
+      const result = getCommonPath(...a);
+      expect(result).toBe(expectedResult);
+    });
+  });
+
 });

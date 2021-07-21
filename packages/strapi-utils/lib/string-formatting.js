@@ -1,23 +1,21 @@
 'use strict';
-
+const _ = require('lodash');
 const slugify = require('@sindresorhus/slugify');
 
 const nameToSlug = (name, options = { separator: '-' }) => slugify(name, options);
 
 const nameToCollectionName = name => slugify(name, { separator: '_' });
 
-const getCommonBeginning = (str1 = '', str2 = '') => {
-  let common = '';
-  let index = 0;
-  while (index < str1.length && index < str2.length) {
-    if (str1[index] === str2[index]) {
-      common += str1[index];
-      index += 1;
-    } else {
-      break;
-    }
-  }
-  return common;
+const getCommonBeginning = (...strings) => _.takeWhile(
+  strings[0],
+  (char, index) => strings.every(string => string[index] === char)
+).join('');
+
+const getCommonPath = (...paths)=> {
+  const [segments, ...otherSegments] = paths.map(it=>_.split(it, '/'));
+  return _.join(
+    _.takeWhile(segments, (str, index)=>otherSegments.every(it=>it[index] === str))
+    , '/');
 };
 
 const escapeQuery = (query, charsToEscape, escapeChar = '\\') => {
@@ -39,6 +37,7 @@ module.exports = {
   nameToSlug,
   nameToCollectionName,
   getCommonBeginning,
+  getCommonPath,
   escapeQuery,
   stringIncludes,
   stringEquals,
