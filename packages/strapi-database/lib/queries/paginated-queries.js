@@ -7,7 +7,7 @@ const createPaginatedQuery = ({ fetch, count }) => async (queryParams, ...args) 
   const pagination = await getPaginationInfos(queryParams, count, ...args);
 
   Object.assign(params, paginationToQueryParams(pagination));
-  const results = await fetch(params, undefined, ...args);
+  const results = await fetch(params, ...args);
 
   return { results, pagination };
 };

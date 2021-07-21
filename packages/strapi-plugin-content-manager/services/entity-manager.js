@@ -34,6 +34,14 @@ const findCreatorRoles = entity => {
   return [];
 };
 
+const forceAutoPopulate = (populate, model) => {
+  if (populate) {
+    return populate;
+  }
+
+  return strapi.getModel(model).associations.map(association => association.alias);
+};
+
 module.exports = {
   async assocCreatorRoles(entity) {
     if (!entity) {
@@ -53,7 +61,10 @@ module.exports = {
   },
 
   findWithRelationCounts(params, model, populate) {
-    return strapi.entityService.findWithRelationCounts({ params, populate }, { model });
+    return strapi.entityService.findWithRelationCounts(
+      { params, populate: forceAutoPopulate(populate, model) },
+      { model }
+    );
   },
 
   search(params, model, populate) {
@@ -73,7 +84,10 @@ module.exports = {
   },
 
   async findOne(id, model, populate) {
-    return strapi.entityService.findOne({ params: { id }, populate }, { model });
+    return strapi.entityService.findOne(
+      { params: { id }, populate: forceAutoPopulate(populate, model) },
+      { model }
+    );
   },
 
   async findOneWithCreatorRoles(id, model, populate) {
