@@ -92,7 +92,7 @@ const RoleListPage = () => {
     ? [
         {
           label: formatMessage({
-            id: 'List.button.roles',
+            id: getTrad('List.button.roles'),
             defaultMessage: 'Add new role',
           }),
           onClick: handleNewRoleClick,

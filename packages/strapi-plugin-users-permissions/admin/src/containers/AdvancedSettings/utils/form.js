@@ -30,7 +30,7 @@ const form = [
     name: 'email_reset_password',
     type: 'text',
     size: { xs: 6 },
-    placeholder: 'ex: https://yourfrontend.com/reset-password',
+    placeholder: getTrad('EditForm.inputToggle.placeholder.email-reset-password'),
   },
   {
     description: getTrad('EditForm.inputToggle.description.email-confirmation'),
@@ -45,7 +45,7 @@ const form = [
     name: 'email_confirmation_redirection',
     type: 'text',
     size: { xs: 6 },
-    placeholder: 'ex: https://yourfrontend.com/reset-password',
+    placeholder: getTrad('EditForm.inputToggle.placeholder.email-confirmation-redirection'),
   },
 ];
 

@@ -36,7 +36,7 @@ const EditPage = () => {
     return [
       {
         label: formatMessage({
-          id: getTrad('app.components.Button.reset'),
+          id: 'app.components.Button.reset',
           defaultMessage: 'Reset',
         }),
         onClick: () => {
@@ -48,7 +48,7 @@ const EditPage = () => {
       },
       {
         label: formatMessage({
-          id: getTrad('app.components.Button.save'),
+          id: 'app.components.Button.save',
           defaultMessage: 'Save',
         }),
         onClick: handleSubmit,

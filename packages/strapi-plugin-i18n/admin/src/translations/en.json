@@ -19,6 +19,8 @@
   "CMEditViewCopyLocale.copy-failure": "Failed to copy locale",
   "CMEditViewCopyLocale.copy-text": "Fill in from another locale",
   "CMEditViewCopyLocale.submit-text": "Yes, fill in",
+  "CMEditViewCopyLocale.ModalConfirm.title": "Select Locale",
+  "CMEditViewCopyLocale.ModalConfirm.content": "Your current content will be erased and filled by the content of the selected locale:",
   "Field.localized": "This value is unique for the selected locale",
   "Field.not-localized": "This value is common to all locales",
   "Settings.list.description": "Configure the settings for the internationalization plugin",

@@ -44,7 +44,10 @@ const ActionRow = ({
             style={{ maxWidth: '60%' }}
             ellipsis
           >
-            {label}
+            {formatMessage({
+              id: `Settings.roles.form.permissions.${label.toLowerCase()}`,
+              defaultMessage: label,
+            })}
           </Text>
           <Text
             lineHeight="19px"

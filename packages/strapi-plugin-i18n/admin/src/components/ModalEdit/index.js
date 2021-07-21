@@ -61,7 +61,7 @@ const ModalEdit = ({ localeToEdit, onClose, locales }) => {
               title={formatMessage({
                 id: getTrad('Settings.locales.modal.title'),
               })}
-              breadCrumb={[formatMessage({ id: getTrad('Settings.list.actions.edit') })]}
+              breadCrumb={[getTrad('Settings.list.actions.edit')]}
               tabsAriaLabel={formatMessage({
                 id: getTrad('Settings.locales.modal.edit.tab.label'),
               })}

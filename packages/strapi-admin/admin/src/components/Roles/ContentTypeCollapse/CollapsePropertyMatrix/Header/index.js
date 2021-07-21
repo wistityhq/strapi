@@ -40,7 +40,10 @@ const Header = ({ headers, label }) => {
         return (
           <HeaderLabel key={header.label}>
             <Text textTransform="capitalize" fontWeight="bold">
-              {header.label}
+              {formatMessage({
+                id: `Settings.roles.form.permissions.${header.label.toLowerCase()}`,
+                defaultMessage: header.label,
+              })}
             </Text>
           </HeaderLabel>
         );

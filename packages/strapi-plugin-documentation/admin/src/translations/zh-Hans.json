@@ -23,5 +23,9 @@
   "error.regenerateDoc": "重新生成文件时发生错误",
   "error.regenerateDoc.versionMissing": "您尝试重新生成的版本不存在",
   "notification.update.success": "设置更新成功",
-  "plugin.name": "文档"
+  "notification.delete.success": "文档删除成功",
+  "notification.generate.success": "文档生成成功",
+  "plugin.name": "文档",
+  "plugin.description.long": "创建OpenAPI文档并使用SwaggerUI可视化你的API",
+  "plugin.description.short": "创建OpenAPI文档并使用SwaggerUI可视化你的API"
 }

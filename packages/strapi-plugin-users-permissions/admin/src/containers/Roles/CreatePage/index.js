@@ -43,7 +43,7 @@ const CreatePage = () => {
       },
       {
         label: formatMessage({
-          id: getTrad('app.components.Button.save'),
+          id: 'app.components.Button.save',
           defaultMessage: 'Save',
         }),
         onClick: handleSubmit,

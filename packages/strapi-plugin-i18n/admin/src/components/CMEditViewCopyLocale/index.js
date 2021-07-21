@@ -109,13 +109,16 @@ const Content = ({ appLocales, currentLocale, localizations, readPermissions }) 
           defaultMessage: 'Yes, fill in',
         }}
         content={{
-          id: 'CMEditViewCopyLocale.ModalConfirm.content',
+          id: getTrad('CMEditViewCopyLocale.ModalConfirm.content'),
           defaultMessage:
             'Your current content will be erased and filled by the content of the selected locale:',
         }}
         isOpen={isOpen}
         onConfirm={handleConfirmCopyLocale}
-        title={{ id: 'CMEditViewCopyLocale.ModalConfirm.title', defaultMessage: 'Select Locale' }}
+        title={{
+          id: getTrad('CMEditViewCopyLocale.ModalConfirm.title'),
+          defaultMessage: 'Select Locale',
+        }}
         toggle={handleToggle}
         type="success"
       >
