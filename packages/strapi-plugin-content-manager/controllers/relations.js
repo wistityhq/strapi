@@ -42,9 +42,9 @@ module.exports = {
     let entities = [];
 
     if (has('_q', ctx.request.query)) {
-      entities = await entityManager.search(query, target.uid);
+      entities = await entityManager.search(query, target.uid, []);
     } else {
-      entities = await entityManager.find(query, target.uid);
+      entities = await entityManager.find(query, target.uid, []);
     }
 
     if (!entities) {

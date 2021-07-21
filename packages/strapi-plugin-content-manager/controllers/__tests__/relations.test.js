@@ -215,7 +215,7 @@ describe('Relations', () => {
 
       await relations.find(ctx);
 
-      expect(find).toHaveBeenCalledWith({ _where: { id_nin: [3, 4] } }, assocModel.uid);
+      expect(find).toHaveBeenCalledWith({ _where: { id_nin: [3, 4] } }, assocModel.uid, []);
       expect(ctx.body).toEqual([
         {
           id: 1,
