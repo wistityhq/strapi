@@ -8,6 +8,9 @@ module.exports = {
     confirmationToken: {
       hidden: true,
     },
+    loginToken: {
+      hidden: true,
+    },
     provider: {
       hidden: true,
     },

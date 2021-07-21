@@ -53,6 +53,53 @@
         "security": []
       }
     },
+    "/auth/login-link": {
+      "get": {
+        "tags": ["Authentication"],
+        "security": []
+      }
+    },
+    "/auth/send-login-link": {
+      "post": {
+        "security": [],
+        "externalDocs": {
+          "description": "Find out more in the strapi's documentation",
+          "url": "https://strapi.io/documentation/developer-docs/latest/development/plugins/users-permissions.html#login-link"
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully sent email",
+            "content": {
+              "application/json": {
+                "email": {
+                  "type": "string"
+                },
+                "sent": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": ["email"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "minLength": 6
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/send-email-confirmation": {
       "post": {
         "security": [],

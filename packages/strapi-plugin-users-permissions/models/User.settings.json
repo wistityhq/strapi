@@ -42,6 +42,11 @@
       "configurable": false,
       "private": true
     },
+    "loginToken": {
+      "type": "string",
+      "configurable": false,
+      "private": true
+    },
     "confirmed": {
       "type": "boolean",
       "default": false,

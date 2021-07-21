@@ -17,9 +17,24 @@ const forms = {
           required: true,
         },
       },
+      {
+        autoFocus: true,
+        label: getTrad('PopUpForm.Providers.local.linkLogin.label'),
+        name: 'linkLogin',
+        type: 'bool',
+        description: getTrad('PopUpForm.Providers.local.linkLogin.description'),
+        size: { xs: 6 },
+        validations: {
+          required: true,
+        },
+      },
     ],
     schema: yup.object().shape({
       enabled: yup.bool().required(translatedErrors.required),
+      linkLogin: yup.bool().when('enabled', {
+        is: true,
+        then: yup.bool().required(translatedErrors.required),
+      }),
     }),
   },
   providers: {

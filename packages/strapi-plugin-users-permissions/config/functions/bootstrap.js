@@ -23,6 +23,7 @@ module.exports = async () => {
     email: {
       enabled: true,
       icon: 'envelope',
+      linkLogin: true,
     },
     discord: {
       enabled: false,
@@ -189,6 +190,25 @@ module.exports = async () => {
 <p>You have to confirm your email address. Please click on the link below.</p>
 
 <p><%= URL %>?confirmation=<%= CODE %></p>
+
+<p>Thanks.</p>`,
+        },
+      },
+      email_login: {
+        display: 'Email.template.email_login',
+        icon: 'check-square',
+        options: {
+          from: {
+            name: 'Administration Panel',
+            email: 'no-reply@strapi.io',
+          },
+          response_email: '',
+          object: 'Login link',
+          message: `<p>Hi!</p>
+
+<p>Please click on the link below to login on the site.</p>
+
+<p><%= URL %>?loginToken=<%= CODE %></p>
 
 <p>Thanks.</p>`,
         },

@@ -598,4 +598,63 @@ module.exports = {
       return ctx.badRequest(null, err);
     }
   },
+
+  async loginLink(ctx) {
+    const { loginToken } = ctx.query;
+
+    const { user: userService, jwt: jwtService } = strapi.plugins['users-permissions'].services;
+
+    if (_.isEmpty(loginToken)) {
+      return ctx.badRequest('token.invalid');
+    }
+
+    const user = await userService.fetch({ loginToken }, []);
+
+    if (!user) {
+      return ctx.badRequest('token.invalid');
+    }
+
+    await userService.edit({ id: user.id }, { loginToken: null });
+
+    ctx.send({
+      jwt: jwtService.issue({ id: user.id }),
+      user: sanitizeEntity(user, {
+        model: strapi.query('user', 'users-permissions').model,
+      }),
+    });
+  },
+
+  async sendLoginLink(ctx) {
+    const params = _.assign(ctx.request.body);
+
+    if (!params.email) {
+      return ctx.badRequest('missing.email');
+    }
+
+    const isEmail = emailRegExp.test(params.email);
+
+    if (isEmail) {
+      params.email = params.email.toLowerCase();
+    } else {
+      return ctx.badRequest('wrong.email');
+    }
+
+    const user = await strapi.query('user', 'users-permissions').findOne({
+      email: params.email,
+    });
+
+    if (user.blocked) {
+      return ctx.badRequest('blocked.user');
+    }
+
+    try {
+      await strapi.plugins['users-permissions'].services.user.sendLoginLink(user);
+      ctx.send({
+        email: user.email,
+        sent: true,
+      });
+    } catch (err) {
+      return ctx.badRequest(null, err);
+    }
+  },
 };

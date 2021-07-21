@@ -274,6 +274,34 @@
     },
     {
       "method": "GET",
+      "path": "/auth/login-link",
+      "handler": "Auth.loginLink",
+      "config": {
+        "policies": [],
+        "prefix": "",
+        "description": "Login a user with one time password",
+        "tag": {
+          "plugin": "users-permissions",
+          "name": "User"
+        }
+      }
+    },
+    {
+      "method": "POST",
+      "path": "/auth/send-login-link",
+      "handler": "Auth.sendLoginLink",
+      "config": {
+        "policies": [],
+        "prefix": "",
+        "description": "Send an email to user with login link",
+        "tag": {
+          "plugin": "users-permissions",
+          "name": "User"
+        }
+      }
+    },
+    {
+      "method": "GET",
       "path": "/auth/email-confirmation",
       "handler": "Auth.emailConfirmation",
       "config": {
