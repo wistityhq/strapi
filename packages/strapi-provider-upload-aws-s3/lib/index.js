@@ -37,6 +37,11 @@ module.exports = {
               // set the bucket file url
               file.url = data.Location;
 
+              // set the file path as provider metadata
+              file.provider_metadata = {
+                path: file.path,
+              };
+
               resolve();
             }
           );
@@ -45,7 +50,7 @@ module.exports = {
       delete(file, customParams = {}) {
         return new Promise((resolve, reject) => {
           // delete file on S3 bucket
-          const path = file.path ? `${file.path}/` : '';
+          const path = file.provider_metadata.path ? `${file.provider_metadata.path}/` : '';
           S3.deleteObject(
             {
               Key: `${path}${file.hash}${file.ext}`,
