@@ -1260,6 +1260,14 @@
     "name":"Meru (Kenya) (mer-KE)"
   },
   {
+    "code":"mn",
+    "name":"Mongolian (mn)"
+  },
+  {
+    "code":"mn-MN",
+    "name":"Mongolian (Mongolia) (mn-MN)"
+  },
+  {
     "code":"mfe",
     "name":"Morisyen (mfe)"
   },
