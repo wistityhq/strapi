@@ -1,9 +1,49 @@
 'use strict';
 
 const _ = require('lodash');
+const pmap = require('p-map');
 const { contentTypes: contentTypesUtils } = require('strapi-utils');
 
 const { PUBLISHED_AT_ATTRIBUTE } = contentTypesUtils.constants;
+
+const BATCH_SIZE = 1000;
+
+const deleteDrafts = async ({ ORM, model }) => {
+  const trx = await ORM.knex.transaction();
+  try {
+    let offset = 0;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      let batch = await trx
+        .select(['id'])
+        .from(model.collectionName)
+        .where(PUBLISHED_AT_ATTRIBUTE, null)
+        .orderBy('id')
+        .offset(offset)
+        .limit(BATCH_SIZE);
+      offset += BATCH_SIZE;
+
+      await pmap(batch, entry => model.deleteRelations(entry.id, { transacting: trx }), {
+        concurrency: 100,
+        stopOnError: true,
+      });
+
+      if (batch.length < BATCH_SIZE) {
+        break;
+      }
+    }
+
+    await trx
+      .delete()
+      .from(model.collectionName)
+      .where(PUBLISHED_AT_ATTRIBUTE, null);
+
+    await trx.commit();
+  } catch (e) {
+    await trx.rollback();
+    throw e;
+  }
+};
 
 const getDraftAndPublishMigrationWay = async ({ definition, previousDefinition }) => {
   const previousDraftAndPublish = contentTypesUtils.hasDraftAndPublish(previousDefinition);
@@ -20,7 +60,7 @@ const getDraftAndPublishMigrationWay = async ({ definition, previousDefinition }
   }
 };
 
-const before = async ({ definition, previousDefinition, ORM }, context) => {
+const before = async ({ model, definition, previousDefinition, ORM }, context) => {
   const way = await getDraftAndPublishMigrationWay({ definition, previousDefinition });
 
   if (way === 'disable') {
@@ -30,9 +70,7 @@ const before = async ({ definition, previousDefinition, ORM }, context) => {
     );
 
     if (publishedAtColumnExists) {
-      await ORM.knex(definition.collectionName)
-        .delete()
-        .where(PUBLISHED_AT_ATTRIBUTE, null);
+      await deleteDrafts({ ORM, model });
 
       if (definition.client === 'sqlite3') {
         // Bug when dropping column with sqlite3 https://github.com/knex/knex/issues/631
