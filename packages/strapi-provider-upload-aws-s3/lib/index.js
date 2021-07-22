@@ -13,7 +13,7 @@ module.exports = {
   init(config) {
     const S3 = new AWS.S3({
       apiVersion: '2006-03-01',
-      ...config,
+      ..._.omit(config, ['pathPrefix']),
     });
 
     return {
@@ -21,9 +21,10 @@ module.exports = {
         return new Promise((resolve, reject) => {
           // upload file on S3 bucket
           const path = file.path ? `${file.path}/` : '';
+          const pathPrefix = config.pathPrefix ? `${config.pathPrefix}/` : '';
           S3.upload(
             {
-              Key: `${path}${file.hash}${file.ext}`,
+              Key: `${pathPrefix}${path}${file.hash}${file.ext}`,
               Body: Buffer.from(file.buffer, 'binary'),
               ACL: 'public-read',
               ContentType: file.mime,
@@ -46,9 +47,10 @@ module.exports = {
         return new Promise((resolve, reject) => {
           // delete file on S3 bucket
           const path = file.path ? `${file.path}/` : '';
+          const pathPrefix = config.pathPrefix ? `${config.pathPrefix}/` : '';
           S3.deleteObject(
             {
-              Key: `${path}${file.hash}${file.ext}`,
+              Key: `${pathPrefix}${path}${file.hash}${file.ext}`,
               ...customParams,
             },
             (err, data) => {

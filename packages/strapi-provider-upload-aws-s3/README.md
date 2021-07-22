@@ -16,12 +16,16 @@ module.exports = ({ env }) => ({
   upload: {
     provider: 'aws-s3',
     providerOptions: {
+    	// AWS S3 config options
       accessKeyId: env('AWS_ACCESS_KEY_ID'),
       secretAccessKey: env('AWS_ACCESS_SECRET'),
       region: env('AWS_REGION'),
       params: {
         Bucket: env('AWS_BUCKET'),
       },
+      
+      // Strapi Provider specific options
+      pathPrefix: env('NODE_ENV'), // Uploads to ${Bucket}/${pathPrefix}/${path}/${file.hash}.${file.ext}
     },
   },
   // ...
