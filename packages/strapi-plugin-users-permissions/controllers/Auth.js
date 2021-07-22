@@ -484,6 +484,21 @@ module.exports = {
       );
     }
 
+    // Check username existancy
+    const usernameExists = await strapi.query('user', 'users-permissions').findOne({
+      username: params.username,
+    });
+
+    if (usernameExists) {
+      return ctx.badRequest(
+        null,
+        formatError({
+          id: 'Auth.form.error.username.taken',
+          message: 'Username already taken',
+        })
+      );
+    }
+
     try {
       if (!settings.email_confirmation) {
         params.confirmed = true;
@@ -512,14 +527,10 @@ module.exports = {
         user: sanitizedUser,
       });
     } catch (err) {
-      const adminError = _.includes(err.message, 'username')
-        ? {
-            id: 'Auth.form.error.username.taken',
-            message: 'Username already taken',
-          }
-        : { id: 'Auth.form.error.email.taken', message: 'Email already taken' };
-
-      ctx.badRequest(null, formatError(adminError));
+      ctx.badRequest(
+        null,
+        formatError({ id: 'Auth.form.error.email.taken', message: 'Email already taken' })
+      );
     }
   },
 
