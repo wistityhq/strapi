@@ -40,7 +40,10 @@ module.exports = async strapi => {
   _.mergeWith(plugins, extensions.merges, (objValue, srcValue, key) => {
     // concat routes
     if (_.isArray(srcValue) && _.isArray(objValue) && key === 'routes') {
-      return srcValue.concat(objValue);
+      const merged = srcValue.concat(objValue);
+      return _.uniqWith(merged, (x, y) =>
+        (x.method === y.method) && (x.handler === y.handler)
+      );
     }
   });
 
