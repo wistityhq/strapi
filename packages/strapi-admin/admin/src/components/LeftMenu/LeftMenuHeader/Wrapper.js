@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
-import Logo from '../../../assets/images/logo-strapi.png';
+import Logo from '../../../assets/images/logo-strapi.svg';
 
 const Wrapper = styled.div`
   background-color: #007eff;
@@ -21,7 +21,6 @@ const Wrapper = styled.div`
     font-size: 2rem;
     letter-spacing: 0.2rem;
     color: $white;
-
     background-image: url(${Logo});
     background-repeat: no-repeat;
     background-position: left center;
