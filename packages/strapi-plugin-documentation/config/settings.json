@@ -38,6 +38,7 @@
     "description": "Find out more",
     "url": "https://strapi.io/documentation/developer-docs/latest/getting-started/introduction.html"
   },
+  "components":{},
   "security": [
     {
       "bearerAuth": []
