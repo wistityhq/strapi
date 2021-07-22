@@ -1,8 +1,6 @@
 import React from 'react';
 import { Switch, Route, useRouteMatch, Redirect, useLocation } from 'react-router-dom';
 import { CheckPagePermissions, LoadingIndicatorPage, NotFound } from '@strapi/helper-plugin';
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import permissions from '../../../permissions';
 import DragLayer from '../../components/DragLayer';
 import ModelsContext from '../../contexts/ModelsContext';
@@ -47,7 +45,7 @@ const App = () => {
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <>
       <DragLayer />
       <ModelsContext.Provider value={{ refetchData }}>
         <div className="container-fluid">
@@ -83,7 +81,7 @@ const App = () => {
           </div>
         </div>
       </ModelsContext.Provider>
-    </DndProvider>
+    </>
   );
 };
 
