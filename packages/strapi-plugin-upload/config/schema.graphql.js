@@ -12,8 +12,8 @@ module.exports = {
     }
   `,
   mutation: `
-    upload(refId: ID, ref: String, field: String, source: String, info: FileInfoInput, file: Upload!): UploadFile!
-    multipleUpload(refId: ID, ref: String, field: String, source: String, files: [Upload]!): [UploadFile]!
+    upload(refId: ID, ref: String, field: String, source: String, path: String, info: FileInfoInput, file: Upload!): UploadFile!
+    multipleUpload(refId: ID, ref: String, field: String, source: String, path: String, files: [Upload]!): [UploadFile]!
     updateFileInfo(id: ID!, info: FileInfoInput!): UploadFile!
   `,
   resolver: {
