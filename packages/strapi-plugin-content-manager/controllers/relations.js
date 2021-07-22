@@ -10,6 +10,7 @@ module.exports = {
     const { model, targetField } = ctx.params;
     const { _component, ...query } = ctx.request.query;
     const { idsToOmit } = ctx.request.body;
+    const { userAbility } = ctx.state;
 
     if (!targetField) {
       return ctx.badRequest();
@@ -38,13 +39,15 @@ module.exports = {
     }
 
     const entityManager = getService('entity-manager');
+    const permissionChecker = getService('permission-checker').create({ userAbility, model });
+    const permissionQuery = permissionChecker.buildReadQuery(query);
 
     let entities = [];
 
     if (has('_q', ctx.request.query)) {
-      entities = await entityManager.search(query, target.uid);
+      entities = await entityManager.search(permissionQuery, target.uid);
     } else {
-      entities = await entityManager.find(query, target.uid);
+      entities = await entityManager.find(permissionQuery, target.uid);
     }
 
     if (!entities) {
