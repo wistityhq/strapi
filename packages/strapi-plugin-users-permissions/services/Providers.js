@@ -5,6 +5,7 @@
  */
 
 // Public node modules.
+const crypto = require('crypto');
 const _ = require('lodash');
 const request = require('request');
 
@@ -13,6 +14,9 @@ const purest = require('purest')({ request });
 const purestConfig = require('@purest/providers');
 const { getAbsoluteServerUrl } = require('strapi-utils');
 const jwt = require('jsonwebtoken');
+
+// Same random suffix as used in upload, except shorter
+const randomSuffix = () => crypto.randomBytes(3).toString('hex');
 
 /**
  * Connect thanks to a third-party provider.
@@ -86,6 +90,23 @@ const connect = (provider, query) => {
         const defaultRole = await strapi
           .query('role', 'users-permissions')
           .findOne({ type: advanced.default_role }, []);
+
+        // Check if a user with the username exists
+        var usernames = await strapi.query('user', 'users-permissions').find({
+          username: profile.username,
+        });
+
+        // Add a new #randomsuffix to the username till we find one that is not taken
+        var newUsername;
+        while (!_.isEmpty(usernames)) {
+          newUsername = `${profile.username}~${randomSuffix()}`;
+          usernames = await strapi.query('user', 'users-permissions').find({
+            username: newUsername,
+          });
+        }
+
+        // Set the updated username
+        profile.username = newUsername;
 
         // Create the new user.
         const params = _.assign(profile, {
