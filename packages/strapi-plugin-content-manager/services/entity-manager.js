@@ -52,8 +52,15 @@ module.exports = {
     return strapi.entityService.findPage({ params, populate }, { model });
   },
 
-  findWithRelationCounts(params, model, populate) {
-    return strapi.entityService.findWithRelationCounts({ params, populate }, { model });
+  async findWithRelationCounts(params, model, populate) {
+    const data = await strapi.entityService.findWithRelationCounts({ params, populate }, { model });
+    const ctx = this;
+    const results = await Promise.all(
+      prop('results', data).map(async entity =>
+        entity ? await this.assocCreatorRoles.call(ctx, entity) : entity
+      )
+    );
+    return assoc('results', results, data);
   },
 
   search(params, model, populate) {
