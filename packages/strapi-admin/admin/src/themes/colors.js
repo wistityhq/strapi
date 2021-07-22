@@ -37,6 +37,7 @@ const colors = {
     'link-hover': '#1c2431',
     'link-color': '#919bae',
     'title-color': '#5b626f',
+    'background-header-link': '#007eff',
   },
   strapi: {
     'gray-light': '#eff3f6',
