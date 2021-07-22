@@ -11,10 +11,7 @@ module.exports = strapi => {
       strapi.app.use(async (ctx, next) => {
         if (ctx.request.admin) {
           return await convert(
-            xssProtection({
-              enabled: true,
-              mode: defaults.xss.mode,
-            })
+            xssProtection(defaults.xss)
           )(ctx, next);
         }
 
