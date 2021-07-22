@@ -3,10 +3,12 @@ import styled from 'styled-components';
 /* eslint-disable */
 
 const BannerWrapper = styled.button`
-  display: flex;
-  height: 36px;
+  display: grid;
+  grid-template-columns: 35px 1fr 35px;
+  grid-template-rows: 1fr;
   width: 100%;
-  padding: 0 15px;
+  height: 45px;
+  padding: 5px 15px;
   border: 1px solid
     ${({ hasErrors, isOpen, isReadOnly }) => {
       if (hasErrors) {
@@ -109,7 +111,10 @@ const BannerWrapper = styled.button`
   .img-wrapper {
     width: 19px;
     height: 19px;
-    margin-right: 19px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto 0;
     border-radius: 50%;
     background-color: ${({ hasErrors, isOpen, isReadOnly }) => {
       if (hasErrors) {
@@ -128,6 +133,8 @@ const BannerWrapper = styled.button`
   .cta-wrapper {
     display: flex;
     margin-left: auto;
+    height: 100%;
+    align-items:center;
     > button {
       padding: 0;
     }
@@ -182,8 +189,16 @@ const BannerWrapper = styled.button`
   -webkit-font-smoothing: antialiased;
 
   > div {
-    align-self: center;
+    align-self: start;
+    text-align: start;
     margin-top: -2px;
+    max-width:100%;
+    margin: auto 0;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
   }
 `;
 
