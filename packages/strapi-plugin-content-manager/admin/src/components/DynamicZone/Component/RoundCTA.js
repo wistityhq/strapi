@@ -14,7 +14,7 @@ const RoundCTA = styled.div`
     line-height: 29px;
     margin: auto;
   }
-  &:not(.arrow-btn) {
+  &.remove-btn {
     position: absolute;
     top: -16px;
     right: 10px;

@@ -109,6 +109,26 @@ const reducer = (state, action) => {
               state.getIn(['modifiedData', action.dynamicZoneName, action.currentIndex])
             );
         });
+    case 'MOVE_COMPONENT_TO':
+      return state
+        .update('shouldCheckErrors', v => {
+          if (action.shouldCheckErrors) {
+            return !v;
+          }
+
+          return v;
+        })
+        .updateIn(['modifiedData', action.dynamicZoneName], list => {
+          console.log(list);
+          console.log(action);
+
+          return list
+            .delete(list.size - 1)
+            .insert(
+              action.currentIndex,
+              state.getIn(['modifiedData', action.dynamicZoneName, list.size - 1])
+            );
+        });
     case 'MOVE_COMPONENT_DOWN':
       return state
         .update('shouldCheckErrors', v => {

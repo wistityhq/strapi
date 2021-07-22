@@ -355,6 +355,20 @@ const EditViewDataManagerProvider = ({
     [shouldCheckDZErrors]
   );
 
+  const moveComponentTo = useCallback(
+    (dynamicZoneName, currentIndex) => {
+      emitEventRef.current('changeComponentsOrder');
+
+      dispatch({
+        type: 'MOVE_COMPONENT_TO',
+        dynamicZoneName,
+        currentIndex,
+        shouldCheckErrors: shouldCheckDZErrors(dynamicZoneName),
+      });
+    },
+    [shouldCheckDZErrors]
+  );
+
   const moveComponentField = useCallback((pathToComponent, dragIndex, hoverIndex) => {
     dispatch({
       type: 'MOVE_COMPONENT_FIELD',
@@ -449,6 +463,7 @@ const EditViewDataManagerProvider = ({
         layout: currentContentTypeLayout,
         modifiedData,
         moveComponentDown,
+        moveComponentTo,
         moveComponentField,
         moveComponentUp,
         moveRelation,

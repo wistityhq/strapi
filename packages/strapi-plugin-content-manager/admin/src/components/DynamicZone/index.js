@@ -30,6 +30,7 @@ const DynamicZone = ({
   labelIcon,
   moveComponentUp,
   moveComponentDown,
+  moveComponentTo,
   removeComponentFromDynamicZone,
   dynamicDisplayedComponents,
   fieldSchema,
@@ -138,10 +139,13 @@ const DynamicZone = ({
               isFieldAllowed={isFieldAllowed}
               moveComponentDown={moveComponentDown}
               moveComponentUp={moveComponentUp}
+              moveComponentTo={moveComponentTo}
               name={name}
               removeComponentFromDynamicZone={removeComponentFromDynamicZone}
+              addComponentToDynamicZone={handleAddComponent}
               showDownIcon={showDownIcon}
               showUpIcon={showUpIcon}
+              availableComponentsList={dynamicZoneAvailableComponents}
             />
           );
         })}
@@ -227,6 +231,7 @@ DynamicZone.propTypes = {
   }).isRequired,
   moveComponentUp: PropTypes.func.isRequired,
   moveComponentDown: PropTypes.func.isRequired,
+  moveComponentTo: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   removeComponentFromDynamicZone: PropTypes.func.isRequired,
 };
