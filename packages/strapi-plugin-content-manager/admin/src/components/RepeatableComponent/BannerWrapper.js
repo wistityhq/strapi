@@ -8,10 +8,10 @@ const BannerWrapper = styled.button`
   width: 100%;
   padding: 0 15px;
   border: 1px solid
-    ${({ hasErrors, isOpen, isReadOnly }) => {
+    ${({ hasErrors, isOpen, isReadOnly, collapsable }) => {
       if (hasErrors) {
         return '#FFA784';
-      } else if (isOpen && !isReadOnly) {
+      } else if (isOpen && !isReadOnly && collapsable) {
         return '#AED4FB';
       } else {
         return 'rgba(227, 233, 243, 0.75)';
@@ -50,21 +50,21 @@ const BannerWrapper = styled.button`
   font-weight: 500;
   cursor: pointer;
 
-  background-color: ${({ hasErrors, isOpen, isReadOnly }) => {
+  background-color: ${({ hasErrors, isOpen, isReadOnly, collapsable }) => {
     if (isReadOnly) {
       return '#fafafb';
     }
 
     if (hasErrors && isOpen) {
       return '#FFE9E0';
-    } else if (isOpen) {
+    } else if (isOpen && collapsable) {
       return '#E6F0FB';
     } else {
       return '#ffffff';
     }
   }};
 
-  ${({ hasErrors, isOpen, isReadOnly }) => {
+  ${({ hasErrors, isOpen, isReadOnly, collapsable }) => {
     if (hasErrors) {
       return `
         color: #f64d0a;
@@ -79,7 +79,7 @@ const BannerWrapper = styled.button`
       `;
     }
 
-    if (isOpen) {
+    if (isOpen && collapsable) {
       return `
         color: #007eff;
         font-weight: 600;
@@ -87,8 +87,8 @@ const BannerWrapper = styled.button`
     }
   }}
 
-  ${({ isOpen }) => {
-    if (isOpen) {
+  ${({ isOpen, collapsable }) => {
+    if (isOpen && collapsable) {
       return `
         &.trash-icon {
           svg {
@@ -111,10 +111,10 @@ const BannerWrapper = styled.button`
     height: 19px;
     margin-right: 19px;
     border-radius: 50%;
-    background-color: ${({ hasErrors, isOpen, isReadOnly }) => {
+    background-color: ${({ hasErrors, isOpen, isReadOnly, collapsable }) => {
       if (hasErrors) {
         return '#FAA684';
-      } else if (isOpen && !isReadOnly) {
+      } else if (isOpen && !isReadOnly && collapsable) {
         return '#AED4FB';
       } else {
         return '#F3F4F4';
@@ -149,11 +149,11 @@ const BannerWrapper = styled.button`
     }
   }
 
-  ${({ hasErrors, isOpen, isReadOnly }) => {
+  ${({ hasErrors, isOpen, isReadOnly, collapsable }) => {
     let fill = '#ABB3C2';
     let trashFill = '#4B515A';
 
-    if (isOpen && !isReadOnly) {
+    if (isOpen && !isReadOnly && collapsable) {
       fill = '#007EFF';
       trashFill = '#007EFF';
     }
@@ -189,6 +189,7 @@ const BannerWrapper = styled.button`
 
 BannerWrapper.defaultProps = {
   isReadOnly: false,
+  collapsable: true,
 };
 
 export default BannerWrapper;

@@ -21,6 +21,7 @@ const Banner = forwardRef(
       isReadOnly,
       isDragging,
       isOpen,
+      collapsable,
       onClickToggle,
       onClickRemove,
       style,
@@ -37,16 +38,19 @@ const Banner = forwardRef(
         hasErrors={hasErrors}
         isFirst={isFirst}
         isOpen={isOpen}
+        collapsable={collapsable}
         isReadOnly={isReadOnly}
         onClick={onClickToggle}
         ref={refs ? refs.dropRef : null}
         style={style}
       >
-        {isDragging && <PreviewCarret isComponent />}
+        {isDragging && collapsable && <PreviewCarret isComponent />}
         <>
-          <div className="img-wrapper" style={{ display }}>
-            <Carret />
-          </div>
+          {collapsable && (
+            <div className="img-wrapper" style={{ display }}>
+              <Carret />
+            </div>
+          )}
 
           <FormattedMessage id={`${pluginId}.containers.Edit.pluginHeader.title.new`}>
             {msg => {
@@ -88,6 +92,7 @@ Banner.defaultProps = {
   isDragging: false,
   isFirst: false,
   isOpen: false,
+  collapsable: true,
   onClickRemove: () => {},
   onClickToggle: () => {},
   style: {},
@@ -101,6 +106,7 @@ Banner.propTypes = {
   isDragging: PropTypes.bool,
   isFirst: PropTypes.bool,
   isOpen: PropTypes.bool,
+  collapsable: PropTypes.bool,
   isReadOnly: PropTypes.bool.isRequired,
   onClickToggle: PropTypes.func,
   onClickRemove: PropTypes.func,

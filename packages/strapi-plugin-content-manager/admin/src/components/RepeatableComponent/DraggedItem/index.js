@@ -25,6 +25,7 @@ const DraggedItem = ({
   isFirst,
   isReadOnly,
   isOpen,
+  collapsable,
   onClickToggle,
   schema,
   toggleCollapses,
@@ -148,6 +149,7 @@ const DraggedItem = ({
         doesPreviousFieldContainErrorsAndIsOpen={doesPreviousFieldContainErrorsAndIsOpen}
         isDragging={isDragging}
         isOpen={isOpen}
+        collapsable={collapsable}
         isReadOnly={isReadOnly}
         onClickToggle={onClickToggle}
         onClickRemove={() => {
@@ -162,7 +164,12 @@ const DraggedItem = ({
         onExited={() => setShowForm(false)}
       >
         {!isDragging && (
-          <FormWrapper hasErrors={hasErrors} isOpen={isOpen} isReadOnly={isReadOnly}>
+          <FormWrapper
+            hasErrors={hasErrors}
+            isOpen={isOpen}
+            isReadOnly={isReadOnly}
+            collapsable={collapsable}
+          >
             {showForm &&
               fields.map((fieldRow, key) => {
                 return (
@@ -184,6 +191,7 @@ const DraggedItem = ({
                             name={keys}
                             max={fieldSchema.max}
                             min={fieldSchema.min}
+                            collapsable={!fieldSchema.expanded}
                           />
                         );
                       }
@@ -217,6 +225,7 @@ DraggedItem.defaultProps = {
   hasMinError: false,
   isFirst: false,
   isOpen: false,
+  collapsable: true,
   toggleCollapses: () => {},
 };
 
@@ -227,6 +236,7 @@ DraggedItem.propTypes = {
   hasMinError: PropTypes.bool,
   isFirst: PropTypes.bool,
   isOpen: PropTypes.bool,
+  collapsable: PropTypes.bool,
   isReadOnly: PropTypes.bool.isRequired,
   onClickToggle: PropTypes.func.isRequired,
   schema: PropTypes.object.isRequired,

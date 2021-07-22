@@ -156,7 +156,13 @@ const EditView = ({
                                   const isComponent = fieldSchema.type === 'component';
 
                                   if (isComponent) {
-                                    const { component, max, min, repeatable = false } = fieldSchema;
+                                    const {
+                                      component,
+                                      max,
+                                      min,
+                                      expanded = false,
+                                      repeatable = false,
+                                    } = fieldSchema;
                                     const componentUid = fieldSchema.component;
 
                                     return (
@@ -168,6 +174,7 @@ const EditView = ({
                                         label={metadatas.label}
                                         max={max}
                                         min={min}
+                                        collapsable={!expanded}
                                         name={name}
                                       />
                                     );

@@ -75,6 +75,8 @@
   "form.attribute.item.enumeration.graphql.description": "Allows you to override the default generated name for GraphQL",
   "form.attribute.item.enumeration.placeholder": "Ex:\nmorning\nnoon\nevening",
   "form.attribute.item.enumeration.rules": "Values (one line per value)",
+  "form.attribute.item.expanded": "Expanded",
+  "form.attribute.item.expanded.description": "Set to always show full content without collapse button",
   "form.attribute.item.maximum": "Maximum value",
   "form.attribute.item.maximumLength": "Maximum length",
   "form.attribute.item.minimum": "Minimum value",

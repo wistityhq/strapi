@@ -29,6 +29,7 @@ const FieldComponent = ({
   labelIcon,
   max,
   min,
+  collapsable,
   name,
   // Passed thanks to the connect function
   hasChildrenAllowedFields,
@@ -118,6 +119,7 @@ const FieldComponent = ({
           isReadOnly={isReadOnly}
           max={max}
           min={min}
+          collapsable={collapsable}
           name={name}
         />
       )}
@@ -138,6 +140,7 @@ FieldComponent.defaultProps = {
   labelIcon: null,
   max: Infinity,
   min: -Infinity,
+  collapsable: true,
 };
 
 FieldComponent.propTypes = {
@@ -162,6 +165,7 @@ FieldComponent.propTypes = {
   }),
   max: PropTypes.number,
   min: PropTypes.number,
+  collapsable: PropTypes.bool,
   name: PropTypes.string.isRequired,
   removeComponentFromField: PropTypes.func.isRequired,
 };

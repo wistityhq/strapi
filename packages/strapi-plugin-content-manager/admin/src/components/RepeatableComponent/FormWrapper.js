@@ -8,11 +8,11 @@ const FormWrapper = styled.div`
   padding-right: 20px;
   padding-bottom: 10px;
   border-top: 1px solid
-    ${({ hasErrors, isOpen, isReadOnly }) => {
+    ${({ hasErrors, isOpen, isReadOnly, collapsable }) => {
       if (hasErrors) {
         return '#ffa784';
       }
-      if (isOpen && !isReadOnly) {
+      if (isOpen && !isReadOnly && collapsable) {
         return '#AED4FB';
       }
 
@@ -22,6 +22,7 @@ const FormWrapper = styled.div`
 
 FormWrapper.defaultProps = {
   isReadOnly: false,
+  collapsable: true,
 };
 
 export default FormWrapper;

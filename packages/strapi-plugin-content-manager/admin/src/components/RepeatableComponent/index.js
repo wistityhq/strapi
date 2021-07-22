@@ -25,6 +25,7 @@ const RepeatableComponent = ({
   isReadOnly,
   max,
   min,
+  collapsable,
   name,
 }) => {
   const [collapseToOpen, setCollapseToOpen] = useState('');
@@ -94,7 +95,7 @@ const RepeatableComponent = ({
         {componentValueLength > 0 &&
           componentValue.map((data, index) => {
             const key = data.__temp_key__;
-            const isOpen = collapseToOpen === key;
+            const isOpen = collapsable === false || collapseToOpen === key;
             const componentFieldName = `${name}.${index}`;
             const previousComponentTempKey = get(componentValue, [index - 1, '__temp_key__']);
             const doesPreviousFieldContainErrorsAndIsOpen =
@@ -114,6 +115,7 @@ const RepeatableComponent = ({
                 isFirst={index === 0}
                 isReadOnly={isReadOnly}
                 isOpen={isOpen}
+                collapsable={collapsable}
                 key={key}
                 onClickToggle={() => {
                   if (isOpen) {
@@ -165,6 +167,7 @@ RepeatableComponent.defaultProps = {
   isNested: false,
   max: Infinity,
   min: -Infinity,
+  collapsable: true,
 };
 
 RepeatableComponent.propTypes = {
@@ -177,6 +180,7 @@ RepeatableComponent.propTypes = {
   isReadOnly: PropTypes.bool.isRequired,
   max: PropTypes.number,
   min: PropTypes.number,
+  collapsable: PropTypes.bool,
   name: PropTypes.string.isRequired,
 };
 

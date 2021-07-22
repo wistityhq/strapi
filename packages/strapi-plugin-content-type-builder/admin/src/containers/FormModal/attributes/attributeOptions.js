@@ -94,6 +94,18 @@ const attributeOptions = {
     },
     validations: {},
   },
+  expanded: {
+    autoFocus: false,
+    name: 'expanded',
+    type: 'checkbox',
+    label: {
+      id: getTrad('form.attribute.item.expanded'),
+    },
+    description: {
+      id: getTrad('form.attribute.item.expanded.description'),
+    },
+    validations: {},
+  },
 };
 
 export default attributeOptions;
