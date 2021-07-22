@@ -155,7 +155,6 @@ module.exports = {
           })
         );
       }
-      ctx.request.body.email = ctx.request.body.email.toLowerCase();
     }
 
     let updateData = {
