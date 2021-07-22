@@ -1157,7 +1157,7 @@ module.exports = {
       }
     } else {
       // Normal way there's no tag object
-      isModelRelated = strapi.models[tag] !== undefined && tag === _.lowerCase(controller);
+      isModelRelated = strapi.models[tag] !== undefined && tag === controller.toLowerCase();
     }
 
     // We create a component when we are sure that we can 'guess' what's needed to be sent
@@ -1626,7 +1626,7 @@ module.exports = {
   getModelForPlugin: function(string, pluginName) {
     const [plugin, model] = this.getModelAndNameForPlugin(string, pluginName);
 
-    return ['plugins', plugin, 'models', _.lowerCase(model)];
+    return ['plugins', plugin, 'models', model.toLowerCase()];
   },
 
   /**
