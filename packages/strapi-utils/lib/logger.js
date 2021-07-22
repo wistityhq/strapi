@@ -6,6 +6,7 @@
 
 const pino = require('pino');
 const _ = require('lodash');
+const { format } = require('date-fns');
 
 const logLevels = Object.keys(pino.levels.values);
 
@@ -28,6 +29,28 @@ function getLogLevel() {
   return logLevel;
 }
 
+function getDateTimeFormatString(envVar, defaultValue) {
+  if (_.isEmpty(envVar) || !_.isString(envVar)) return defaultValue;
+  if (_.isString(envVar)) {
+    try {
+      format(new Date(), envVar);
+      return envVar;
+    } catch (e) {
+      throw new Error('Invalid date format:' + e.message + '.');
+    }
+  }
+}
+
+function getLogDateTime() {
+  if (getBool(process.env.STRAPI_LOG_SERVER_TIME, false)) {
+    const dateTimeFormat = getDateTimeFormatString(
+      process.env.STRAPI_LOG_DATETIME_FORMAT,
+      "yyyy-MM-dd'T'HH:mm:ss.sss"
+    );
+    return format(new Date(), dateTimeFormat);
+  } else return new Date().toISOString();
+}
+
 function getBool(envVar, defaultValue) {
   if (_.isBoolean(envVar)) return envVar;
   if (_.isString(envVar)) {
@@ -48,7 +71,7 @@ const pretty = pino.pretty({
   formatter: (logs, options) => {
     return `${options.asColoredText(
       { level: 10 },
-      `[${new Date().toISOString()}]`
+      `[${getLogDateTime()}]`
     )} ${options.prefix.toLowerCase()} ${logs.stack ? logs.stack : logs.msg}`;
   },
 });
