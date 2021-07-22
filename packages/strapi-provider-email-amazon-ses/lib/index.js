@@ -26,7 +26,7 @@ module.exports = {
           client.sendEmail(removeUndefined(msg), function(err) {
             if (err) {
               if (err.Message) {
-                reject(`${err.Message} ${err.Detail ? err.Detail : ''}`);
+                reject({message: `${err.Message} ${err.Detail ? err.Detail : ''}`});
               }
               reject(err);
             } else {
