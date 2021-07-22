@@ -7,6 +7,7 @@ import {
   LabelIconWrapper,
   prefixFileUrlWithBackendUrl,
 } from 'strapi-helper-plugin';
+import { Description } from '@buffetjs/styles';
 import pluginPermissions from '../../permissions';
 import { getTrad, formatFileForEditing } from '../../utils';
 import CardControl from '../CardControl';
@@ -24,6 +25,7 @@ import ErrorMessage from './ErrorMessage';
 const InputMedia = ({
   disabled,
   label,
+  description,
   onChange,
   name,
   attribute,
@@ -136,7 +138,7 @@ const InputMedia = ({
         <span>{`${label}${displaySlidePagination}`}</span>
         {labelIcon && <LabelIconWrapper title={labelIcon.title}>{labelIcon.icon}</LabelIconWrapper>}
       </Name>
-
+      {!!description && <Description>{description}</Description>}
       <CardPreviewWrapper onDragOver={handleAllowDrop} onDrop={handleDrop}>
         <CardControlWrapper>
           {!disabled && (
@@ -221,6 +223,7 @@ InputMedia.propTypes = {
     icon: PropTypes.node.isRequired,
     title: PropTypes.string,
   }),
+  description: PropTypes.string,
   name: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   type: PropTypes.string.isRequired,
@@ -232,6 +235,7 @@ InputMedia.defaultProps = {
   error: null,
   label: '',
   labelIcon: null,
+  description: '',
   value: null,
 };
 

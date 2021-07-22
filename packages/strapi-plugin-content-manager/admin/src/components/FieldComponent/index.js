@@ -2,6 +2,7 @@
 import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import { size } from 'lodash';
+import { Description } from '@buffetjs/styles';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import isEqual from 'react-fast-compare';
@@ -27,6 +28,7 @@ const FieldComponent = ({
   isNested,
   label,
   labelIcon,
+  description,
   max,
   min,
   name,
@@ -86,6 +88,7 @@ const FieldComponent = ({
           </LabelIconWrapper>
         )}
       </Label>
+      {!!description && <Description>{description}</Description>}
       {showResetComponent && (
         <Reset
           onClick={e => {
@@ -136,6 +139,7 @@ FieldComponent.defaultProps = {
   isRepeatable: false,
   isNested: false,
   labelIcon: null,
+  description: '',
   max: Infinity,
   min: -Infinity,
 };
@@ -160,6 +164,7 @@ FieldComponent.propTypes = {
       defaultMessage: PropTypes.string.isRequired,
     }),
   }),
+  description: PropTypes.string,
   max: PropTypes.number,
   min: PropTypes.number,
   name: PropTypes.string.isRequired,

@@ -13,6 +13,15 @@ const Wrapper = styled.div`
 
     return '';
   }}
+
+  > p {
+    width: 100%;
+    font-size: 13px;
+    line-height: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 export default Wrapper;

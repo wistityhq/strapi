@@ -166,6 +166,7 @@ const EditView = ({
                                         labelIcon={labelIcon}
                                         isRepeatable={repeatable}
                                         label={metadatas.label}
+                                        description={metadatas.description}
                                         max={max}
                                         min={min}
                                         name={name}

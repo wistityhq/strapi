@@ -185,7 +185,10 @@ const EditSettingsView = ({ components, mainLayout, isContentTypeView, slug, upd
         return null;
       }
 
-      if ((formType === 'component' || formType === 'media') && meta !== 'label') {
+      if (
+        (formType === 'component' || formType === 'media') &&
+        !['label', 'description'].includes(meta)
+      ) {
         return null;
       }
 
