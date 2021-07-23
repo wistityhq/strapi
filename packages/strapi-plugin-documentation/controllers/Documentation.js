@@ -33,6 +33,38 @@ module.exports = {
     }
   },
 
+  getApiSpecJson: async ctx => {
+    const version = (function() {
+      const { major, minor, patch } = ctx.params;
+      if (major && minor && patch) {
+        const userVersion = `${major}.${minor}.${patch}`;
+        strapi.log.debug(`Returning user requested OpenAPI spec version: ${userVersion}`);
+        return userVersion;
+      }
+      const latestVersion = strapi.plugins.documentation.config.info.version;
+      strapi.log.debug(`Returning latest OpenAPI spec version: ${latestVersion}`);
+      return latestVersion;
+    })();
+    const openAPISpecsPath = path.join(
+      strapi.config.appPath,
+      'extensions',
+      'documentation',
+      'documentation',
+      version,
+      'full_documentation.json'
+    );
+    try {
+      const documentation = fs.readFileSync(openAPISpecsPath, 'utf8');
+      return JSON.parse(documentation);
+    } catch (err) {
+      if (err && err.code === 'ENOENT') {
+        ctx.response.status = 404;
+        return;
+      }
+      throw err;
+    }
+  },
+
   async index(ctx, next) {
     try {
       /**

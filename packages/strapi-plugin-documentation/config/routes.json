@@ -24,6 +24,46 @@
     },
     {
       "method": "GET",
+      "path": "/v:major(\\d+).:minor(\\d+).:patch(\\d+)/swagger.json",
+      "handler": "Documentation.getApiSpecJson",
+      "config": {
+        "policies": [
+          ["admin::hasPermissions", ["plugins::documentation.read"]]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/v:major(\\d+).:minor(\\d+).:patch(\\d+)/openapi.json",
+      "handler": "Documentation.getApiSpecJson",
+      "config": {
+        "policies": [
+          ["admin::hasPermissions", ["plugins::documentation.read"]]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/swagger.json",
+      "handler": "Documentation.getApiSpecJson",
+      "config": {
+        "policies": [
+          ["admin::hasPermissions", ["plugins::documentation.read"]]
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "path": "/openapi.json",
+      "handler": "Documentation.getApiSpecJson",
+      "config": {
+        "policies": [
+          ["admin::hasPermissions", ["plugins::documentation.read"]]
+        ]
+      }
+    },
+    {
+      "method": "GET",
       "path": "/login",
       "handler": "Documentation.loginView",
       "config": {

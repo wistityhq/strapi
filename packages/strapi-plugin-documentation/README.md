@@ -86,6 +86,21 @@ Overriding the `full_documentation.json` is a bad idea since it will be regenera
 
 You can easily modify the description, summary, parameters of a path however, for a response like the `200` you will need to write the full object. Take a look at the `./plugins/users-permissions/documentation/overrides/1.0.0/users-permissions-User.json` for a complete example.
 
+### `swagger.json` and `openapi.json` files
+
+This plugin is able to serve up these files. You need to grant the permission to
+call the controller action to the roles that can have access.
+
+The endpoints exposed are (assuming you use the default `/documentation` base
+URL):
+
+- `/documentation/swagger.json` or `/documentation/openapi.json`: the OpenAPI
+  spec for the latest version of your API. Both endpoints serve the same
+  document.
+- `/documentation/vN.N.N/swagger.json` or
+  `/documentation/vN.N.N/openapi.json`: request the spec for a specific
+  version of your API. For example: `/documentation/v1.0.0/openapi.json`
+
 ### FAQ
 
 #### How does it generate the others plugins documentation ?
