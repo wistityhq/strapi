@@ -1,6 +1,6 @@
 'use strict';
 
-const { mergeSchemas } = require('../utils');
+const { mergeSchemas } = require('../old/utils');
 
 const createRootSchema = () => ({
   definition: '',

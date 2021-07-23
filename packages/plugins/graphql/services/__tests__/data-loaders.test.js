@@ -1,6 +1,6 @@
 'use strict';
 
-const dataLoaders = require('../data-loaders');
+const dataLoaders = require('../old/data-loaders');
 
 describe('dataloader', () => {
   describe('serializeKey', () => {

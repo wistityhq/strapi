@@ -1,6 +1,6 @@
 'use strict';
 
-const { buildMutation, buildQuery } = require('../resolvers-builder');
+const { buildMutation, buildQuery } = require('../old/resolvers-builder');
 
 global.strapi = {
   plugins: {

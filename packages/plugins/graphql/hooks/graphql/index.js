@@ -73,7 +73,7 @@ module.exports = strapi => {
     },
 
     initialize() {
-      const schema = strapi.plugins.graphql.services['schema-generator'].generateSchema();
+      const schema = strapi.plugins.graphql.services.schema(strapi).generateContentAPISchema();
 
       if (_.isEmpty(schema)) {
         strapi.log.warn('The GraphQL schema has not been generated because it is empty');
@@ -102,10 +102,10 @@ module.exports = strapi => {
         schema,
         uploads: false,
         context: ({ ctx }) => {
-          // Initiliase loaders for this request.
+          // Initialize loaders for this request.
           // TODO: set loaders in the context not globally
 
-          strapi.plugins.graphql.services['data-loaders'].initializeLoader();
+          strapi.plugins.graphql.services.old['data-loaders'].initializeLoader();
 
           return {
             context: ctx,

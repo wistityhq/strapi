@@ -17,6 +17,7 @@ const { QUERY_OPERATORS } = require('@strapi/utils');
  * @param  {Schema[]} sources - source objects to merge into the destination object
  * @returns {Schema}
  */
+// todo[v4]: get rid off this
 const mergeSchemas = (object, ...sources) => {
   sources.forEach(sub => {
     if (_.isEmpty(sub)) return;
@@ -37,6 +38,7 @@ const mergeSchemas = (object, ...sources) => {
  * Returns an empty schema
  * @returns {Schema}
  */
+// todo[v4] get rid of this
 const createDefaultSchema = () => ({
   definition: '',
   query: {},

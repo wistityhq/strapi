@@ -1,6 +1,6 @@
 'use strict';
 
-const { toPlural, toSingular, toInputName } = require('../naming');
+const { toPlural, toSingular, toInputName } = require('../old/naming');
 
 describe('Name util', () => {
   it('Pluralizes with camelcase', () => {

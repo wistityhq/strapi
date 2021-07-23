@@ -230,7 +230,8 @@ const addGraphqlLocalizationAction = contentType => {
     return;
   }
 
-  const { toSingular, toPlural } = strapi.plugins.graphql.services.naming;
+  // todo[v4]: Rework the way we customize args, types & queries: expose a custom API / hooks
+  const { toSingular, toPlural } = strapi.plugins.graphql.services.old.naming;
 
   // We use a string instead of an enum as the locales can be changed in the admin
   // NOTE: We could use a custom scalar so the validation becomes dynamic

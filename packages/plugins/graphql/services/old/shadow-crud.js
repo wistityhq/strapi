@@ -8,7 +8,7 @@ const {
   constants: { DP_PUB_STATE_LIVE },
 } = contentTypes;
 
-const DynamicZoneScalar = require('../types/dynamiczoneScalar');
+const DynamicZoneScalar = require('../../types/dynamiczoneScalar');
 
 const { formatModelConnectionsGQL } = require('./build-aggregation');
 const types = require('./type-builder');
@@ -244,7 +244,8 @@ const buildAssocResolvers = model => {
               obj[alias] = _.get(obj[alias], targetModel.primaryKey, obj[alias]);
             }
 
-            const loader = strapi.plugins.graphql.services['data-loaders'].loaders[targetModel.uid];
+            const loader =
+              strapi.plugins.graphql.services.old['data-loaders'].loaders[targetModel.uid];
 
             const localId = obj[model.primaryKey];
             const targetPK = targetModel.primaryKey;
@@ -610,3 +611,4 @@ const buildMutationTypeDef = ({ model, action }, ctx) => {
 };
 
 module.exports = buildShadowCrud;
+module.exports.buildAssocResolvers = buildAssocResolvers;

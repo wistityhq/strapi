@@ -1,7 +1,7 @@
 'use strict';
 
-const types = require('../services/type-builder');
-const buildShadowCrud = require('../services/shadow-crud');
+const types = require('../services/old/type-builder');
+const buildShadowCrud = require('../services/old/shadow-crud');
 
 const playerModel = {
   attributes: {
