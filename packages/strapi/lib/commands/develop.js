@@ -29,6 +29,7 @@ module.exports = async function({ build, watchAdmin, polling, browser }) {
         stdio: 'inherit',
       });
     } catch (err) {
+      console.log('Error running "build" command. It is likely missing from your package.json')
       process.exit(1);
     }
   }

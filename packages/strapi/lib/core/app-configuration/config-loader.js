@@ -25,6 +25,8 @@ const loadFile = file => {
   switch (ext) {
     case '.js':
       return loadJsFile(file);
+    case '.ts':
+      return loadJsFile(file);
     case '.json':
       return loadJSONFile(file);
     default:
