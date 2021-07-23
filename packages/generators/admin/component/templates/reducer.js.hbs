@@ -1,0 +1,24 @@
+/*
+ *
+ * {{name}} reducer
+ *
+ */
+
+import produce from 'immer';
+import { DEFAULT_ACTION } from './constants';
+
+export const initialState = {};
+
+const {{camelCase name}}Reducer = (state = initialState, action) =>
+  // eslint-disable-next-line consistent-return
+  produce(state, draftState => {
+    switch (action.type) {
+      case DEFAULT_ACTION: {
+			  break;
+			}
+      default:
+        return draftState;
+    }
+  });
+
+export default {{camelCase name}}Reducer;

@@ -1,0 +1,17 @@
+import { initialState } from './reducer';
+{{#unless plugin "===" "admin"}}
+  import pluginId from '../../pluginId'
+{{/unless}}
+
+/**
+ * Direct selector to the {{name}} state domain
+ */
+
+// eslint-disable-next-line import/prefer-default-export
+export const select{{name}}Domain = state => state[`
+{{~#if plugin "===" "admin"~}}
+  {{plugin}}
+{{~else~}}
+  ${pluginId}
+{{~/if~}}
+_{{camelCase name}}`] || initialState;

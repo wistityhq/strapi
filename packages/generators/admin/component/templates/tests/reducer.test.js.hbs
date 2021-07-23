@@ -1,0 +1,21 @@
+// import produce from 'immer';
+import {{camelCase name}}Reducer, { initialState } from '../reducer';
+import { fixtures } from '../../../../../../../admin-test-utils';
+// import { someAction } from '../actions';
+
+/* eslint-disable default-case, no-param-reassign */
+describe('{{camelCase name}}Reducer', () => {
+  let state;
+  beforeEach(() => {
+    state = {
+      ...fixtures.store.state,
+      '{{plugin}}_{{camelCase name}}': initialState,
+    };
+  });
+
+  it('returns the initial state', () => {
+    const expectedResult = state['{{plugin}}_{{camelCase name}}'];
+
+    expect({{camelCase name}}Reducer(undefined, {})).toEqual(expectedResult);
+  });
+});

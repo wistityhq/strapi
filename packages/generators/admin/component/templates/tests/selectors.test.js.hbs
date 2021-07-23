@@ -1,0 +1,17 @@
+import { fixtures } from '../../../../../../../admin-test-utils';
+import { select{{name}}Domain } from '../selectors';
+
+describe('select{{name}}Domain', () => {
+  let store;
+
+  beforeEach(() => {
+    store = { ...fixtures.store.state, '{{plugin}}_{{camelCase name}}': {} };
+  });
+
+  it('expects to have unit tests specified', () => {
+    const actual = select{{name}}Domain(store);
+
+		// TBC
+		expect(actual).toEqual(store['{{plugin}}_{{camelCase name}}']);
+  });
+});

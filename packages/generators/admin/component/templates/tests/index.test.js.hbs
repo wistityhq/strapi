@@ -1,0 +1,64 @@
+/**
+ *
+ * Tests for {{name}}
+ *
+ */
+
+import React from 'react';
+import { render {{~#if useRedux}} as tlRender {{~/if}} } from '@testing-library/react';
+{{#if useRedux}}
+  import { Provider } from 'react-redux';
+  import { createStore, combineReducers } from 'redux';
+  import { initialState } from '../reducer';
+  import reducers from '../../../reducers';
+{{/if}}
+{{#if useI18n}}
+  import { IntlProvider } from 'react-intl';
+{{/if}}
+import {{name}} from '../index';
+
+{{#if useRedux}}
+  const rootReducer = combineReducers(reducers);
+
+  const render = (
+    ui,
+    {
+      preloadedState = initialState,
+      store = createStore(rootReducer, { '{{plugin}}_{{camelCase name}}': preloadedState }),
+      ...renderOptions
+    } = {},
+  ) => {
+    // eslint-disable-next-line react/prop-types
+    const Wrapper = ({ children }) => (
+      <Provider store={store}>{children}</Provider>
+    );
+
+    return tlRender(ui, { wrapper: Wrapper, ...renderOptions });
+  };
+
+{{/if}}
+{{#if useI18n}}
+  const messages = {
+    en: {
+      '{{plugin}}.component.name': '{{titleCase name}}',
+    },
+  };
+
+{{/if}}
+describe('<{{name}} />', () => {
+  it('renders and matches the snapshot', () => {
+    const {
+      container: { firstChild },
+    } = render(
+      {{#if useI18n}}
+        <IntlProvider locale="en" messages={messages} textComponent="span">
+          <{{name}} />
+        </IntlProvider>,
+      {{else}}
+        <{{name}} />
+      {{/if}}
+    );
+
+    expect(firstChild).toMatchInlineSnapshot();
+  });
+});

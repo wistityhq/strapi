@@ -1,0 +1,61 @@
+{{#if styled}}
+  import styled from 'styled-components'
+{{else}}
+  /**
+   *
+   * {{name}}
+   *
+   */
+
+  // import PropTypes from 'prop-types';
+  import React from 'react';
+  {{#if useI18n}}
+    import { useIntl } from 'react-intl';
+    {{#unless plugin "===" "admin"}}
+      import { getTrad } from '../../utils';
+    {{/unless}}
+  {{/if}}
+  {{#if useRedux}}
+    import { useDispatch, useSelector } from 'react-redux';
+    import { select{{name}}Domain } from './selectors';
+    import { defaultAction } from './actions';
+  {{/if}}
+{{/if}}
+
+{{#if styled}}
+  const {{name}} = styled.{{ htmlTag }}``;
+{{else}}
+  const {{name}} = () => {
+    {{#if useI18n}}
+      const { formatMessage } = useIntl();
+    {{/if}}
+    {{#if useRedux}}
+      const dispatch = useDispatch();
+      // eslint-disable-next-line no-unused-vars
+      const state = useSelector(select{{name}}Domain);
+
+      const handleClick = () => dispatch(defaultAction())
+    {{/if}}
+    {{#if useI18n "||" useRedux}}
+
+    {{/if}}
+    return (
+      <div>
+        {{#if useRedux}}
+          <button type="button" onClick={handleClick}>{{titleCase name}}</button>
+        {{/if}}
+        {{#if useI18n}}
+          <p>{formatMessage({ id: {{#if plugin "===" "admin"~}}
+            'component.name'
+          {{~else~}}
+            getTrad('component.name')
+          {{~/if}}, defaultMessage: '{{titleCase name}}' })}</p>
+        {{/if}}
+      </div>
+    );
+  };
+
+  {{name}}.propTypes = {};
+{{/if}}
+
+export default {{name}};
