@@ -40,7 +40,6 @@ const createComponentSchema = (usedComponentNames, reservedNames, category) => {
       .required(errorsTrads.required),
 
     icon: yup.string().required(errorsTrads.required),
-    collectionName: yup.string().nullable(),
   };
 
   return yup.object(shape);

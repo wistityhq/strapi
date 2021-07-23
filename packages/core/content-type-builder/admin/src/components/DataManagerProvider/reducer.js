@@ -1,10 +1,12 @@
-import { fromJS, OrderedMap } from 'immutable';
-import { get, has } from 'lodash';
+import produce, { current } from 'immer';
+import get from 'lodash/get';
+import set from 'lodash/set';
 import makeUnique from '../../utils/makeUnique';
+import getRelationType from '../../utils/getRelationType';
 import retrieveComponentsFromSchema from './utils/retrieveComponentsFromSchema';
 import * as actions from './constants';
 
-const initialState = fromJS({
+const initialState = {
   components: {},
   contentTypes: {},
   initialComponents: {},
@@ -14,448 +16,558 @@ const initialState = fromJS({
   reservedNames: {},
   isLoading: true,
   isLoadingForDataToBeSet: true,
-});
+};
 
 const ONE_SIDE_RELATIONS = ['oneWay', 'manyWay'];
 
-const getOppositeNature = originalNature => {
-  if (originalNature === 'manyToOne') {
+const getOppositeRelation = originalRelation => {
+  if (originalRelation === 'manyToOne') {
     return 'oneToMany';
   }
 
-  if (originalNature === 'oneToMany') {
+  if (originalRelation === 'oneToMany') {
     return 'manyToOne';
   }
 
-  return originalNature;
+  return originalRelation;
 };
 
-const addComponentsToState = (state, componentToAddUid, objToUpdate) => {
-  let newObj = objToUpdate;
-  const componentToAdd = state.getIn(['components', componentToAddUid]);
-  const isTemporaryComponent = componentToAdd.get('isTemporary');
-  const componentToAddSchema = componentToAdd.getIn(['schema', 'attributes']);
-  const hasComponentAlreadyBeenAdded =
-    state.getIn(['modifiedData', 'components', componentToAddUid]) !== undefined;
-
-  // created components are already in the modifiedData.components
-  // We don't add them because all modifications will be lost
-  if (isTemporaryComponent || hasComponentAlreadyBeenAdded) {
-    return newObj;
-  }
-
-  // Add the added components to the modifiedData.compontnes
-  newObj = newObj.set(componentToAddUid, componentToAdd);
-  const nestedComponents = retrieveComponentsFromSchema(
-    componentToAddSchema.toJS(),
-    state.get('components').toJS()
-  );
-
-  // We need to add the nested components to the modifiedData.components as well
-  nestedComponents.forEach(componentUid => {
-    const isTemporary = state.getIn(['components', componentUid, 'isTemporary']) || false;
-    const hasNestedComponentAlreadyBeenAdded =
-      state.getIn(['modifiedData', 'components', componentUid]) !== undefined;
-
-    // Same logic here otherwise we will lose the modifications added to the components
-    if (!isTemporary && !hasNestedComponentAlreadyBeenAdded) {
-      newObj = newObj.set(componentUid, state.getIn(['components', componentUid]));
-    }
-  });
-
-  return newObj;
+const findAttributeIndex = (schema, attributeToFind) => {
+  return schema.schema.attributes.findIndex(({ name }) => name === attributeToFind);
 };
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case actions.ADD_ATTRIBUTE: {
-      const {
-        attributeToSet: { name, ...rest },
-        forTarget,
-        targetUid,
-      } = action;
-      delete rest.createComponent;
+const reducer = (state = initialState, action) =>
+  // eslint-disable-next-line consistent-return
+  produce(state, draftState => {
+    switch (action.type) {
+      case actions.ADD_ATTRIBUTE: {
+        const {
+          attributeToSet: { name, ...rest },
+          forTarget,
+          targetUid,
+        } = action;
+        delete rest.createComponent;
 
-      const pathToDataToEdit = ['component', 'contentType'].includes(forTarget)
-        ? [forTarget]
-        : [forTarget, targetUid];
+        const pathToDataToEdit = ['component', 'contentType'].includes(forTarget)
+          ? [forTarget]
+          : [forTarget, targetUid];
 
-      return state
-        .updateIn(['modifiedData', ...pathToDataToEdit, 'schema', 'attributes', name], () => {
-          return fromJS(rest);
-        })
-        .updateIn(['modifiedData', ...pathToDataToEdit, 'schema', 'attributes'], obj => {
-          const type = get(rest, 'type', 'relation');
-          const target = get(rest, 'target', null);
-          const nature = get(rest, 'nature', null);
-          const currentUid = state.getIn(['modifiedData', ...pathToDataToEdit, 'uid']);
+        const currentAttributes = get(
+          state,
+          ['modifiedData', ...pathToDataToEdit, 'schema', 'attributes'],
+          []
+        ).slice();
+
+        // Add the createdAttribute
+        const updatedAttributes = [...currentAttributes, { ...rest, name }];
+
+        set(
+          draftState,
+          ['modifiedData', ...pathToDataToEdit, 'schema', 'attributes'],
+          updatedAttributes
+        );
+
+        if (action.shouldAddComponentToData) {
+          const componentToAddUID = rest.component;
+          const componentToAdd = state.components[componentToAddUID];
+          const isTemporaryComponent = componentToAdd.isTemporary;
+          const hasComponentAlreadyBeenAdded =
+            state.modifiedData.components[componentToAddUID] !== undefined;
+
+          if (isTemporaryComponent || hasComponentAlreadyBeenAdded) {
+            break;
+          }
+
+          // Add the added component to the modifiedData.components
+          draftState.modifiedData.components[componentToAddUID] = componentToAdd;
+
+          const nestedComponents = retrieveComponentsFromSchema(
+            componentToAdd.schema.attributes,
+            state.components
+          );
+
+          // We dont' need to set the already added components otherwise all modifications will be lost so we need to only add the not modified ones
+          const nestedComponentsToAddInModifiedData = nestedComponents.filter(compoUID => {
+            return get(state, ['modifiedData', 'components', compoUID]) === undefined;
+          });
+
+          nestedComponentsToAddInModifiedData.forEach(compoUID => {
+            const compoSchema = get(state, ['components', compoUID], {});
+            const isTemporary = compoSchema.isTemporary || false;
+
+            // If the nested component has not been saved we don't need to add them as they are already in the state
+            if (!isTemporary) {
+              draftState.modifiedData.components[compoUID] = compoSchema;
+            }
+          });
+
+          break;
+        }
+
+        const isCreatingRelationAttribute = rest.type === 'relation';
+
+        if (isCreatingRelationAttribute) {
+          const target = rest.target;
+          const targetAttribute = rest.targetAttribute || null;
+          const relation = rest.relation;
+          const relationType = getRelationType(relation, targetAttribute);
+          const currentUid = get(state, ['modifiedData', ...pathToDataToEdit, 'uid']);
 
           // When the user in creating a relation with the same content type we need to create another attribute
           // that is the opposite of the created one
           if (
-            type === 'relation' &&
-            nature !== 'oneWay' &&
-            nature !== 'manyWay' &&
+            rest.type === 'relation' &&
+            relationType !== 'oneWay' &&
+            relationType !== 'manyWay' &&
             target === currentUid
           ) {
             const oppositeAttribute = {
-              nature: getOppositeNature(nature),
+              name: targetAttribute,
+              relation: getOppositeRelation(relationType),
               target,
-              unique: rest.unique,
-              // Leave this if we allow the required on the relation
-              // required: rest.required,
-              dominant: nature === 'manyToMany' ? !rest.dominant : null,
               targetAttribute: name,
-              columnName: rest.targetColumnName,
-              targetColumnName: rest.columnName,
+              type: 'relation',
             };
 
-            return obj.update(rest.targetAttribute, () => {
-              return fromJS(oppositeAttribute);
-            });
+            if (rest.private) {
+              oppositeAttribute.private = rest.private;
+            }
+
+            const attributesToSet = [...updatedAttributes, oppositeAttribute];
+
+            set(
+              draftState,
+              ['modifiedData', ...pathToDataToEdit, 'schema', 'attributes'],
+              attributesToSet
+            );
           }
-
-          return obj;
-        })
-        .updateIn(['modifiedData', 'components'], existingCompos => {
-          if (action.shouldAddComponentToData) {
-            return addComponentsToState(state, rest.component, existingCompos);
-          }
-
-          return existingCompos;
-        });
-    }
-    case actions.ADD_CREATED_COMPONENT_TO_DYNAMIC_ZONE: {
-      const { dynamicZoneTarget, componentsToAdd } = action;
-
-      return state.updateIn(
-        ['modifiedData', 'contentType', 'schema', 'attributes', dynamicZoneTarget, 'components'],
-        list => {
-          return list.concat(componentsToAdd);
         }
-      );
-    }
-    case actions.CANCEL_CHANGES: {
-      return state
-        .update('modifiedData', () => state.get('initialData'))
-        .update('components', () => state.get('initialComponents'));
-    }
-    case actions.CHANGE_DYNAMIC_ZONE_COMPONENTS: {
-      const { dynamicZoneTarget, newComponents } = action;
 
-      return state
-        .updateIn(
-          ['modifiedData', 'contentType', 'schema', 'attributes', dynamicZoneTarget, 'components'],
-          list => {
-            return fromJS(makeUnique([...list.toJS(), ...newComponents]));
-          }
-        )
-        .updateIn(['modifiedData', 'components'], old => {
-          const componentsSchema = newComponents.reduce((acc, current) => {
-            return addComponentsToState(state, current, acc);
-          }, old);
-
-          return componentsSchema;
-        });
-    }
-
-    case actions.CREATE_SCHEMA: {
-      const newSchema = {
-        uid: action.uid,
-        isTemporary: true,
-        schema: {
-          ...action.data,
-          attributes: {},
-        },
-      };
-
-      return state.updateIn(['contentTypes', action.uid], () => fromJS(newSchema));
-    }
-    case actions.CREATE_COMPONENT_SCHEMA: {
-      const newSchema = {
-        uid: action.uid,
-        isTemporary: true,
-        category: action.componentCategory,
-        schema: {
-          ...action.data,
-          attributes: {},
-        },
-      };
-
-      if (action.shouldAddComponentToData) {
-        return state
-          .updateIn(['components', action.uid], () => fromJS(newSchema))
-          .updateIn(['modifiedData', 'components', action.uid], () => fromJS(newSchema));
+        break;
       }
+      case actions.ADD_CREATED_COMPONENT_TO_DYNAMIC_ZONE: {
+        const { dynamicZoneTarget, componentsToAdd } = action;
 
-      return state.updateIn(['components', action.uid], () => fromJS(newSchema));
-    }
-    case actions.DELETE_NOT_SAVED_TYPE: {
-      // Doing so will also reset the modified and the initial data
-      return state
-        .update('contentTypes', () => state.get('initialContentTypes'))
-        .update('components', () => state.get('initialComponents'));
-    }
-    case actions.EDIT_ATTRIBUTE: {
-      const {
-        attributeToSet: { name, ...rest },
-        forTarget,
-        targetUid,
-        initialAttribute,
-      } = action;
-      let newState = state;
-
-      const initialAttributeName = get(initialAttribute, ['name'], '');
-      const pathToDataToEdit = ['component', 'contentType'].includes(forTarget)
-        ? [forTarget]
-        : [forTarget, targetUid];
-
-      return newState.updateIn(['modifiedData', ...pathToDataToEdit, 'schema'], obj => {
-        let oppositeAttributeNameToRemove = null;
-        let oppositeAttributeNameToUpdate = null;
-        let oppositeAttributeNameToCreateBecauseOfNatureChange = null;
-        let oppositeAttributeToCreate = null;
-
-        const newObj = OrderedMap(
-          obj
-            .get('attributes')
-            .keySeq()
-            .reduce((acc, current) => {
-              const isEditingCurrentAttribute = current === initialAttributeName;
-
-              if (isEditingCurrentAttribute) {
-                const currentUid = state.getIn(['modifiedData', ...pathToDataToEdit, 'uid']);
-                const isEditingRelation = has(initialAttribute, 'nature');
-                const didChangeTargetRelation = initialAttribute.target !== rest.target;
-                const didCreateInternalRelation = rest.target === currentUid;
-                const nature = rest.nature;
-                const initialNature = initialAttribute.nature;
-                const hadInternalRelation = initialAttribute.target === currentUid;
-                const didChangeRelationNature = initialAttribute.nature !== nature;
-                const shouldRemoveOppositeAttributeBecauseOfTargetChange =
-                  didChangeTargetRelation &&
-                  !didCreateInternalRelation &&
-                  hadInternalRelation &&
-                  isEditingRelation;
-                const shouldRemoveOppositeAttributeBecauseOfNatureChange =
-                  didChangeRelationNature &&
-                  hadInternalRelation &&
-                  ['oneWay', 'manyWay'].includes(nature) &&
-                  isEditingRelation;
-                const shouldUpdateOppositeAttributeBecauseOfNatureChange =
-                  !ONE_SIDE_RELATIONS.includes(initialNature) &&
-                  !ONE_SIDE_RELATIONS.includes(nature) &&
-                  hadInternalRelation &&
-                  didCreateInternalRelation &&
-                  isEditingRelation;
-                const shouldCreateOppositeAttributeBecauseOfNatureChange =
-                  ONE_SIDE_RELATIONS.includes(initialNature) &&
-                  !ONE_SIDE_RELATIONS.includes(nature) &&
-                  hadInternalRelation &&
-                  didCreateInternalRelation &&
-                  isEditingRelation;
-                const shouldCreateOppositeAttributeBecauseOfTargetChange =
-                  didChangeTargetRelation &&
-                  didCreateInternalRelation &&
-                  !ONE_SIDE_RELATIONS.includes(nature);
-
-                // Update the opposite attribute name so it is removed at the end of the loop
-                if (
-                  shouldRemoveOppositeAttributeBecauseOfTargetChange ||
-                  shouldRemoveOppositeAttributeBecauseOfNatureChange
-                ) {
-                  oppositeAttributeNameToRemove = initialAttribute.targetAttribute;
-                }
-
-                // Set the opposite attribute that will be updated when the loop attribute matches the name
-                if (
-                  shouldUpdateOppositeAttributeBecauseOfNatureChange ||
-                  shouldCreateOppositeAttributeBecauseOfNatureChange ||
-                  shouldCreateOppositeAttributeBecauseOfTargetChange
-                ) {
-                  oppositeAttributeNameToUpdate = initialAttribute.targetAttribute;
-                  oppositeAttributeNameToCreateBecauseOfNatureChange = rest.targetAttribute;
-
-                  oppositeAttributeToCreate = {
-                    nature: getOppositeNature(rest.nature),
-                    target: rest.target,
-                    unique: rest.unique,
-                    // Leave this if we allow the required on the relation
-                    // required: rest.required,
-                    dominant: rest.nature === 'manyToMany' ? !rest.dominant : null,
-                    targetAttribute: name,
-                    columnName: rest.targetColumnName,
-                    targetColumnName: rest.columnName,
-                  };
-
-                  // First update the current attribute with the value
-                  acc[name] = fromJS(rest);
-
-                  // Then (if needed) create the opposite attribute the case is changing the relation from
-                  // We do it here so keep the order of the attributes
-                  // oneWay || manyWay to something another relation
-                  if (
-                    shouldCreateOppositeAttributeBecauseOfNatureChange ||
-                    shouldCreateOppositeAttributeBecauseOfTargetChange
-                  ) {
-                    acc[oppositeAttributeNameToCreateBecauseOfNatureChange] = fromJS(
-                      oppositeAttributeToCreate
-                    );
-
-                    oppositeAttributeToCreate = null;
-                    oppositeAttributeNameToCreateBecauseOfNatureChange = null;
-                  }
-
-                  return acc;
-                }
-
-                acc[name] = fromJS(rest);
-              } else if (current === oppositeAttributeNameToUpdate) {
-                acc[oppositeAttributeNameToCreateBecauseOfNatureChange] = fromJS(
-                  oppositeAttributeToCreate
-                );
-              } else {
-                acc[current] = obj.getIn(['attributes', current]);
-              }
-
-              return acc;
-            }, {})
+        const dzAttributeIndex = findAttributeIndex(
+          state.modifiedData.contentType,
+          dynamicZoneTarget
         );
 
-        let updatedObj;
+        componentsToAdd.forEach(componentUid => {
+          draftState.modifiedData.contentType.schema.attributes[dzAttributeIndex].components.push(
+            componentUid
+          );
+        });
 
-        // Remove the opposite attribute
-        if (oppositeAttributeNameToRemove !== null) {
-          updatedObj = newObj.remove(oppositeAttributeNameToRemove);
-        } else {
-          updatedObj = newObj;
-        }
-
-        return obj.set('attributes', updatedObj);
-      });
-    }
-
-    case actions.GET_DATA_SUCCEEDED: {
-      return state
-        .update('components', () => fromJS(action.components))
-        .update('initialComponents', () => fromJS(action.components))
-        .update('initialContentTypes', () => fromJS(action.contentTypes))
-        .update('contentTypes', () => fromJS(action.contentTypes))
-        .update('reservedNames', () => fromJS(action.reservedNames))
-
-        .update('isLoading', () => false);
-    }
-    case actions.RELOAD_PLUGIN:
-      return initialState;
-    case actions.REMOVE_FIELD_FROM_DISPLAYED_COMPONENT: {
-      const { attributeToRemoveName, componentUid } = action;
-
-      return state.removeIn([
-        'modifiedData',
-        'components',
-        componentUid,
-        'schema',
-        'attributes',
-        attributeToRemoveName,
-      ]);
-    }
-    case actions.REMOVE_COMPONENT_FROM_DYNAMIC_ZONE:
-      return state.removeIn([
-        'modifiedData',
-        'contentType',
-        'schema',
-        'attributes',
-        action.dzName,
-        'components',
-        action.componentToRemoveIndex,
-      ]);
-    case actions.REMOVE_FIELD: {
-      const { mainDataKey, attributeToRemoveName } = action;
-      const pathToAttributes = ['modifiedData', mainDataKey, 'schema', 'attributes'];
-      const pathToAttributeToRemove = [...pathToAttributes, attributeToRemoveName];
-
-      const attributeToRemoveData = state.getIn(pathToAttributeToRemove);
-
-      const isRemovingRelationAttribute = attributeToRemoveData.get('nature') !== undefined;
-      // Only content types can have relations with themselves since
-      // components can only have oneWay or manyWay relations
-      const canTheAttributeToRemoveHaveARelationWithItself = mainDataKey === 'contentType';
-
-      if (isRemovingRelationAttribute && canTheAttributeToRemoveHaveARelationWithItself) {
-        const { target, nature, targetAttribute } = attributeToRemoveData.toJS();
-        const uid = state.getIn(['modifiedData', 'contentType', 'uid']);
-        const shouldRemoveOppositeAttribute =
-          target === uid && !ONE_SIDE_RELATIONS.includes(nature);
-
-        if (shouldRemoveOppositeAttribute) {
-          return state
-            .removeIn(pathToAttributeToRemove)
-            .removeIn([...pathToAttributes, targetAttribute]);
-        }
+        break;
       }
+      case actions.CANCEL_CHANGES: {
+        draftState.modifiedData = state.initialData;
+        draftState.components = state.initialComponents;
 
-      return state.removeIn(pathToAttributeToRemove).updateIn([...pathToAttributes], attributes => {
-        return attributes.keySeq().reduce((acc, current) => {
-          if (acc.getIn([current, 'targetField']) === attributeToRemoveName) {
-            return acc.removeIn([current, 'targetField']);
+        break;
+      }
+      case actions.CHANGE_DYNAMIC_ZONE_COMPONENTS: {
+        const { dynamicZoneTarget, newComponents } = action;
+
+        const dzAttributeIndex = findAttributeIndex(
+          state.modifiedData.contentType,
+          dynamicZoneTarget
+        );
+
+        const currentDZComponents =
+          state.modifiedData.contentType.schema.attributes[dzAttributeIndex].components;
+
+        const updatedComponents = makeUnique([...currentDZComponents, ...newComponents]);
+
+        draftState.modifiedData.contentType.schema.attributes[
+          dzAttributeIndex
+        ].components = updatedComponents;
+
+        // Retrieve all the components that needs to be added to the modifiedData.components
+        const nestedComponents = retrieveComponentsFromSchema(
+          current(draftState.modifiedData.contentType.schema.attributes),
+          state.components
+        );
+
+        // We dont' need to set the already added components otherwise all modifications will be lost so we need to only add the not modified ones
+        const nestedComponentsToAddInModifiedData = nestedComponents.filter(compoUID => {
+          return get(state, ['modifiedData', 'components', compoUID]) === undefined;
+        });
+
+        nestedComponentsToAddInModifiedData.forEach(compoUID => {
+          const compoSchema = get(state, ['components', compoUID], {});
+          const isTemporary = compoSchema.isTemporary || false;
+
+          // If the nested component has not been saved we don't need to add them as they are already in the state
+          if (!isTemporary) {
+            draftState.modifiedData.components[compoUID] = compoSchema;
+          }
+        });
+
+        break;
+      }
+      case actions.CREATE_COMPONENT_SCHEMA: {
+        const newSchema = {
+          uid: action.uid,
+          isTemporary: true,
+          category: action.componentCategory,
+          schema: {
+            ...action.data,
+            attributes: [],
+          },
+        };
+
+        draftState.components[action.uid] = newSchema;
+
+        if (action.shouldAddComponentToData) {
+          draftState.modifiedData.components[action.uid] = newSchema;
+        }
+
+        break;
+      }
+      case actions.CREATE_SCHEMA: {
+        const newSchema = {
+          uid: action.uid,
+          isTemporary: true,
+          schema: {
+            ...action.data,
+            attributes: [],
+          },
+        };
+
+        draftState.contentTypes[action.uid] = newSchema;
+
+        break;
+      }
+      case actions.EDIT_ATTRIBUTE: {
+        const {
+          attributeToSet: { name, ...rest },
+          forTarget,
+          targetUid,
+          initialAttribute,
+        } = action;
+
+        const initialAttributeName = initialAttribute.name;
+        const pathToDataToEdit = ['component', 'contentType'].includes(forTarget)
+          ? [forTarget]
+          : [forTarget, targetUid];
+
+        const initialAttributeIndex = findAttributeIndex(
+          get(state, ['modifiedData', ...pathToDataToEdit]),
+          initialAttributeName
+        );
+
+        const isEditingRelation = rest.type === 'relation';
+
+        if (!isEditingRelation) {
+          set(
+            draftState,
+            ['modifiedData', ...pathToDataToEdit, 'schema', 'attributes', initialAttributeIndex],
+            action.attributeToSet
+          );
+
+          break;
+        }
+
+        const updatedAttributes = get(state, [
+          'modifiedData',
+          ...pathToDataToEdit,
+          'schema',
+          'attributes',
+        ]).slice();
+
+        // First create the current relation attribute updated
+        const toSet = {
+          name,
+          relation: rest.relation,
+          target: rest.target,
+          targetAttribute: rest.targetAttribute,
+          type: 'relation',
+        };
+
+        if (rest.private) {
+          toSet.private = rest.private;
+        }
+
+        const currentAttributeIndex = updatedAttributes.findIndex(
+          ({ name }) => name === initialAttribute.name
+        );
+
+        // First set it in the updatedAttributes
+        if (currentAttributeIndex !== -1) {
+          updatedAttributes.splice(currentAttributeIndex, 1, toSet);
+        }
+
+        let oppositeAttributeNameToRemove = null;
+        let oppositeAttributeNameToUpdate = null;
+        let oppositeAttributeToCreate = null;
+
+        const currentUid = get(state, ['modifiedData', ...pathToDataToEdit, 'uid']);
+        const didChangeTargetRelation = initialAttribute.target !== rest.target;
+        const didCreateInternalRelation = rest.target === currentUid;
+        const relationType = getRelationType(rest.relation, rest.targetAttribute);
+        const initialRelationType = getRelationType(
+          initialAttribute.relation,
+          initialAttribute.targetAttribute
+        );
+        const hadInternalRelation = initialAttribute.target === currentUid;
+        const didChangeRelationType = initialRelationType !== relationType;
+        const shouldRemoveOppositeAttributeBecauseOfTargetChange =
+          didChangeTargetRelation &&
+          !didCreateInternalRelation &&
+          hadInternalRelation &&
+          isEditingRelation;
+        const shouldRemoveOppositeAttributeBecauseOfRelationTypeChange =
+          didChangeRelationType &&
+          hadInternalRelation &&
+          ['oneWay', 'manyWay'].includes(relationType) &&
+          isEditingRelation;
+        const shouldUpdateOppositeAttributeBecauseOfRelationTypeChange =
+          !ONE_SIDE_RELATIONS.includes(initialRelationType) &&
+          !ONE_SIDE_RELATIONS.includes(relationType) &&
+          hadInternalRelation &&
+          didCreateInternalRelation &&
+          isEditingRelation;
+        const shouldCreateOppositeAttributeBecauseOfRelationTypeChange =
+          ONE_SIDE_RELATIONS.includes(initialRelationType) &&
+          !ONE_SIDE_RELATIONS.includes(relationType) &&
+          hadInternalRelation &&
+          didCreateInternalRelation &&
+          isEditingRelation;
+        const shouldCreateOppositeAttributeBecauseOfTargetChange =
+          didChangeTargetRelation &&
+          didCreateInternalRelation &&
+          !ONE_SIDE_RELATIONS.includes(relationType);
+
+        // Store opposite attribute name to remove at the end of the loop
+        if (
+          shouldRemoveOppositeAttributeBecauseOfTargetChange ||
+          shouldRemoveOppositeAttributeBecauseOfRelationTypeChange
+        ) {
+          oppositeAttributeNameToRemove = initialAttribute.targetAttribute;
+        }
+
+        // In case of oneWay or manyWay relation there isn't an opposite attribute
+        if (oppositeAttributeNameToRemove) {
+          const indexToRemove = updatedAttributes.findIndex(
+            ({ name }) => name === oppositeAttributeNameToRemove
+          );
+
+          updatedAttributes.splice(indexToRemove, 1);
+        }
+
+        // Create the opposite attribute
+        if (
+          shouldCreateOppositeAttributeBecauseOfRelationTypeChange ||
+          shouldCreateOppositeAttributeBecauseOfTargetChange
+        ) {
+          oppositeAttributeToCreate = {
+            name: rest.targetAttribute,
+            relation: getOppositeRelation(relationType),
+            target: rest.target,
+            targetAttribute: name,
+            type: 'relation',
+          };
+
+          if (rest.private) {
+            oppositeAttributeToCreate.private = rest.private;
           }
 
-          return acc;
-        }, attributes);
-      });
-    }
-    case actions.SET_MODIFIED_DATA: {
-      let newState = state
-        .update('isLoadingForDataToBeSet', () => false)
-        .update('initialData', () => fromJS(action.schemaToSet))
-        .update('modifiedData', () => fromJS(action.schemaToSet));
+          const indexToInsert =
+            updatedAttributes.findIndex(({ name }) => name === initialAttribute.name) + 1;
 
-      // Reset the state with the initial data
-      // All created components and content types will be lost
-      if (!action.hasJustCreatedSchema) {
-        newState = newState
-          .update('components', () => state.get('initialComponents'))
-          .update('contentTypes', () => state.get('initialContentTypes'));
+          updatedAttributes.splice(indexToInsert, 0, oppositeAttributeToCreate);
+        }
+
+        if (shouldUpdateOppositeAttributeBecauseOfRelationTypeChange) {
+          oppositeAttributeNameToUpdate = initialAttribute.targetAttribute;
+
+          oppositeAttributeToCreate = {
+            name: rest.targetAttribute,
+            relation: getOppositeRelation(relationType),
+            target: rest.target,
+            targetAttribute: name,
+            type: 'relation',
+          };
+
+          if (rest.private) {
+            oppositeAttributeToCreate.private = rest.private;
+          }
+
+          if (oppositeAttributeNameToUpdate) {
+            const indexToUpdate = updatedAttributes.findIndex(
+              ({ name }) => name === oppositeAttributeNameToUpdate
+            );
+
+            updatedAttributes.splice(indexToUpdate, 1, oppositeAttributeToCreate);
+          }
+        }
+
+        set(
+          draftState,
+          ['modifiedData', ...pathToDataToEdit, 'schema', 'attributes'],
+          updatedAttributes
+        );
+
+        break;
       }
+      case actions.GET_DATA_SUCCEEDED: {
+        draftState.components = action.components;
+        draftState.initialComponents = action.components;
+        draftState.initialContentTypes = action.contentTypes;
+        draftState.contentTypes = action.contentTypes;
+        draftState.reservedNames = action.reservedNames;
+        draftState.isLoading = false;
 
-      return newState;
-    }
-    case actions.UPDATE_SCHEMA: {
-      const {
-        data: { name, collectionName, category, icon, kind },
-        schemaType,
-        uid,
-      } = action;
+        break;
+      }
+      case actions.DELETE_NOT_SAVED_TYPE: {
+        // Doing so will also reset the modified and the initial data
+        draftState.contentTypes = state.initialContentTypes;
+        draftState.components = state.initialComponents;
 
-      let newState = state.updateIn(['modifiedData', schemaType], obj => {
-        let updatedObj = obj
-          .updateIn(['schema', 'name'], () => name)
-          .updateIn(['schema', 'collectionName'], () => collectionName);
+        break;
+      }
+      case actions.RELOAD_PLUGIN: {
+        return initialState;
+      }
+      case actions.REMOVE_COMPONENT_FROM_DYNAMIC_ZONE: {
+        const dzAttributeIndex = findAttributeIndex(state.modifiedData.contentType, action.dzName);
+
+        draftState.modifiedData.contentType.schema.attributes[dzAttributeIndex].components.splice(
+          action.componentToRemoveIndex,
+          1
+        );
+
+        break;
+      }
+      case actions.REMOVE_FIELD: {
+        const { mainDataKey, attributeToRemoveName } = action;
+        const pathToAttributes = ['modifiedData', mainDataKey, 'schema', 'attributes'];
+        const attributeToRemoveIndex = findAttributeIndex(
+          state.modifiedData[mainDataKey],
+          attributeToRemoveName
+        );
+
+        const pathToAttributeToRemove = [...pathToAttributes, attributeToRemoveIndex];
+        const attributeToRemoveData = get(state, pathToAttributeToRemove);
+        const isRemovingRelationAttribute = attributeToRemoveData.type === 'relation';
+        // Only content types can have relations with themselves since
+        // components can only have oneWay or manyWay relations
+        const canTheAttributeToRemoveHaveARelationWithItself = mainDataKey === 'contentType';
+
+        if (isRemovingRelationAttribute && canTheAttributeToRemoveHaveARelationWithItself) {
+          const { target, relation, targetAttribute } = attributeToRemoveData;
+          const relationType = getRelationType(relation, targetAttribute);
+
+          const uid = state.modifiedData.contentType.uid;
+          const shouldRemoveOppositeAttribute =
+            target === uid && !ONE_SIDE_RELATIONS.includes(relationType);
+
+          if (shouldRemoveOppositeAttribute) {
+            const attributes = state.modifiedData[mainDataKey].schema.attributes.slice();
+            const nextAttributes = attributes.filter(attribute => {
+              if (attribute.name === attributeToRemoveName) {
+                return false;
+              }
+
+              if (attribute.target === uid && attribute.targetAttribute === attributeToRemoveName) {
+                return false;
+              }
+
+              return true;
+            });
+
+            draftState.modifiedData[mainDataKey].schema.attributes = nextAttributes;
+
+            break;
+          }
+        }
+
+        // Find all uid fields that have the targetField set to the field we are removing
+        const uidFieldsToUpdate = state.modifiedData[mainDataKey].schema.attributes
+          .slice()
+          .reduce((acc, current) => {
+            if (current.type !== 'uid') {
+              return acc;
+            }
+
+            if (current.targetField !== attributeToRemoveName) {
+              return acc;
+            }
+
+            acc.push(current.name);
+
+            return acc;
+          }, []);
+
+        uidFieldsToUpdate.forEach(fieldName => {
+          const fieldIndex = findAttributeIndex(state.modifiedData[mainDataKey], fieldName);
+
+          delete draftState.modifiedData[mainDataKey].schema.attributes[fieldIndex].targetField;
+        });
+
+        draftState.modifiedData[mainDataKey].schema.attributes.splice(attributeToRemoveIndex, 1);
+
+        break;
+      }
+      case actions.REMOVE_FIELD_FROM_DISPLAYED_COMPONENT: {
+        const { attributeToRemoveName, componentUid } = action;
+
+        const attributeToRemoveIndex = findAttributeIndex(
+          state.modifiedData.components[componentUid],
+          attributeToRemoveName
+        );
+
+        draftState.modifiedData.components[componentUid].schema.attributes.splice(
+          attributeToRemoveIndex,
+          1
+        );
+
+        break;
+      }
+      case actions.SET_MODIFIED_DATA: {
+        draftState.isLoadingForDataToBeSet = false;
+        draftState.initialData = action.schemaToSet;
+        draftState.modifiedData = action.schemaToSet;
+
+        // Reset the state with the initial data
+        // All created components and content types will be lost
+        if (!action.hasJustCreatedSchema) {
+          draftState.components = state.initialComponents;
+          draftState.contentTypes = state.initialContentTypes;
+        }
+
+        break;
+      }
+      case actions.UPDATE_SCHEMA: {
+        const {
+          data: { name, collectionName, category, icon, kind },
+          schemaType,
+          uid,
+        } = action;
+
+        draftState.modifiedData[schemaType].schema.collectionName = collectionName;
+        draftState.modifiedData[schemaType].schema.name = name;
 
         if (action.schemaType === 'component') {
-          updatedObj = updatedObj
-            .update('category', () => category)
-            .updateIn(['schema', 'icon'], () => icon);
-        }
-        if (action.schemaType === 'contentType') {
-          updatedObj = updatedObj.updateIn(['schema', 'kind'], () => kind);
+          draftState.modifiedData.component.category = category;
+          draftState.modifiedData.component.schema.icon = icon;
+          const addedComponent = current(draftState.modifiedData.component);
+          draftState.components[uid] = addedComponent;
+
+          break;
         }
 
-        return updatedObj;
-      });
+        draftState.modifiedData.contentType.schema.kind = kind;
 
-      if (schemaType === 'component') {
-        newState = newState.updateIn(['components'], obj => {
-          return obj.update(uid, () => newState.getIn(['modifiedData', 'component']));
-        });
+        break;
       }
-
-      return newState;
+      default:
+        return draftState;
     }
-    default:
-      return state;
-  }
-};
+  });
 
 export default reducer;
-export { addComponentsToState, initialState };
+export { initialState };

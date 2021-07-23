@@ -42,7 +42,6 @@ const productWithCompo = {
       required: true,
     },
   },
-  connection: 'default',
   name: 'product-with-compo',
   description: '',
   collectionName: '',
@@ -77,6 +76,9 @@ describe('Core API - Basic + compo', () => {
       method: 'POST',
       url: '/product-with-compos',
       body: product,
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);
@@ -89,6 +91,9 @@ describe('Core API - Basic + compo', () => {
     const res = await rq({
       method: 'GET',
       url: '/product-with-compos',
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);
@@ -111,6 +116,9 @@ describe('Core API - Basic + compo', () => {
       method: 'PUT',
       url: `/product-with-compos/${data.productsWithCompo[0].id}`,
       body: product,
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);
@@ -124,6 +132,9 @@ describe('Core API - Basic + compo', () => {
     const res = await rq({
       method: 'DELETE',
       url: `/product-with-compos/${data.productsWithCompo[0].id}`,
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);
@@ -139,6 +150,7 @@ describe('Core API - Basic + compo', () => {
         name: 'Product 1',
         description: 'Product description',
       };
+
       const res = await rq({
         method: 'POST',
         url: '/product-with-compos',

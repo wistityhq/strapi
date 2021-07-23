@@ -1,0 +1,33 @@
+{
+  "info": {
+    "singularName": "locale",
+    "pluralName": "locales",
+    "collectionName": "locales",
+    "displayName": "Locale",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "min": 1,
+      "max": 50,
+      "configurable": false
+    },
+    "code": {
+      "type": "string",
+      "unique": true,
+      "configurable": false
+    }
+  }
+}

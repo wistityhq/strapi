@@ -131,7 +131,6 @@ describe('Authenticated User', () => {
         lastname: input.lastname,
         username: expect.stringOrNull(),
         isActive: expect.any(Boolean),
-        roles: expect.arrayContaining([]),
       });
     });
   });

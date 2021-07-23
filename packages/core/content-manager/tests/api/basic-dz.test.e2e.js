@@ -42,7 +42,6 @@ const productWithDz = {
       required: true,
     },
   },
-  connection: 'default',
   name: 'product with dz',
   description: '',
   collectionName: '',

@@ -25,7 +25,6 @@ const productWithDP = {
       maxLength: 30,
     },
   },
-  connection: 'default',
   draftAndPublish: true,
   name: 'product with DP',
   description: '',

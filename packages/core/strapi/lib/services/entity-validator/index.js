@@ -56,7 +56,7 @@ const preventCast = validator => validator.transform((val, originalVal) => origi
 const createComponentValidator = createOrUpdate => (attr, data, { isDraft }) => {
   let validator;
 
-  const [model] = strapi.db.getModelsByAttribute(attr);
+  const model = strapi.getModel(attr.component);
   if (!model) {
     throw new Error('Validation failed: Model not found');
   }
@@ -134,6 +134,7 @@ const createScalarAttributeValidator = createOrUpdate => (attr, { isDraft }) => 
 
 const createAttributeValidator = createOrUpdate => (attr, data, { isDraft }) => {
   let validator;
+
   if (isMediaAttribute(attr)) {
     validator = yup.mixed();
   } else if (isScalarAttribute(attr)) {

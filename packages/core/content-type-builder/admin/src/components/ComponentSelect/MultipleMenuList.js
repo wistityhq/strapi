@@ -8,6 +8,7 @@ import { CheckboxWrapper, Label } from '@buffetjs/styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useDataManager from '../../hooks/useDataManager';
 import getTrad from '../../utils/getTrad';
+import findAttribute from '../../utils/findAttribute';
 import SelectCheckbox from '../SelectCheckbox';
 import Ul from '../SelectMenuUl';
 import SubUl from '../SelectMenuSubUl';
@@ -26,11 +27,10 @@ const MultipleMenuList = ({
   const { componentsGroupedByCategory, modifiedData } = useDataManager();
   const query = useQuery();
   const dzName = query.get('dynamicZoneTarget');
-  const alreadyUsedComponents = get(
-    modifiedData,
-    ['contentType', 'schema', 'attributes', dzName, 'components'],
-    []
-  );
+  const dzSchema =
+    findAttribute(get(modifiedData, ['contentType', 'schema', 'attributes'], []), dzName) || {};
+  const alreadyUsedComponents = dzSchema.components || [];
+
   const filteredComponentsGroupedByCategory = Object.keys(componentsGroupedByCategory).reduce(
     (acc, current) => {
       const filteredComponents = componentsGroupedByCategory[current].filter(({ uid }) => {

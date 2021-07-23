@@ -1,6 +1,7 @@
 import * as yup from 'yup';
 import { translatedErrors as errorsTrads } from '@strapi/helper-plugin';
 import getTrad from '../../../utils/getTrad';
+import getRelationType from '../../../utils/getRelationType';
 import {
   alreadyUsedAttributeNames,
   createTextShape,
@@ -243,10 +244,15 @@ const types = {
     const shape = {
       name: validators.name(usedAttributeNames, reservedNames),
       target: yup.string().required(errorsTrads.required),
-      nature: yup.string().required(),
-      dominant: yup.boolean().nullable(),
-      unique: yup.boolean().nullable(),
+      relation: yup.string().required(),
+      type: yup.string().required(),
       targetAttribute: yup.lazy(() => {
+        const relationType = getRelationType(modifiedData.relation, modifiedData.targetAttribute);
+
+        if (relationType === 'oneWay' || relationType === 'manyWay') {
+          return yup.string().nullable();
+        }
+
         let schema = yup.string().test(isNameAllowed(reservedNames));
         const initialForbiddenName = [...alreadyTakenTargetAttributes, modifiedData.name];
 
@@ -254,11 +260,8 @@ const types = {
           val => val !== initialData.targetAttribute
         );
 
-        if (!['oneWay', 'manyWay'].includes(modifiedData.nature)) {
-          schema = schema.matches(NAME_REGEX, errorsTrads.regex);
-        }
-
         return schema
+          .matches(NAME_REGEX, errorsTrads.regex)
           .test({
             name: 'forbiddenTargetAttributeName',
             message: getTrad('error.validation.relation.targetAttribute-taken'),

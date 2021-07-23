@@ -14,10 +14,7 @@ module.exports = (api, controller) => {
   if (!_.isObject(api)) {
     throw new Error('Should be an object');
   }
-
-  if (_.isObject(controller) && _.has(controller, 'identity')) {
-    controller = controller.identity.toLowerCase();
-  } else if (_.isString(controller)) {
+  if (_.isString(controller)) {
     controller = controller.toLowerCase();
   } else {
     throw new Error('Should be an object or a string');

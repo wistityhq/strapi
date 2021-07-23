@@ -9,7 +9,7 @@ const ACTIONS = {
   unpublish: 'plugins::content-manager.explorer.publish',
 };
 
-const createPermissionChecker = ({ userAbility, model }) => {
+const createPermissionChecker = strapi => ({ userAbility, model }) => {
   const permissionsManager = strapi.admin.services.permission.createPermissionsManager({
     ability: userAbility,
     model,
@@ -64,6 +64,6 @@ const createPermissionChecker = ({ userAbility, model }) => {
   };
 };
 
-module.exports = {
-  create: createPermissionChecker,
-};
+module.exports = ({ strapi }) => ({
+  create: createPermissionChecker(strapi),
+});

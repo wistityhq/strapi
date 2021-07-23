@@ -44,8 +44,8 @@ module.exports = strapi => {
     nodeVersion: process.version,
     docker: process.env.DOCKER || isDocker(),
     isCI: ciEnv.isCI,
-    version: strapi.config.info.strapi,
-    strapiVersion: strapi.config.info.strapi,
+    version: strapi.config.get('info.strapi'),
+    strapiVersion: strapi.config.get('info.strapi'),
     projectType: isEE ? 'Enterprise' : 'Community',
   };
 

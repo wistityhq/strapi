@@ -2,6 +2,7 @@
 
 const _ = require('lodash');
 const { streamToBuffer } = require('../utils/file');
+const { getService } = require('../utils');
 
 module.exports = {
   definition: `
@@ -32,9 +33,7 @@ module.exports = {
         resolver: async (obj, { file: upload, info, ...fields }) => {
           const file = await formatFile(upload, info, fields);
 
-          const uploadedFiles = await strapi.plugins.upload.services.upload.uploadFileAndPersist(
-            file
-          );
+          const uploadedFiles = await getService('upload').uploadFileAndPersist(file);
 
           // Return response.
           return uploadedFiles.length === 1 ? uploadedFiles[0] : uploadedFiles;
@@ -46,7 +45,7 @@ module.exports = {
         resolver: async (obj, { files: uploads, ...fields }) => {
           const files = await Promise.all(uploads.map(upload => formatFile(upload, {}, fields)));
 
-          const uploadService = strapi.plugins.upload.services.upload;
+          const uploadService = getService('upload');
 
           return Promise.all(files.map(file => uploadService.uploadFileAndPersist(file)));
         },
@@ -55,16 +54,18 @@ module.exports = {
         description: 'Update file information',
         resolverOf: 'plugins::upload.upload.upload',
         resolver: async (obj, { id, info }) => {
-          return await strapi.plugins.upload.services.upload.updateFileInfo(id, info);
+          return await getService('upload').updateFileInfo(id, info);
         },
       },
       deleteFile: {
         description: 'Delete one file',
         resolverOf: 'plugins::upload.upload.destroy',
         resolver: async (obj, options, { context }) => {
-          const file = await strapi.plugins.upload.services.upload.fetch({ id: context.params.id });
+          const file = await getService('upload').findOne({
+            id: context.params.id,
+          });
           if (file) {
-            const fileResult = await strapi.plugins.upload.services.upload.remove(file);
+            const fileResult = await getService('upload').remove(file);
             return { file: fileResult };
           }
         },
@@ -81,7 +82,7 @@ const formatFile = async (upload, extraInfo, metas) => {
 
   const { buffer, info } = await optimize(readBuffer);
 
-  const uploadService = strapi.plugins.upload.services.upload;
+  const uploadService = getService('upload');
   const fileInfo = uploadService.formatFileInfo(
     {
       filename,

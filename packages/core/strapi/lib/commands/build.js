@@ -15,7 +15,7 @@ module.exports = async ({ clean, optimization }) => {
   const dir = process.cwd();
   const config = loadConfiguration(dir);
 
-  const { serverUrl, adminPath } = getConfigUrls(config.get('server'), true);
+  const { serverUrl, adminPath } = getConfigUrls(config.server, true);
 
   console.log(`Building your admin UI with ${green(config.environment)} configuration ...`);
 

@@ -9,7 +9,7 @@ const {
   getWritableAttributes,
 } = require('./content-types');
 
-const { ID_ATTRIBUTE } = constants;
+const { ID_ATTRIBUTE, CREATED_AT_ATTRIBUTE, UPDATED_AT_ATTRIBUTE } = constants;
 
 const sanitizeEntity = (dataSource, options) => {
   const { model, withPrivate = false, isOutput = true, includeFields = null } = options;
@@ -76,7 +76,7 @@ const sanitizeEntity = (dataSource, options) => {
           }
 
           return sanitizeEntity(entity, {
-            model: strapi.db.getModelByGlobalId(entity.__contentType),
+            model: strapi.getModel(entity.__contentType),
             ...baseOptions,
           });
         };
@@ -121,10 +121,9 @@ const sanitizeEntity = (dataSource, options) => {
 const parseOriginalData = data => (_.isFunction(data.toJSON) ? data.toJSON() : data);
 
 const COMPONENT_FIELDS = ['__component'];
-const STATIC_FIELDS = [ID_ATTRIBUTE, '__v'];
+const STATIC_FIELDS = [ID_ATTRIBUTE];
 
 const getAllowedFields = ({ includeFields, model, isOutput }) => {
-  const { options, primaryKey } = model;
   const nonWritableAttributes = getNonWritableAttributes(model);
   const nonVisibleAttributes = getNonVisibleAttributes(model);
 
@@ -132,20 +131,18 @@ const getAllowedFields = ({ includeFields, model, isOutput }) => {
 
   const nonVisibleWritableAttributes = _.intersection(writableAttributes, nonVisibleAttributes);
 
-  const timestamps = options.timestamps || [];
-
   return _.concat(
     includeFields || [],
     ...(isOutput
       ? [
-          primaryKey,
-          timestamps,
           STATIC_FIELDS,
+          CREATED_AT_ATTRIBUTE,
+          UPDATED_AT_ATTRIBUTE,
           COMPONENT_FIELDS,
           ...nonWritableAttributes,
           ...nonVisibleAttributes,
         ]
-      : [primaryKey, STATIC_FIELDS, COMPONENT_FIELDS, ...nonVisibleWritableAttributes])
+      : [STATIC_FIELDS, COMPONENT_FIELDS, ...nonVisibleWritableAttributes])
   );
 };
 

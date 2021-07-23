@@ -10,6 +10,12 @@ const { createService } = require('./service');
 
 /**
  * Returns a service and a controller built based on the content type passed
+ *
+ * @param {object} opts options
+ * @param {object} opts.api api
+ * @param {object} opts.model model
+ * @param {object} opts.strapi strapi
+ * @returns {object} controller & service
  */
 function createCoreApi({ api, model, strapi }) {
   const { modelName } = model;

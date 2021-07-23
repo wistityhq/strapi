@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import makeUnique from '../../../utils/makeUnique';
 
 const retrieveComponentsThatHaveComponents = allComponents => {
@@ -17,10 +17,10 @@ const retrieveComponentsThatHaveComponents = allComponents => {
 };
 
 const doesComponentHaveAComponentField = component => {
-  const attributes = get(component, ['schema', 'attributes'], {});
+  const attributes = get(component, ['schema', 'attributes'], []);
 
-  return Object.keys(attributes).some(attributeName => {
-    const type = get(attributes, [attributeName, 'type'], '');
+  return attributes.some(attribute => {
+    const { type } = attribute;
 
     return type === 'component';
   });

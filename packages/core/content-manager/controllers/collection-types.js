@@ -20,7 +20,10 @@ module.exports = {
       return ctx.forbidden();
     }
 
-    const method = has('_q', query) ? 'searchWithRelationCounts' : 'findWithRelationCounts';
+    // FIXME: do search instead
+    const method = has('_q', query)
+      ? /*'searchWithRelationCounts'*/ 'findWithRelationCounts'
+      : 'findWithRelationCounts';
 
     const permissionQuery = permissionChecker.buildReadQuery(query);
 
@@ -210,17 +213,20 @@ module.exports = {
       return ctx.forbidden();
     }
 
+    // TODO: fix
     const permissionQuery = permissionChecker.buildDeleteQuery(query);
 
-    const idsWhereClause = { [`id_in`]: ids };
+    const idsWhereClause = { id: { $in: ids } };
     const params = {
       ...permissionQuery,
-      _where: [idsWhereClause].concat(permissionQuery._where || {}),
+      filters: {
+        $and: [idsWhereClause].concat(permissionQuery._where || []),
+      },
     };
 
-    const results = await entityManager.findAndDelete(params, model);
+    const { count } = await entityManager.deleteMany(params, model);
 
-    ctx.body = results.map(result => permissionChecker.sanitizeOutput(result));
+    ctx.body = { count };
   },
 
   async previewManyRelations(ctx) {
@@ -239,9 +245,9 @@ module.exports = {
     }
 
     const modelDef = strapi.getModel(model);
-    const assoc = modelDef.associations.find(a => a.alias === targetField);
+    const assoc = modelDef.attributes[targetField];
 
-    if (!assoc || !MANY_RELATIONS.includes(assoc.nature)) {
+    if (!assoc || !MANY_RELATIONS.includes(assoc.relation)) {
       return ctx.badRequest('Invalid target field');
     }
 
@@ -256,18 +262,31 @@ module.exports = {
     }
 
     let relationList;
-    if (assoc.nature === 'manyWay') {
+    // FIXME: load relations using query.load
+    if (!assoc.inversedBy && !assoc.mappedBy) {
       const populatedEntity = await entityManager.findOne(id, model, [targetField]);
       const relationsListIds = populatedEntity[targetField].map(prop('id'));
+
       relationList = await entityManager.findPage(
-        { page, pageSize, id_in: relationsListIds },
-        assoc.targetUid
+        {
+          page,
+          pageSize,
+          filters: {
+            id: relationsListIds,
+          },
+        },
+        assoc.target
       );
     } else {
-      const assocModel = strapi.db.getModelByAssoc(assoc);
       relationList = await entityManager.findPage(
-        { page, pageSize, [`${assoc.via}.${assocModel.primaryKey}`]: entity.id },
-        assoc.targetUid
+        {
+          page,
+          pageSize,
+          filters: {
+            [assoc.inversedBy || assoc.mappedBy]: entity.id,
+          },
+        },
+        assoc.target
       );
     }
 
@@ -276,7 +295,7 @@ module.exports = {
 
     ctx.body = {
       pagination: relationList.pagination,
-      results: relationList.results.map(pick(['id', modelDef.primaryKey, mainField])),
+      results: relationList.results.map(pick(['id', mainField])),
     };
   },
 };

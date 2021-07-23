@@ -1,9 +1,13 @@
+'use strict';
+
+const path = require('path');
+
 module.exports = ({ env }) => ({
   graphql: {
-    amountLimit: 50,
-    depthLimit: 10,
-    apolloServer: {
-      tracing: true,
-    },
+    enabled: true,
+    config: require('./plugins/graphql')({ env }),
+  },
+  i18n: {
+    config: require('./plugins/i18n')({ env }),
   },
 });

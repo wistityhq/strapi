@@ -30,7 +30,7 @@ const customComparator = (value1, value2) => {
   }
 };
 
-module.exports = {
+module.exports = ({ strapi }) => ({
   areObjectsEquals: function(obj1, obj2) {
     // stringify to remove nested empty objects
     return customIsEqual(this.cleanObject(obj1), this.cleanObject(obj2));
@@ -879,7 +879,7 @@ module.exports = {
       },
     };
 
-    const { generateDefaultResponse } = strapi.plugins.documentation.config['x-strapi-config'];
+    const { generateDefaultResponse } = strapi.config.get('plugins.documentation.x-strapi-config');
 
     if (generateDefaultResponse) {
       response.default = {
@@ -940,7 +940,7 @@ module.exports = {
       },
     };
 
-    const { generateDefaultResponse } = strapi.plugins.documentation.config['x-strapi-config'];
+    const { generateDefaultResponse } = strapi.config.get('plugins.documentation.x-strapi-config');
 
     if (generateDefaultResponse) {
       response.default = {
@@ -1414,7 +1414,7 @@ module.exports = {
    * Retrieve the plugin's configuration version
    */
   getDocumentationVersion: () => {
-    const version = strapi.plugins['documentation'].config.info.version;
+    const version = strapi.config.get('plugins.documentation.info.version');
 
     return version;
   },
@@ -1637,7 +1637,9 @@ module.exports = {
    * @returns {Boolean}
    */
   isPluginDocumentationNeeded: function(pluginName) {
-    const { pluginsForWhichToGenerateDoc } = strapi.plugins.documentation.config['x-strapi-config'];
+    const { pluginsForWhichToGenerateDoc } = strapi.config.get(
+      'plugins.documentation.x-strapi-config'
+    );
     if (
       Array.isArray(pluginsForWhichToGenerateDoc) &&
       !pluginsForWhichToGenerateDoc.includes(pluginName)
@@ -1860,4 +1862,4 @@ module.exports = {
 
     return forms;
   },
-};
+});

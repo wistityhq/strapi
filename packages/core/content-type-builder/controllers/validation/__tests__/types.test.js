@@ -120,7 +120,8 @@ describe('Type validators', () => {
     test('Target field must have a type', () => {
       const attributes = {
         relation: {
-          nature: 'oneToOne',
+          type: 'relation',
+          relation: 'oneToOne',
         },
         slug: {
           type: 'uid',

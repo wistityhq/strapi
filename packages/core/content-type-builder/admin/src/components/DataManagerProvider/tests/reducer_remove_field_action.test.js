@@ -1,4 +1,3 @@
-import { fromJS } from 'immutable';
 import reducer, { initialState } from '../reducer';
 import testData from './data';
 import { REMOVE_FIELD } from '../constants';
@@ -6,28 +5,76 @@ import { REMOVE_FIELD } from '../constants';
 describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () => {
   describe('Removing a field that is not a relation', () => {
     it('Should remove the attribute correctly from the content type', () => {
-      const contentTypeUID = 'application::address.address';
-      const attributeToRemoveName = 'city';
       const action = {
         type: REMOVE_FIELD,
         mainDataKey: 'contentType',
-        attributeToRemoveName,
+        attributeToRemoveName: 'city',
         componentUid: '',
       };
 
-      const state = initialState
-        .set('contentTypes', fromJS(testData.contentTypes))
-        .set('initialContentTypes', fromJS(testData.contentTypes))
-        .setIn(['modifiedData', 'contentType'], fromJS(testData.contentTypes[contentTypeUID]))
-        .setIn(['modifiedData', 'components'], fromJS({}));
+      const state = {
+        ...initialState,
+        contentTypes: testData.contentTypes,
+        initialContentTypes: testData.contentTypes,
+        modifiedData: {
+          components: {},
+          contentType: {
+            uid: 'application::address.address',
+            schema: {
+              name: 'address',
+              description: '',
+              connection: 'default',
+              collectionName: '',
+              attributes: [
+                { name: 'geolocation', type: 'json', required: true },
+                { name: 'city', type: 'string', required: true },
+                { name: 'postal_coder', type: 'string' },
+                {
+                  name: 'category',
+                  relation: 'oneToOne',
+                  target: 'application::category.category',
+                  targetAttribute: null,
+                  type: 'relation',
+                },
+                { name: 'cover', type: 'media', multiple: false, required: false },
+                { name: 'images', type: 'media', multiple: true, required: false },
+                { name: 'full_name', type: 'string', required: true },
+              ],
+            },
+          },
+        },
+      };
 
-      const expected = state.removeIn([
-        'modifiedData',
-        'contentType',
-        'schema',
-        'attributes',
-        attributeToRemoveName,
-      ]);
+      const expected = {
+        ...state,
+        modifiedData: {
+          components: {},
+          contentType: {
+            uid: 'application::address.address',
+            schema: {
+              name: 'address',
+              description: '',
+              connection: 'default',
+              collectionName: '',
+              attributes: [
+                { name: 'geolocation', type: 'json', required: true },
+
+                { name: 'postal_coder', type: 'string' },
+                {
+                  name: 'category',
+                  relation: 'oneToOne',
+                  target: 'application::category.category',
+                  targetAttribute: null,
+                  type: 'relation',
+                },
+                { name: 'cover', type: 'media', multiple: false, required: false },
+                { name: 'images', type: 'media', multiple: true, required: false },
+                { name: 'full_name', type: 'string', required: true },
+              ],
+            },
+          },
+        },
+      };
 
       expect(reducer(state, action)).toEqual(expected);
     });
@@ -35,7 +82,6 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
 
   describe('Removing a relation attribute with another content type', () => {
     it('Should remove the attribute correctly if the relation is made with another content type', () => {
-      const contentTypeUID = 'application::menusection.menusection';
       const attributeToRemoveName = 'menu';
       const action = {
         type: REMOVE_FIELD,
@@ -44,19 +90,66 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
         componentUid: '',
       };
 
-      const state = initialState
-        .set('contentTypes', fromJS(testData.contentTypes))
-        .set('initialContentTypes', fromJS(testData.contentTypes))
-        .setIn(['modifiedData', 'contentType'], fromJS(testData.contentTypes[contentTypeUID]))
-        .setIn(['modifiedData', 'components'], fromJS({}));
+      const state = {
+        ...initialState,
+        contentTypes: testData.contentTypes,
+        initialContentTypes: testData.contentTypes,
+        modifiedData: {
+          components: {},
+          contentType: {
+            uid: 'application::menusection.menusection',
+            schema: {
+              name: 'menusection',
+              description: '',
+              connection: 'default',
+              collectionName: '',
+              attributes: [
+                { name: 'name', type: 'string', required: true, minLength: 6 },
+                {
+                  name: 'dishes',
+                  component: 'default.dish',
+                  type: 'component',
+                  repeatable: true,
+                },
+                {
+                  name: 'menu',
+                  relation: 'manyToOne',
+                  target: 'application::menu.menu',
+                  targetAttribute: 'menusections',
+                  type: 'relation',
+                },
+              ],
+            },
+          },
+        },
+      };
 
-      const expected = state.removeIn([
-        'modifiedData',
-        'contentType',
-        'schema',
-        'attributes',
-        attributeToRemoveName,
-      ]);
+      const expected = {
+        ...initialState,
+        contentTypes: testData.contentTypes,
+        initialContentTypes: testData.contentTypes,
+        modifiedData: {
+          components: {},
+          contentType: {
+            uid: 'application::menusection.menusection',
+            schema: {
+              name: 'menusection',
+              description: '',
+              connection: 'default',
+              collectionName: '',
+              attributes: [
+                { name: 'name', type: 'string', required: true, minLength: 6 },
+                {
+                  name: 'dishes',
+                  component: 'default.dish',
+                  type: 'component',
+                  repeatable: true,
+                },
+              ],
+            },
+          },
+        },
+      };
 
       expect(reducer(state, action)).toEqual(expected);
     });
@@ -65,6 +158,7 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
   describe('Removing a relation attribute with the same content type', () => {
     it('Should handle the removal of the one side (oneWay or manyWay) nature correctly', () => {
       const contentTypeUID = 'application::dummy.dummy';
+
       const action = {
         type: REMOVE_FIELD,
         mainDataKey: 'contentType',
@@ -75,45 +169,35 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
         uid: contentTypeUID,
         schema: {
           name: 'dummy',
-          attributes: {
-            name: { type: 'string' },
-            one_way_attr: {
-              nature: 'oneWay',
-              targetAttribute: '-',
+          attributes: [
+            { name: 'name', type: 'string' },
+            {
+              name: 'one_way_attr',
+              relation: 'oneToOne',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            many_way_attrs: {
-              nature: 'manyWay',
-              targetAttribute: '-',
+            {
+              name: 'many_way_attrs',
+              relation: 'oneToMany',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            one_to_many_left: {
-              nature: 'oneToMany',
+            {
+              name: 'one_to_many_left',
+              relation: 'oneToMany',
               targetAttribute: 'one_to_many_right',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            one_to_many_right: {
-              nature: 'manyToOne',
+            {
+              name: 'one_to_many_right',
+              relation: 'manyToOne',
               target: 'application::dummy.dummy',
-              unique: false,
-              dominant: null,
               targetAttribute: 'one_to_many_left',
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-          },
+          ],
         },
       };
 
@@ -121,44 +205,53 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
         uid: contentTypeUID,
         schema: {
           name: 'dummy',
-          attributes: {
-            name: { type: 'string' },
-            many_way_attrs: {
-              nature: 'manyWay',
-              targetAttribute: '-',
+          attributes: [
+            { name: 'name', type: 'string' },
+            {
+              name: 'many_way_attrs',
+              relation: 'oneToMany',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            one_to_many_left: {
-              nature: 'oneToMany',
+            {
+              name: 'one_to_many_left',
+              relation: 'oneToMany',
               targetAttribute: 'one_to_many_right',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            one_to_many_right: {
-              nature: 'manyToOne',
+            {
+              name: 'one_to_many_right',
+              relation: 'manyToOne',
               target: 'application::dummy.dummy',
-              unique: false,
-              dominant: null,
               targetAttribute: 'one_to_many_left',
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-          },
+          ],
         },
       };
 
-      const state = initialState
-        .setIn(['contentTypes', contentTypeUID], fromJS(contentType))
-        .setIn(['modifiedData', 'contentType'], fromJS(contentType));
+      const state = {
+        ...initialState,
+        contentTypes: {
+          [contentTypeUID]: contentType,
+        },
+        modifiedData: {
+          components: {},
+          contentType,
+        },
+      };
 
-      const expected = state.setIn(['modifiedData', 'contentType'], fromJS(expectedContentType));
+      const expected = {
+        ...initialState,
+        contentTypes: {
+          [contentTypeUID]: contentType,
+        },
+        modifiedData: {
+          components: {},
+          contentType: expectedContentType,
+        },
+      };
 
       expect(reducer(state, action)).toEqual(expected);
     });
@@ -175,45 +268,35 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
         uid: contentTypeUID,
         schema: {
           name: 'dummy',
-          attributes: {
-            name: { type: 'string' },
-            one_way_attr: {
-              nature: 'oneWay',
-              targetAttribute: '-',
+          attributes: [
+            { name: 'name', type: 'string' },
+            {
+              name: 'one_way_attr',
+              relation: 'oneToOne',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            many_way_attrs: {
-              nature: 'manyWay',
-              targetAttribute: '-',
+            {
+              name: 'many_way_attrs',
+              relation: 'oneToMany',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            one_to_many_left: {
-              nature: 'oneToMany',
+            {
+              name: 'one_to_many_left',
+              relation: 'oneToMany',
               targetAttribute: 'one_to_many_right',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            one_to_many_right: {
-              nature: 'manyToOne',
+            {
+              name: 'one_to_many_right',
+              relation: 'manyToOne',
               target: 'application::dummy.dummy',
-              unique: false,
-              dominant: null,
               targetAttribute: 'one_to_many_left',
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-          },
+          ],
         },
       };
 
@@ -221,35 +304,41 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
         uid: contentTypeUID,
         schema: {
           name: 'dummy',
-          attributes: {
-            name: { type: 'string' },
-            one_way_attr: {
-              nature: 'oneWay',
-              targetAttribute: '-',
+          attributes: [
+            { name: 'name', type: 'string' },
+            {
+              name: 'one_way_attr',
+              relation: 'oneToOne',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-            many_way_attrs: {
-              nature: 'manyWay',
-              targetAttribute: '-',
+            {
+              name: 'many_way_attrs',
+              relation: 'oneToMany',
               target: contentTypeUID,
-              unique: false,
-              dominant: null,
-              columnName: null,
-              targetColumnName: null,
+              type: 'relation',
             },
-          },
+          ],
         },
       };
 
-      const state = initialState
-        .setIn(['contentTypes', contentTypeUID], fromJS(contentType))
-        .setIn(['modifiedData', 'contentType'], fromJS(contentType));
+      const state = {
+        ...initialState,
+        contentTypes: { [contentTypeUID]: contentType },
+        modifiedData: {
+          components: {},
+          contentType,
+        },
+      };
 
-      const expected = state.setIn(['modifiedData', 'contentType'], fromJS(expectedContentType));
+      const expected = {
+        ...initialState,
+        contentTypes: { [contentTypeUID]: contentType },
+        modifiedData: {
+          components: {},
+          contentType: expectedContentType,
+        },
+      };
 
       expect(reducer(state, action)).toEqual(expected);
       expect(
@@ -260,9 +349,9 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
       ).toEqual(expected);
     });
   });
+
   describe('Removing a field that is targeted by a UID field', () => {
     it('Should remove the attribute correctly and remove the targetField from the UID field', () => {
-      const contentTypeUID = 'application::homepage.homepage';
       const attributeToRemoveName = 'description';
       const action = {
         type: REMOVE_FIELD,
@@ -271,22 +360,46 @@ describe('CTB | components | DataManagerProvider | reducer | REMOVE_FIELD', () =
         componentUid: '',
       };
 
-      const state = initialState
-        .set('contentTypes', fromJS(testData.contentTypes))
-        .set('initialContentTypes', fromJS(testData.contentTypes))
-        .setIn(['modifiedData', 'contentType'], fromJS(testData.contentTypes[contentTypeUID]))
-        .setIn(['modifiedData', 'components'], fromJS({}));
+      const state = {
+        ...initialState,
+        contentTypes: testData.contentTypes,
+        initialContentTypes: testData.contentTypes,
+        modifiedData: {
+          components: {},
+          contentType: {
+            uid: 'application::homepage.homepage',
+            schema: {
+              name: 'homepage',
+              attributes: [
+                { name: 'title', type: 'string' },
+                { name: 'homepageuidfield', type: 'uid', targetField: 'description' },
+                { name: 'description', type: 'string' },
+                { name: 'other_uid_field', type: 'uid', targetField: 'description' },
+              ],
+            },
+          },
+        },
+      };
 
-      const expected = state
-        .removeIn(['modifiedData', 'contentType', 'schema', 'attributes', attributeToRemoveName])
-        .removeIn([
-          'modifiedData',
-          'contentType',
-          'schema',
-          'attributes',
-          'homepageuidfield',
-          'targetField',
-        ]);
+      const expected = {
+        ...initialState,
+        contentTypes: testData.contentTypes,
+        initialContentTypes: testData.contentTypes,
+        modifiedData: {
+          components: {},
+          contentType: {
+            uid: 'application::homepage.homepage',
+            schema: {
+              name: 'homepage',
+              attributes: [
+                { name: 'title', type: 'string' },
+                { name: 'homepageuidfield', type: 'uid' },
+                { name: 'other_uid_field', type: 'uid' },
+              ],
+            },
+          },
+        },
+      };
 
       expect(reducer(state, action)).toEqual(expected);
     });

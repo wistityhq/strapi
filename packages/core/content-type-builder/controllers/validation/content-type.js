@@ -5,6 +5,7 @@ const yup = require('yup');
 const { formatYupErrors, nameToSlug } = require('@strapi/utils');
 const pluralize = require('pluralize');
 
+const { getService } = require('../../utils');
 const { modelTypes, DEFAULT_TYPES, typeKinds } = require('../../services/constants');
 const createSchema = require('./model-schema');
 const { removeEmptyDefaults, removeDeletedUIDTargetFields } = require('./data-transform');
@@ -14,15 +15,8 @@ const { nestedComponentSchema } = require('./component');
  * Allowed relation per type kind
  */
 const VALID_RELATIONS = {
-  [typeKinds.SINGLE_TYPE]: ['oneWay', 'manyWay'],
-  [typeKinds.COLLECTION_TYPE]: [
-    'oneWay',
-    'manyWay',
-    'oneToOne',
-    'oneToMany',
-    'manyToOne',
-    'manyToMany',
-  ],
+  [typeKinds.SINGLE_TYPE]: ['oneToOne', 'oneToMany'],
+  [typeKinds.COLLECTION_TYPE]: ['oneToOne', 'oneToMany', 'manyToOne', 'manyToMany'],
 };
 
 /**
@@ -96,8 +90,7 @@ const validateUpdateContentTypeInput = data => {
 };
 
 const forbiddenContentTypeNameValidator = () => {
-  const reservedNames = strapi.plugins['content-type-builder'].services.builder.getReservedNames()
-    .models;
+  const reservedNames = getService('builder').getReservedNames().models;
 
   return {
     name: 'forbiddenContentTypeName',

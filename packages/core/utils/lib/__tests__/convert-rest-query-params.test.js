@@ -22,16 +22,7 @@ describe('convertRestQueryParams', () => {
         _limit: '10',
       })
     ).toMatchObject({
-      sort: [
-        {
-          field: 'id',
-          order: 'desc',
-        },
-        {
-          field: 'price',
-          order: 'asc',
-        },
-      ],
+      sort: [{ id: 'desc' }, { price: 'asc' }],
       start: 5,
       limit: 10,
     });
@@ -49,47 +40,18 @@ describe('convertRestQueryParams', () => {
     });
 
     test.each([
-      ['id', [{ field: 'id', order: 'asc' }]],
-      ['id:desc', [{ field: 'id', order: 'desc' }]],
-      ['id:ASC', [{ field: 'id', order: 'asc' }]],
-      ['id:DESC', [{ field: 'id', order: 'desc' }]],
-      ['id:asc', [{ field: 'id', order: 'asc' }]],
-      [
-        'id,price',
-        [
-          { field: 'id', order: 'asc' },
-          { field: 'price', order: 'asc' },
-        ],
-      ],
-      [
-        'id:desc,price',
-        [
-          { field: 'id', order: 'desc' },
-          { field: 'price', order: 'asc' },
-        ],
-      ],
-      [
-        'id:desc,price:desc',
-        [
-          { field: 'id', order: 'desc' },
-          { field: 'price', order: 'desc' },
-        ],
-      ],
-      [
-        'id:asc,price,date:desc',
-        [
-          { field: 'id', order: 'asc' },
-          { field: 'price', order: 'asc' },
-          { field: 'date', order: 'desc' },
-        ],
-      ],
+      ['id', [{ id: 'asc' }]],
+      ['id:desc', [{ id: 'desc' }]],
+      ['id:ASC', [{ id: 'asc' }]],
+      ['id:DESC', [{ id: 'desc' }]],
+      ['id:asc', [{ id: 'asc' }]],
+      ['id,price', [{ id: 'asc' }, { price: 'asc' }]],
+      ['id:desc,price', [{ id: 'desc' }, { price: 'asc' }]],
+      ['id:desc,price:desc', [{ id: 'desc' }, { price: 'desc' }]],
+      ['id:asc,price,date:desc', [{ id: 'asc' }, { price: 'asc' }, { date: 'desc' }]],
       [
         'published_at:asc,price:ASC,date:DESC',
-        [
-          { field: 'published_at', order: 'asc' },
-          { field: 'price', order: 'asc' },
-          { field: 'date', order: 'desc' },
-        ],
+        [{ published_at: 'asc' }, { price: 'asc' }, { date: 'desc' }],
       ],
     ])('Converts sort query "%s" correctly', (input, expected) => {
       expect(convertRestQueryParams({ _sort: input })).toMatchObject({

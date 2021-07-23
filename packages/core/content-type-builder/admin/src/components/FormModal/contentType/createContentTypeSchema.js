@@ -33,7 +33,7 @@ const createContentTypeSchema = (usedContentTypeNames, reservedNames) => {
         },
       })
       .required(errorsTrads.required),
-    collectionName: yup.string(),
+
     draftAndPublish: yup.boolean(),
     kind: yup.string().oneOf(['singleType', 'collectionType']),
   };

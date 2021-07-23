@@ -44,7 +44,6 @@ const productWithCompoAndDP = {
       required: true,
     },
   },
-  connection: 'default',
   draftAndPublish: true,
   name: 'product with dz and DP',
   description: '',

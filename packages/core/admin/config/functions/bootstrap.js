@@ -45,8 +45,6 @@ module.exports = async () => {
   const userService = getService('user');
   const roleService = getService('role');
 
-  await userService.migrateUsers();
-
   await roleService.createRolesIfNoneExist();
   await roleService.resetSuperAdminPermissions();
   await roleService.displayWarningIfNoSuperAdmin();

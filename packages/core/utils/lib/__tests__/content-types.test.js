@@ -35,7 +35,6 @@ const createConfig = (privateAttributes = []) => ({
 });
 
 const createModel = opts => ({
-  primaryKey: 'id',
   ...opts,
 });
 
@@ -64,37 +63,12 @@ describe('Content types utils', () => {
         },
       });
 
-      expect(getNonWritableAttributes(model)).toEqual(['id', 'non_writable_field']);
-    });
-
-    test('Includes primaryKey', () => {
-      const model = createModel({
-        primaryKey: 'testPK',
-        attributes: {
-          title: {
-            type: 'string',
-          },
-        },
-      });
-
-      expect(getNonWritableAttributes(model)).toEqual(expect.arrayContaining(['testPK']));
-    });
-
-    test('Includes timestamps', () => {
-      const model = createModel({
-        options: {
-          timestamps: ['creation_date', 'edition_date'],
-        },
-        attributes: {
-          title: {
-            type: 'string',
-          },
-        },
-      });
-
-      expect(getNonWritableAttributes(model)).toEqual(
-        expect.arrayContaining(['creation_date', 'edition_date'])
-      );
+      expect(getNonWritableAttributes(model)).toEqual([
+        'id',
+        'created_at',
+        'updated_at',
+        'non_writable_field',
+      ]);
     });
   });
 
@@ -115,44 +89,10 @@ describe('Content types utils', () => {
       expect(getVisibleAttributes(model)).toEqual(['title']);
     });
 
-    test('Excludes timestamps', () => {
-      const model = createModel({
-        options: {
-          timestamps: ['timestamp_date'],
-        },
-        attributes: {
-          title: {
-            type: 'string',
-          },
-          timestamp_date: {
-            type: 'datetime',
-          },
-        },
-      });
-
-      expect(getVisibleAttributes(model)).toEqual(['title']);
-    });
-
     test('Excludes id', () => {
       const model = createModel({
         attributes: {
           id: {
-            type: 'integer',
-          },
-          title: {
-            type: 'string',
-          },
-        },
-      });
-
-      expect(getVisibleAttributes(model)).toEqual(['title']);
-    });
-
-    test('Excludes primaryKey', () => {
-      const model = createModel({
-        primaryKey: '_id',
-        attributes: {
-          _id: {
             type: 'integer',
           },
           title: {

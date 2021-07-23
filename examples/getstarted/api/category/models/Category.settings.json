@@ -7,8 +7,6 @@
   },
   "options": {
     "draftAndPublish": true,
-    "increments": true,
-    "timestamps": true,
     "comment": ""
   },
   "attributes": {
@@ -16,8 +14,10 @@
       "type": "string"
     },
     "addresses": {
-      "via": "categories",
-      "collection": "address"
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "application::address.address",
+      "mappedBy": "categories"
     }
   }
 }

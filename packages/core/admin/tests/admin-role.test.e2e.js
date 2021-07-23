@@ -219,7 +219,7 @@ describe('Role CRUD End to End', () => {
             newPermissions
               .slice(3, 6)
               .map(p => ({ ...p, conditions: [] }))
-              .map(expect.objectContaining)
+              .map(perm => expect.objectContaining(perm))
           ),
         });
 
@@ -253,6 +253,7 @@ describe('Role CRUD End to End', () => {
         [{ name: 'new role 4', description: 'description' }],
         [{ name: 'new role 5', description: 'description' }],
       ];
+
       test.each(rolesToCreate)('can create %p', async role => {
         let res = await rq({
           url: '/admin/roles',

@@ -3,9 +3,11 @@
   "version": "3.6.5",
   "description": "Adds GraphQL endpoint with default API methods.",
   "strapi": {
+    "displayName": "GraphQL",
     "name": "graphql",
     "icon": "plug",
-    "description": "graphql.plugin.description"
+    "description": "graphql.plugin.description",
+    "kind": "plugin"
   },
   "scripts": {
     "test": "echo \"no tests yet\""

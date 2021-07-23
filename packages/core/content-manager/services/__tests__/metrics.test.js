@@ -5,32 +5,32 @@ const metricsService = require('../metrics');
 describe('metrics', () => {
   describe('sendDidConfigureListView', () => {
     const contentType = {
-      associations: [
-        {
-          alias: 'field1',
-          nature: 'oneToMany',
+      attributes: {
+        field1: {
+          type: 'relation',
+          relation: 'oneToMany',
         },
-        {
-          alias: 'field2',
-          nature: 'manyToMany',
+        field2: {
+          type: 'relation',
+          relation: 'manyToMany',
         },
-        {
-          alias: 'field3',
-          nature: 'manyWay',
+        field3: {
+          type: 'relation',
+          relation: 'manyWay',
         },
-        {
-          alias: 'field4',
-          nature: 'manyToOne',
+        field4: {
+          type: 'relation',
+          relation: 'manyToOne',
         },
-        {
-          alias: 'field5',
-          nature: 'oneWay',
+        field5: {
+          type: 'relation',
+          relation: 'oneWay',
         },
-        {
-          alias: 'field6',
-          nature: 'oneToOne',
+        field6: {
+          type: 'relation',
+          relation: 'oneToOne',
         },
-      ],
+      },
     };
 
     const testData = [

@@ -1,12 +1,11 @@
 {
-  "collectionName": "users-permissions_user",
+  "collectionName": "up_users",
   "info": {
     "name": "user",
     "description": ""
   },
   "options": {
-    "draftAndPublish": false,
-    "timestamps": ["created_at", "updated_at"]
+    "draftAndPublish": false
   },
   "attributes": {
     "username": {
@@ -53,15 +52,14 @@
       "configurable": false
     },
     "role": {
-      "model": "role",
-      "via": "users",
-      "plugin": "users-permissions",
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugins::users-permissions.role",
+      "inversedBy": "users",
       "configurable": false
     },
     "picture": {
-      "model": "file",
-      "via": "related",
-      "plugin": "upload"
+      "type": "media"
     }
   }
 }

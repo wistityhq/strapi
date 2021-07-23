@@ -7,61 +7,35 @@
   },
   "options": {
     "draftAndPublish": true,
-    "increments": true,
-    "timestamps": ["created_at", "updated_at"],
     "comment": ""
   },
-  "pluginOptions": {
-    "i18n": {
-      "localized": true
-    }
-  },
+  "pluginOptions": {},
   "attributes": {
     "name": {
       "maxLength": 50,
       "required": true,
       "minLength": 5,
       "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "slug": {
       "type": "uid",
       "targetField": "name",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "price_range": {
       "enum": ["very_cheap", "cheap", "average", "expensive", "very_expensive"],
       "type": "enumeration",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "closing_period": {
       "component": "default.closingperiod",
       "type": "component",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "contact_email": {
       "type": "email",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "stars": {
       "required": true,
@@ -75,66 +49,54 @@
       "max": 35.12
     },
     "address": {
-      "model": "address"
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "application::address.address"
     },
     "cover": {
-      "model": "file",
-      "via": "related",
-      "plugin": "upload",
+      "type": "media",
+      "multiple": false,
       "required": false
     },
     "timestamp": {
       "type": "timestamp"
     },
     "images": {
-      "collection": "file",
-      "via": "related",
-      "plugin": "upload",
+      "type": "media",
+      "multiple": true,
       "required": false
     },
     "short_description": {
       "type": "text",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "since": {
       "type": "date",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "categories": {
-      "collection": "category"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "application::category.category"
     },
     "description": {
       "type": "richtext",
       "required": true,
       "minLength": 10,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "services": {
       "component": "default.restaurantservice",
       "repeatable": true,
       "type": "component",
       "max": 1,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "menu": {
-      "model": "menu",
-      "via": "restaurant"
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "application::menu.menu",
+      "inversedBy": "restaurant"
     },
     "opening_times": {
       "component": "default.openingtimes",
@@ -142,11 +104,7 @@
       "repeatable": true,
       "min": 1,
       "max": 10,
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     },
     "dz": {
       "type": "dynamiczone",
@@ -156,11 +114,7 @@
         "default.closingperiod",
         "default.dish"
       ],
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
+      "pluginOptions": {}
     }
   }
 }

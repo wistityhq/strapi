@@ -22,43 +22,34 @@ describe('Permission Service', () => {
 
   describe('Find permissions', () => {
     test('Find calls the right db query', async () => {
-      const find = jest.fn(() => Promise.resolve([]));
+      const findMany = jest.fn(() => Promise.resolve([]));
       global.strapi = merge(global.strapi, {
         query() {
-          return { find };
+          return { findMany };
         },
       });
 
-      await permissionService.find({ role: 1 });
+      await permissionService.findMany({ where: { role: { id: 1 } } });
 
-      expect(find).toHaveBeenCalledWith({ role: 1 }, []);
+      expect(findMany).toHaveBeenCalledWith({ where: { role: { id: 1 } } });
     });
   });
 
   describe('Find User Permissions', () => {
     test('Find calls the right db query', async () => {
-      const find = jest.fn(({ role_in }) => role_in.map(roleId => ({ role: roleId })));
+      const findMany = jest.fn(() => Promise.resolve([]));
 
       global.strapi = merge(global.strapi, {
         query() {
-          return { find };
+          return { findMany };
         },
       });
 
-      const rolesId = [1, 2];
-
-      const res = await permissionService.findUserPermissions({
-        roles: rolesId.map(id => ({ id })),
+      await permissionService.findUserPermissions({
+        id: 1,
       });
 
-      expect(find).toHaveBeenCalledWith({ role_in: rolesId, _limit: -1 }, []);
-      expect(res.map(permission => permission.role)).toStrictEqual(rolesId);
-    });
-
-    test('Returns default result when no roles provided', async () => {
-      const res = await permissionService.findUserPermissions({});
-
-      expect(res).toStrictEqual([]);
+      expect(findMany).toHaveBeenCalledWith({ where: { role: { users: { id: 1 } } } });
     });
   });
 
@@ -133,21 +124,19 @@ describe('Permission Service', () => {
         { ...permsInDb[5], properties: { fields: ['name'] } },
       ].map(p => ({ ...p, conditions: [] }));
 
-      const findPage = jest.fn(() =>
-        Promise.resolve({
-          results: permsInDb,
-          pagination: { total: 4 },
-        })
-      );
+      const findMany = jest.fn(() => Promise.resolve(permsInDb));
+
       const cleanPermissionFields = jest.fn(() => toPermission(permsWithCleanFields));
       const dbDelete = jest.fn(() => Promise.resolve());
       const update = jest.fn(() => Promise.resolve());
+      const count = jest.fn(() => Promise.resolve(4));
+
       const registeredPerms = new Map();
       registeredPerms.set('action-1', {});
       registeredPerms.set('action-3', { subjects: ['country'] });
 
       global.strapi = merge(global.strapi, {
-        query: () => ({ findPage, delete: dbDelete, update }),
+        query: () => ({ findMany, delete: dbDelete, update, count }),
         admin: {
           services: {
             'content-type': { cleanPermissionFields },
@@ -163,10 +152,18 @@ describe('Permission Service', () => {
 
       await permissionService.cleanPermissionsInDatabase();
 
-      expect(findPage).toHaveBeenCalledWith({ page: 1, pageSize: 200 }, []);
-      expect(update).toHaveBeenNthCalledWith(1, { id: permsInDb[4].id }, permsWithCleanFields[2]);
-      expect(update).toHaveBeenNthCalledWith(2, { id: permsInDb[5].id }, permsWithCleanFields[3]);
-      expect(dbDelete).toHaveBeenCalledWith({ id_in: [2, 4] });
+      expect(findMany).toHaveBeenCalledWith({ limit: 200, offset: 0 });
+      expect(update).toHaveBeenNthCalledWith(1, {
+        where: { id: permsInDb[4].id },
+        data: permsWithCleanFields[2],
+      });
+
+      expect(update).toHaveBeenNthCalledWith(2, {
+        where: { id: permsInDb[5].id },
+        data: permsWithCleanFields[3],
+      });
+      expect(dbDelete).toHaveBeenNthCalledWith(1, { where: { id: 2 } });
+      expect(dbDelete).toHaveBeenNthCalledWith(2, { where: { id: 4 } });
     });
   });
 });

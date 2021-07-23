@@ -6,7 +6,7 @@ const routes = require('./routes');
 
 module.exports = strapi => ({
   beforeInitialize() {
-    strapi.config.middleware.load.before.unshift('features-routes');
+    strapi.config.middleware.load.before.unshift('features-routes'); // TODO
   },
 
   initialize() {
@@ -17,7 +17,7 @@ module.exports = strapi => ({
 const loadFeaturesRoutes = () => {
   for (const [feature, getFeatureRoutes] of Object.entries(routes)) {
     if (features.isEnabled(feature)) {
-      strapi.admin.config.routes.push(...getFeatureRoutes);
+      strapi.admin.config.routes.push(...getFeatureRoutes); // TODO
     }
   }
 };

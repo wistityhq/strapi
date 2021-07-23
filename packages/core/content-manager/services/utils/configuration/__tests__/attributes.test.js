@@ -63,7 +63,7 @@ describe('attributesUtils', () => {
         oneWayRel: {
           type: 'relation',
           targetModel: 'someModel',
-          relationType: 'oneWay',
+          relationType: 'oneToOne',
         },
         manyToOneRel: {
           type: 'relation',
@@ -78,7 +78,7 @@ describe('attributesUtils', () => {
         manyWayRel: {
           type: 'relation',
           targetModel: 'someModel',
-          relationType: 'manyWay',
+          relationType: 'oneToMany',
         },
         oneToManyRel: {
           type: 'relation',

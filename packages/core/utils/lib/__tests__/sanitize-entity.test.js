@@ -36,10 +36,7 @@ describe('Sanitize Entity', () => {
   };
 
   const userModel = {
-    primaryKey: 'id',
-    options: {
-      timestamps: ['created_at', 'updated_at'],
-    },
+    options: {},
     privateAttributes: ['email'],
     attributes: {
       email: {
@@ -80,10 +77,7 @@ describe('Sanitize Entity', () => {
   };
 
   const articleModel = {
-    primaryKey: 'id',
-    options: {
-      timestamps: ['created_at', 'updated_at'],
-    },
+    options: {},
     privateAttributes: ['secret'],
     attributes: {
       name: {

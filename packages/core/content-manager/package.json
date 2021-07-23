@@ -3,10 +3,12 @@
   "version": "3.6.5",
   "description": "A powerful UI to easily manage your data.",
   "strapi": {
-    "name": "Content Manager",
     "icon": "plug",
+    "name": "content-manager",
+    "displayName": "Content Manager",
     "description": "content-manager.plugin.description",
-    "required": true
+    "required": true,
+    "kind": "plugin"
   },
   "dependencies": {
     "@buffetjs/core": "3.3.6",

@@ -16,7 +16,9 @@ module.exports = async (ctx, next) => {
     const querystring = ctx.querystring ? `?${ctx.querystring}` : '';
 
     return ctx.redirect(
-      `${strapi.config.server.url}${strapi.plugins.documentation.config['x-strapi-config'].path}/login${querystring}`
+      `${strapi.config.server.url}${
+        strapi.config.get('plugins.documentation.x-strapi-config').path
+      }/login${querystring}`
     );
   }
   const isValid = await strapi.plugins['users-permissions'].services.user.validatePassword(

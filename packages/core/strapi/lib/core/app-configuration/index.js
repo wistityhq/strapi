@@ -3,6 +3,7 @@
 const os = require('os');
 const path = require('path');
 const _ = require('lodash');
+const { omit } = require('lodash/fp');
 const dotenv = require('dotenv');
 
 dotenv.config({ path: process.env.ENV_PATH });
@@ -10,10 +11,9 @@ dotenv.config({ path: process.env.ENV_PATH });
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 const getPrefixedDeps = require('../../utils/get-prefixed-dependencies');
-const loadPolicies = require('../load-policies');
-const loadFunctions = require('../load-functions');
+// const loadPolicies = require('../load-policies');
+// const loadFunctions = require('../load-functions');
 const loadConfigDir = require('./config-loader');
-const createConfigProvider = require('./config-provider');
 
 const { version: strapiVersion } = require(path.join(__dirname, '../../../package.json'));
 
@@ -52,12 +52,13 @@ const defaultConfig = {
   },
   hook: {
     timeout: 1000,
-    load: { before: [], order: [], after: [] },
+    load: {
+      before: ['responseTime', 'logger', 'cors', 'responses', 'gzip'],
+      order: [],
+      after: ['parser', 'router'],
+    },
     settings: {},
   },
-  routes: {},
-  functions: {},
-  policies: {},
 };
 
 module.exports = (dir, initialConfig = {}) => {
@@ -80,20 +81,16 @@ module.exports = (dir, initialConfig = {}) => {
       ...pkgJSON,
       strapi: strapiVersion,
     },
-    installedPlugins: getPrefixedDeps('@strapi/plugin', pkgJSON),
+    // installedPlugins: getPrefixedDeps('@strapi/plugin', pkgJSON),
     installedMiddlewares: getPrefixedDeps('@strapi/middleware', pkgJSON),
     installedHooks: getPrefixedDeps('@strapi/hook', pkgJSON),
-    installedProviders: getPrefixedDeps('@strapi/provider', pkgJSON),
+    // installedProviders: getPrefixedDeps('@strapi/provider', pkgJSON),
   };
 
-  const baseConfig = {
-    ...loadConfigDir(configDir),
-    policies: loadPolicies(path.resolve(configDir, 'policies')),
-    functions: loadFunctions(path.resolve(configDir, 'functions')),
-  };
+  const baseConfig = omit('plugins', loadConfigDir(configDir)); // plugin config will be loaded later
 
   const envDir = path.resolve(configDir, 'env', process.env.NODE_ENV);
   const envConfig = loadConfigDir(envDir);
 
-  return createConfigProvider(_.merge(rootConfig, defaultConfig, baseConfig, envConfig));
+  return _.merge(rootConfig, defaultConfig, baseConfig, envConfig);
 };

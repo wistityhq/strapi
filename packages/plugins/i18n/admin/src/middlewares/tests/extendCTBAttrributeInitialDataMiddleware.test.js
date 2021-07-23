@@ -50,7 +50,9 @@ describe('i18n | middlewares | extendCTBAttributeInitialDataMiddleware', () => {
       };
       const getState = jest.fn(() => ({
         'content-type-builder_dataManagerProvider': {
-          getIn: jest.fn(() => false),
+          modifiedData: {
+            contentType: { schema: { pluginOptions: { i18n: { localized: false } } } },
+          },
         },
       }));
 
@@ -69,9 +71,7 @@ describe('i18n | middlewares | extendCTBAttributeInitialDataMiddleware', () => {
         type: 'ContentTypeBuilder/FormModal/SET_ATTRIBUTE_DATA_SCHEMA',
       };
       const getState = jest.fn(() => ({
-        'content-type-builder_dataManagerProvider': {
-          getIn: undefined,
-        },
+        'content-type-builder_dataManagerProvider': undefined,
       }));
 
       const next = jest.fn();
@@ -92,7 +92,9 @@ describe('i18n | middlewares | extendCTBAttributeInitialDataMiddleware', () => {
     const getState = jest.fn(() => ({
       'content-type-builder_dataManagerProvider': {
         // i18n is activated
-        getIn: jest.fn(() => true),
+        modifiedData: {
+          contentType: { schema: { pluginOptions: { i18n: { localized: true } } } },
+        },
       },
     }));
 
@@ -116,7 +118,9 @@ describe('i18n | middlewares | extendCTBAttributeInitialDataMiddleware', () => {
     const getState = jest.fn(() => ({
       'content-type-builder_dataManagerProvider': {
         // i18n is activated
-        getIn: jest.fn(() => true),
+        modifiedData: {
+          contentType: { schema: { pluginOptions: { i18n: { localized: true } } } },
+        },
       },
     }));
 

@@ -1,18 +1,13 @@
 module.exports = ({ env }) => ({
-  defaultConnection: 'default',
-  connections: {
-    default: {
-      connector: 'bookshelf',
-      settings: {
-        client: 'mysql',
-        host: env('DATABASE_HOST', '<%= settings.host %>'),
-        port: env.int('DATABASE_PORT', <%= settings.port %>),
-        database: env('DATABASE_NAME', '<%= settings.database %>'),
-        username: env('DATABASE_USERNAME', '<%= settings.username %>'),
-        password: env('DATABASE_PASSWORD', '<%= settings.password %>'),
-        ssl: env.bool('DATABASE_SSL', <%= settings.ssl %>),
-      },
-      options: {}
+  connection: {
+    client: 'mysql',
+    connection: {
+      host: env('DATABASE_HOST', '<%= connection.host %>'),
+      port: env.int('DATABASE_PORT', <%= connection.port %>),
+      database: env('DATABASE_NAME', '<%= connection.database %>'),
+      user: env('DATABASE_USERNAME', '<%= connection.username %>'),
+      password: env('DATABASE_PASSWORD', '<%= connection.password %>'),
+      ssl: env.bool('DATABASE_SSL', <%= connection.ssl %>),
     },
   },
 });

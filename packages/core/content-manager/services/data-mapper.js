@@ -18,10 +18,14 @@ const dtoFields = [
   'pluginOptions',
 ];
 
-module.exports = {
+module.exports = () => ({
   toContentManagerModel(contentType) {
     return {
       ...contentType,
+      options: {
+        ...contentType.options,
+        timestamps: [],
+      },
       apiID: contentType.modelName,
       isDisplayed: isVisible(contentType),
       info: {
@@ -30,16 +34,15 @@ module.exports = {
       },
       attributes: {
         id: {
-          type: contentType.primaryKeyType,
+          type: 'integer',
         },
         ...formatAttributes(contentType),
-        ...contentTypesUtils.getTimestampsAttributes(contentType),
       },
     };
   },
 
   toDto: pick(dtoFields),
-};
+});
 
 const formatContentTypeLabel = contentType => {
   const name = prop('info.name', contentType) || contentType.modelName;
@@ -64,17 +67,25 @@ const formatAttributes = model => {
   }, {});
 };
 
+// FIXME: not needed
 const formatAttribute = (key, attribute, { model }) => {
-  if (has('type', attribute)) return attribute;
-
-  if (isMediaAttribute(attribute)) {
-    return toMedia(attribute);
+  if (attribute.type === 'relation') {
+    return toRelation(attribute);
   }
 
-  const relation = (model.associations || []).find(assoc => assoc.alias === key);
-  return toRelation(attribute, relation);
+  return attribute;
+
+  // if (has('type', attribute)) return attribute;
+
+  // if (isMediaAttribute(attribute)) {
+  //   return toMedia(attribute);
+  // }
+
+  // const relation = (model.associations || []).find(assoc => assoc.alias === key);
+  // return toRelation(attribute, relation);
 };
 
+// FIXME: not needed
 const toMedia = attribute => {
   return {
     type: 'media',
@@ -85,12 +96,13 @@ const toMedia = attribute => {
   };
 };
 
-const toRelation = (attribute, relation) => {
+// FIXME: not needed
+const toRelation = attribute => {
   return {
     ...attribute,
     type: 'relation',
-    targetModel: relation.targetUid,
-    relationType: relation.nature,
+    targetModel: attribute.target,
+    relationType: attribute.relation,
     pluginOptions: attribute.pluginOptions,
   };
 };

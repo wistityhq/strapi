@@ -12,16 +12,7 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "knex": "0.21.18",
-    "lodash": "4.17.21",
-    "mysql": "2.18.1",
-    "pg": "8.6.0",
-    "sqlite3": "5.0.0",
-    "@strapi/strapi": "3.6.5",
     "@strapi/admin": "3.6.5",
-    "@strapi/connector-bookshelf": "3.6.5",
-    "@strapi/connector-mongoose": "3.6.5",
-    "strapi-middleware-views": "3.6.5",
     "@strapi/plugin-content-manager": "3.6.5",
     "@strapi/plugin-content-type-builder": "3.6.5",
     "@strapi/plugin-documentation": "3.6.5",
@@ -33,7 +24,13 @@
     "@strapi/provider-email-mailgun": "3.6.5",
     "@strapi/provider-upload-aws-s3": "3.6.5",
     "@strapi/provider-upload-cloudinary": "3.6.5",
-    "@strapi/utils": "3.6.5"
+    "@strapi/strapi": "3.6.5",
+    "@strapi/utils": "3.6.5",
+    "lodash": "4.17.21",
+    "mysql": "2.18.1",
+    "pg": "8.6.0",
+    "sqlite3": "5.0.2",
+    "strapi-middleware-views": "3.6.5"
   },
   "strapi": {
     "uuid": "getstarted"

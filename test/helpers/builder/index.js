@@ -26,7 +26,7 @@ const createTestBuilder = (options = {}) => {
     },
 
     sanitizedFixturesFor(modelName, strapi) {
-      const model = strapi.getModel(modelName);
+      const model = strapi.getModel(`application::${modelName}.${modelName}`);
       const fixtures = this.fixturesFor(modelName);
 
       return sanitizeEntity(fixtures, { model });
@@ -77,7 +77,7 @@ const createTestBuilder = (options = {}) => {
 
       if (enableTestDataAutoCleanup) {
         for (const model of models.reverse()) {
-          await modelsUtils.cleanupModel(model.uid || model.modelName);
+          await modelsUtils.cleanupModel(model.uid);
         }
       }
 

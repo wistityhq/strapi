@@ -42,23 +42,8 @@ const componentForm = {
 
     return items;
   },
-  advanced(prefix = '') {
-    const items = [
-      [
-        {
-          autoFocus: true,
-          label: {
-            id: getTrad('contentType.collectionName.label'),
-          },
-          description: {
-            id: getTrad('contentType.collectionName.description'),
-          },
-          name: `${prefix}collectionName`,
-          type: 'text',
-          validations: {},
-        },
-      ],
-    ];
+  advanced() {
+    const items = [];
 
     return items;
   },

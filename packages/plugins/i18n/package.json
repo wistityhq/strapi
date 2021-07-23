@@ -3,10 +3,12 @@
   "version": "3.6.5",
   "description": "This plugin enables to create, to read and to update content in different languages, both from the Admin Panel and from the API",
   "strapi": {
-    "name": "Internationalization",
+    "displayName": "Internationalization",
+    "name": "i18n",
     "icon": "round-language",
     "description": "i18n.plugin.description",
-    "required": false
+    "required": false,
+    "kind": "plugin"
   },
   "dependencies": {
     "lodash": "4.17.20",

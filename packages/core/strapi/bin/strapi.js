@@ -91,13 +91,11 @@ program
   .option('--quickstart', 'Quickstart app creation')
   .option('--dbclient <dbclient>', 'Database client')
   .option('--dbhost <dbhost>', 'Database host')
-  .option('--dbsrv <dbsrv>', 'Database srv')
   .option('--dbport <dbport>', 'Database port')
   .option('--dbname <dbname>', 'Database name')
   .option('--dbusername <dbusername>', 'Database username')
   .option('--dbpassword <dbpassword>', 'Database password')
   .option('--dbssl <dbssl>', 'Database SSL')
-  .option('--dbauth <dbauth>', 'Authentication Database')
   .option('--dbfile <dbfile>', 'Database file path for sqlite')
   .option('--dbforce', 'Overwrite database content if any')
   .description('Create a new application')
@@ -126,7 +124,6 @@ program
   .option('-a, --api <api>', 'API name to generate the files in')
   .option('-p, --plugin <api>', 'Name of the local plugin')
   .option('-e, --extend <api>', 'Name of the plugin to extend')
-  .option('-c, --connection <connection>', 'The name of the connection to use')
   .option('--draft-and-publish', 'Enable draft/publish', false)
   .description('Generate a basic API')
   .action((id, attributes, cliArguments) => {
@@ -148,7 +145,6 @@ program
   .command('generate:model <id> [attributes...]')
   .option('-a, --api <api>', 'API name to generate a sub API')
   .option('-p, --plugin <api>', 'plugin name')
-  .option('-c, --connection <connection>', 'The name of the connection to use')
   .option('--draft-and-publish', 'Enable draft/publish', false)
   .description('Generate a model for an API')
   .action((id, attributes, cliArguments) => {
@@ -169,7 +165,6 @@ program
   .command('generate:service <id>')
   .option('-a, --api <api>', 'API name')
   .option('-p, --plugin <api>', 'plugin name')
-  .option('-t, --tpl <template>', 'template name')
   .description('Generate a service for an API')
   .action(getLocalScript('generate'));
 

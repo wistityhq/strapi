@@ -20,7 +20,6 @@ const product = {
       type: 'text',
     },
   },
-  connection: 'default',
   name: 'product',
   description: '',
   collectionName: '',

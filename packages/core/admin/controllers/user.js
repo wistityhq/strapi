@@ -7,6 +7,8 @@ const {
   validateUsersDeleteInput,
 } = require('../validation/user');
 
+const { getService } = require('../utils');
+
 module.exports = {
   async create(ctx) {
     const { body } = ctx.request;
@@ -80,7 +82,7 @@ module.exports = {
 
     if (_.has(input, 'email')) {
       const uniqueEmailCheck = await strapi.admin.services.user.exists({
-        id_ne: id,
+        id: { $ne: id },
         email: input.email,
       });
 
@@ -126,7 +128,8 @@ module.exports = {
       return ctx.badRequest('ValidationError', err);
     }
 
-    const users = await strapi.admin.services.user.deleteByIds(body.ids);
+    const users = await getService('user').deleteByIds(body.ids);
+
     const sanitizedUsers = users.map(strapi.admin.services.user.sanitizeUser);
 
     return ctx.deleted({

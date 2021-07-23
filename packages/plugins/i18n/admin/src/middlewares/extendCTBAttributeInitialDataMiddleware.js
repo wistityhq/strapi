@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 const extendCTBAttributeInitialDataMiddleware = () => {
   return ({ getState }) => next => action => {
     const enhanceAction = () => {
@@ -5,14 +7,20 @@ const extendCTBAttributeInitialDataMiddleware = () => {
       // of the ctb when the plugin is not mounted
       try {
         const store = getState();
-        const hasi18nEnabled = store['content-type-builder_dataManagerProvider'].getIn([
-          'modifiedData',
-          'contentType',
-          'schema',
-          'pluginOptions',
-          'i18n',
-          'localized',
-        ]);
+
+        const hasi18nEnabled = get(
+          store,
+          [
+            'content-type-builder_dataManagerProvider',
+            'modifiedData',
+            'contentType',
+            'schema',
+            'pluginOptions',
+            'i18n',
+            'localized',
+          ],
+          false
+        );
 
         if (hasi18nEnabled) {
           const pluginOptions = action.options

@@ -35,6 +35,7 @@ module.exports = ({ ability, action, model }) => ({
     return buildStrapiQuery(buildCaslQuery(ability, queryAction, model));
   },
 
+  // FIXME:
   queryFrom(query = {}, action) {
     const permissionQuery = this.getQuery(action);
 

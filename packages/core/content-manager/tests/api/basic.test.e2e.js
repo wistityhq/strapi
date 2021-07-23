@@ -24,7 +24,6 @@ const product = {
       maxLength: 30,
     },
   },
-  connection: 'default',
   name: 'product',
   description: '',
   collectionName: '',

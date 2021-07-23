@@ -158,10 +158,10 @@ const canBeProccessed = async buffer => {
   return format && formatsToProccess.includes(format);
 };
 
-module.exports = {
+module.exports = () => ({
   getDimensions,
   generateResponsiveFormats,
   generateThumbnail,
   bytesToKbytes,
   optimize,
-};
+});

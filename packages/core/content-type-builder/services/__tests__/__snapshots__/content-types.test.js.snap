@@ -11,7 +11,7 @@ Object {
       },
     },
     "collectionName": "tests",
-    "connection": "default",
+    "connection": undefined,
     "description": "My description",
     "draftAndPublish": false,
     "kind": "singleType",

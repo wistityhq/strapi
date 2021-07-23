@@ -60,7 +60,7 @@ const getConfigUrls = (serverConfig, forAdminBuild = false) => {
 };
 
 const getAbsoluteUrl = adminOrServer => (config, forAdminBuild = false) => {
-  const { serverUrl, adminUrl } = getConfigUrls(config.server, forAdminBuild);
+  const { serverUrl, adminUrl } = getConfigUrls(config.get('server'), forAdminBuild);
   let url = adminOrServer === 'server' ? serverUrl : adminUrl;
 
   if (url.startsWith('http')) {
@@ -68,11 +68,12 @@ const getAbsoluteUrl = adminOrServer => (config, forAdminBuild = false) => {
   }
 
   let hostname =
-    config.environment === 'development' && ['127.0.0.1', '0.0.0.0'].includes(config.server.host)
+    config.get('environment') === 'development' &&
+    ['127.0.0.1', '0.0.0.0'].includes(config.get('server.host'))
       ? 'localhost'
-      : config.server.host;
+      : config.get('server.host');
 
-  return `http://${hostname}:${config.server.port}${url}`;
+  return `http://${hostname}:${config.get('server.port')}${url}`;
 };
 
 module.exports = {

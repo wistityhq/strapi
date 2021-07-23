@@ -1,4 +1,5 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
+import getRelationType from '../../../utils/getRelationType';
 
 const canEditContentType = (data, modifiedData) => {
   const kind = get(data, ['contentType', 'schema', 'kind'], '');
@@ -8,10 +9,12 @@ const canEditContentType = (data, modifiedData) => {
     return true;
   }
 
-  const contentTypeAttributes = get(data, ['contentType', 'schema', 'attributes'], '');
-  const relationAttributes = Object.values(contentTypeAttributes).filter(
-    ({ nature }) => nature && !['oneWay', 'manyWay'].includes(nature)
-  );
+  const contentTypeAttributes = get(data, ['contentType', 'schema', 'attributes'], []);
+  const relationAttributes = contentTypeAttributes.filter(({ relation, type, targetAttribute }) => {
+    const relationType = getRelationType(relation, targetAttribute);
+
+    return type === 'relation' && !['oneWay', 'manyWay'].includes(relationType);
+  });
 
   return relationAttributes.length === 0;
 };

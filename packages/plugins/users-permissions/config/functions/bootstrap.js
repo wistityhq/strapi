@@ -9,6 +9,7 @@
  */
 const _ = require('lodash');
 const uuid = require('uuid/v4');
+const { getService } = require('../../utils');
 
 const usersPermissionsActions = require('../users-permissions-actions');
 
@@ -19,6 +20,33 @@ module.exports = async () => {
     name: 'users-permissions',
   });
 
+  await initGrant(pluginStore);
+  await initEmails(pluginStore);
+  await initAdvancedOptions(pluginStore);
+
+  await strapi.admin.services.permission.actionProvider.registerMany(
+    usersPermissionsActions.actions
+  );
+
+  await getService('users-permissions').initialize();
+
+  if (!_.get(strapi.plugins['users-permissions'], 'config.jwtSecret')) {
+    const jwtSecret = uuid();
+    _.set(strapi.plugins['users-permissions'], 'config.jwtSecret', jwtSecret);
+
+    strapi.reload.isWatching = false;
+
+    await strapi.fs.writePluginFile(
+      'users-permissions',
+      'config/jwt.js',
+      `module.exports = {\n  jwtSecret: process.env.JWT_SECRET || '${jwtSecret}'\n};`
+    );
+
+    strapi.reload.isWatching = true;
+  }
+};
+
+const initGrant = async pluginStore => {
   const grantConfig = {
     email: {
       enabled: true,
@@ -140,6 +168,7 @@ module.exports = async () => {
       subdomain: 'my.subdomain.com/cas',
     },
   };
+
   const prevGrantConfig = (await pluginStore.get({ key: 'grant' })) || {};
   // store grant auth config to db
   // when plugin_users-permissions_grant is not existed in db
@@ -153,7 +182,9 @@ module.exports = async () => {
     });
     await pluginStore.set({ key: 'grant', value: grantConfig });
   }
+};
 
+const initEmails = async pluginStore => {
   if (!(await pluginStore.get({ key: 'email' }))) {
     const value = {
       reset_password: {
@@ -197,7 +228,9 @@ module.exports = async () => {
 
     await pluginStore.set({ key: 'email', value });
   }
+};
 
+const initAdvancedOptions = async pluginStore => {
   if (!(await pluginStore.get({ key: 'advanced' }))) {
     const value = {
       unique_email: true,
@@ -210,25 +243,4 @@ module.exports = async () => {
 
     await pluginStore.set({ key: 'advanced', value });
   }
-
-  await strapi.plugins['users-permissions'].services.userspermissions.initialize();
-
-  if (!_.get(strapi.plugins['users-permissions'], 'config.jwtSecret')) {
-    const jwtSecret = uuid();
-    _.set(strapi.plugins['users-permissions'], 'config.jwtSecret', jwtSecret);
-
-    strapi.reload.isWatching = false;
-
-    await strapi.fs.writePluginFile(
-      'users-permissions',
-      'config/jwt.js',
-      `module.exports = {\n  jwtSecret: process.env.JWT_SECRET || '${jwtSecret}'\n};`
-    );
-
-    strapi.reload.isWatching = true;
-  }
-
-  await strapi.admin.services.permission.actionProvider.registerMany(
-    usersPermissionsActions.actions
-  );
 };

@@ -3,7 +3,7 @@
 const _ = require('lodash');
 const slugify = require('@sindresorhus/slugify');
 
-module.exports = {
+module.exports = ({ strapi }) => ({
   async generateUIDField({ contentTypeUID, field, data }) {
     const contentType = strapi.contentTypes[contentTypeUID];
     const { attributes } = contentType;
@@ -30,9 +30,8 @@ module.exports = {
     const query = strapi.db.query(contentTypeUID);
 
     const possibleColisions = await query
-      .find({
-        [`${field}_contains`]: value,
-        _limit: -1,
+      .findMany({
+        where: { [field]: { $contains: value } },
       })
       .then(results => results.map(result => result[field]));
 
@@ -54,10 +53,10 @@ module.exports = {
     const query = strapi.db.query(contentTypeUID);
 
     const count = await query.count({
-      [field]: value,
+      where: { [field]: value },
     });
 
     if (count > 0) return false;
     return true;
   },
-};
+});

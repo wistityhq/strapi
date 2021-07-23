@@ -1,25 +1,27 @@
 import React, { memo } from 'react';
 import { DropdownItem } from 'reactstrap';
+import { useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import { Text } from '@buffetjs/core';
+import { ON_CHANGE_RELATION_TARGET } from '../FormModal/constants';
 
 const Item = ({
-  onChange,
   oneThatIsCreatingARelationWithAnother,
   plugin,
   restrictRelationsTo,
   title,
   uid,
 }) => {
+  const dispatch = useDispatch();
+
   const handleChange = () => {
     const selectedContentTypeFriendlyName = plugin ? `${plugin}_${title}` : title;
 
-    onChange({
+    dispatch({
+      type: ON_CHANGE_RELATION_TARGET,
       target: {
-        name: 'target',
         value: uid,
-        type: 'relation',
         oneThatIsCreatingARelationWithAnother,
         selectedContentTypeFriendlyName,
         targetContentTypeAllowedRelations: restrictRelationsTo,
@@ -51,7 +53,6 @@ Item.defaultProps = {
 };
 
 Item.propTypes = {
-  onChange: PropTypes.func.isRequired,
   oneThatIsCreatingARelationWithAnother: PropTypes.string.isRequired,
   plugin: PropTypes.string,
   restrictRelationsTo: PropTypes.array,

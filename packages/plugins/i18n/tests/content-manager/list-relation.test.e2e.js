@@ -24,7 +24,6 @@ const productModel = {
       type: 'string',
     },
   },
-  connection: 'default',
   name: 'product',
   description: '',
   collectionName: '',
@@ -41,13 +40,12 @@ const shopModel = {
       type: 'string',
     },
     products: {
-      dominant: true,
-      nature: 'manyToMany',
+      type: 'relation',
+      relation: 'manyToMany',
       target: 'application::product.product',
       targetAttribute: 'shops',
     },
   },
-  connection: 'default',
   name: 'shop',
 };
 
@@ -113,7 +111,7 @@ describe('i18n - Relation-list route', () => {
     const res = await rq({
       method: 'POST',
       url: '/content-manager/relations/application::shop.shop/products',
-      qs: { _locale: 'it' },
+      qs: { locale: 'it' },
     });
 
     expect(res.body).toHaveLength(1);

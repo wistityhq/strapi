@@ -17,7 +17,7 @@ const BOUND_ACTIONS = [READ_ACTION, CREATE_ACTION, UPDATE_ACTION, DELETE_ACTION,
 const BOUND_ACTIONS_FOR_FIELDS = [READ_ACTION, CREATE_ACTION, UPDATE_ACTION];
 
 const getBoundActionsBySubject = (role, subject) => {
-  const model = strapi.getModel(subject);
+  const model = strapi.contentTypes[subject];
 
   if (role.code === AUTHOR_CODE || !hasDraftAndPublish(model)) {
     return [READ_ACTION, UPDATE_ACTION, CREATE_ACTION, DELETE_ACTION];

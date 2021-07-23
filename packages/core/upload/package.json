@@ -3,10 +3,12 @@
   "version": "3.6.5",
   "description": "Makes it easy to upload images and files to your Strapi Application.",
   "strapi": {
-    "name": "Media Library",
+    "displayName": "Media Library",
+    "name": "upload",
     "icon": "cloud-upload-alt",
     "description": "upload.plugin.description",
-    "required": true
+    "required": true,
+    "kind": "plugin"
   },
   "scripts": {
     "test": "echo \"no tests yet\""

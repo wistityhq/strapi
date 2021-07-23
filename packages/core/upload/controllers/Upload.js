@@ -67,37 +67,13 @@ module.exports = {
 
   async search(ctx) {
     const { id } = ctx.params;
-    const model = strapi.getModel('file', 'upload');
-    const entries = await strapi.query('file', 'upload').custom(searchQueries)({
-      id,
+    const model = strapi.getModel('plugins::upload.file');
+    const entries = await strapi.query('plugins::upload.file').findMany({
+      where: {
+        $or: [{ hash: { $contains: id } }, { name: { $contains: id } }],
+      },
     });
 
     ctx.body = sanitizeEntity(entries, { model });
-  },
-};
-
-const searchQueries = {
-  bookshelf({ model }) {
-    return ({ id }) => {
-      return model
-        .query(qb => {
-          qb.whereRaw('LOWER(hash) LIKE ?', [`%${id}%`]).orWhereRaw('LOWER(name) LIKE ?', [
-            `%${id}%`,
-          ]);
-        })
-        .fetchAll()
-        .then(results => results.toJSON());
-    };
-  },
-  mongoose({ model }) {
-    return ({ id }) => {
-      const re = new RegExp(id, 'i');
-
-      return model
-        .find({
-          $or: [{ hash: re }, { name: re }],
-        })
-        .lean();
-    };
   },
 };

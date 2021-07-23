@@ -9,24 +9,22 @@ const expectedData = {
         type: 'string',
       },
       address: {
-        nature: 'oneWay',
+        relation: 'oneToOne',
         target: 'application::address.address',
-        unique: false,
-        required: false,
+        // targetAttribute: null,
+        type: 'relation',
       },
       testContentTypes: {
-        nature: 'oneToMany',
+        relation: 'oneToMany',
         targetAttribute: 'testContentType',
         target: '__self__',
-        unique: false,
-        required: false,
+        type: 'relation',
       },
       testContentType: {
-        nature: 'manyToOne',
+        relation: 'manyToOne',
         target: '__self__',
-        unique: false,
-        required: false,
         targetAttribute: 'testContentTypes',
+        type: 'relation',
       },
       mainCompoField: {
         type: 'component',
@@ -55,24 +53,21 @@ const expectedData = {
         type: 'string',
       },
       address: {
-        nature: 'oneWay',
+        relation: 'oneToOne',
         target: 'application::address.address',
-        unique: false,
-        required: false,
+        type: 'relation',
       },
       testContentTypes: {
-        nature: 'oneToMany',
+        relation: 'oneToMany',
         targetAttribute: 'testContentType',
         target: 'application::test-content-type.test-content-type',
-        unique: false,
-        required: false,
+        type: 'relation',
       },
       testContentType: {
-        nature: 'manyToOne',
+        relation: 'manyToOne',
         target: 'application::test-content-type.test-content-type',
-        unique: false,
-        required: false,
         targetAttribute: 'testContentTypes',
+        type: 'relation',
       },
       mainCompoField: {
         type: 'component',
@@ -146,10 +141,9 @@ const expectedData = {
           type: 'string',
         },
         testContentType: {
-          nature: 'oneWay',
+          relation: 'oneToOne',
           target: '__contentType__',
-          unique: false,
-          required: false,
+          type: 'relation',
         },
         subCompoField: {
           type: 'component',
@@ -185,9 +179,7 @@ const expectedData = {
           type: 'string',
           required: true,
         },
-        author: {
-          model: 'user',
-        },
+
         link_to_biography: {
           type: 'string',
           required: true,
@@ -206,10 +198,9 @@ const expectedData = {
           type: 'string',
         },
         testContentType: {
-          nature: 'oneWay',
+          relation: 'oneToOne',
           target: 'application::test-content-type.test-content-type',
-          unique: false,
-          required: false,
+          type: 'relation',
         },
         subCompoField: {
           type: 'component',
@@ -244,9 +235,6 @@ const expectedData = {
         quote: {
           type: 'string',
           required: true,
-        },
-        author: {
-          model: 'user',
         },
         link_to_biography: {
           type: 'string',
@@ -266,10 +254,9 @@ const expectedData = {
           type: 'string',
         },
         testContentType: {
-          nature: 'oneWay',
+          relation: 'oneToOne',
           target: '__contentType__',
-          unique: false,
-          required: false,
+          type: 'relation',
         },
         subCompoField: {
           type: 'component',
@@ -304,9 +291,6 @@ const expectedData = {
         quote: {
           type: 'string',
           required: true,
-        },
-        author: {
-          model: 'user',
         },
         link_to_biography: {
           type: 'string',
@@ -326,10 +310,9 @@ const expectedData = {
           type: 'string',
         },
         testContentType: {
-          nature: 'oneWay',
+          relation: 'oneToOne',
           target: 'application::test-content-type.test-content-type',
-          unique: false,
-          required: false,
+          type: 'relation',
         },
         subCompoField: {
           type: 'component',
@@ -364,9 +347,6 @@ const expectedData = {
         quote: {
           type: 'string',
           required: true,
-        },
-        author: {
-          model: 'user',
         },
         link_to_biography: {
           type: 'string',

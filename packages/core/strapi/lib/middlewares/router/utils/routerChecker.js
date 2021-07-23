@@ -43,7 +43,10 @@ module.exports = strapi =>
 
     // Retrieve the API's name where the controller is located
     // to access to the right validators
-    const currentApiName = finder(strapi.plugins[plugin] || strapi.api || strapi.admin, controller);
+    const currentApiName = finder(
+      strapi.plugins[plugin] || strapi.api || strapi.admin,
+      controllerKey
+    );
 
     // Add the `globalPolicy`.
     const globalPolicy = policyUtils.globalPolicy({

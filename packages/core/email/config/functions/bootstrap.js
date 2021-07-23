@@ -16,7 +16,7 @@ const createProvider = emailConfig => {
 };
 
 module.exports = async () => {
-  const emailConfig = _.get(strapi.plugins, 'email.config', {});
+  const emailConfig = strapi.config.get('plugins.email');
   strapi.plugins.email.provider = createProvider(emailConfig);
 
   // Add permissions

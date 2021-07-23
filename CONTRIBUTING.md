@@ -141,7 +141,6 @@ You can run the test suites using different databases:
 
 ```bash
 $ node test/e2e.js --db=sqlite
-$ node test/e2e.js --db=mongo
 $ node test/e2e.js --db=postgres
 $ node test/e2e.js --db=mysql
 ```

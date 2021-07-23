@@ -116,12 +116,8 @@ module.exports = (scope, cb) => {
   // Set description
   scope.description = _.has(scope.args, 'description') ? scope.args.description : '';
 
-  // Set connection
-  scope.connection = _.get(scope.args, 'connection', undefined);
-
   scope.schema = JSON.stringify(
     {
-      connection: scope.connection,
       collectionName: scope.collectionName,
       info: {
         name: scope.args.displayName || scope.id,
@@ -129,8 +125,6 @@ module.exports = (scope, cb) => {
       },
       options: {
         draftAndPublish: scope.args.draftAndPublish === 'true',
-        increments: true,
-        timestamps: true,
         comment: '',
       },
       attributes: scope.attributes,

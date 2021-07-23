@@ -30,7 +30,7 @@ describe('User', () => {
     const sendDidInviteUser = jest.fn();
 
     test('Creates a user by merging given and default attributes', async () => {
-      const create = jest.fn(user => Promise.resolve(user));
+      const create = jest.fn(({ data }) => Promise.resolve(data));
       const createToken = jest.fn(() => 'token');
       const hashPassword = jest.fn(() => Promise.resolve('123456789'));
 
@@ -59,7 +59,7 @@ describe('User', () => {
     });
 
     test('Creates a user and hash password if provided', async () => {
-      const create = jest.fn(user => Promise.resolve(user));
+      const create = jest.fn(({ data }) => Promise.resolve(data));
       const createToken = jest.fn(() => 'token');
       const hashPassword = jest.fn(() => Promise.resolve('123456789'));
 
@@ -101,7 +101,7 @@ describe('User', () => {
     });
 
     test('Creates a user by using given attributes', async () => {
-      const create = jest.fn(user => Promise.resolve(user));
+      const create = jest.fn(({ data }) => Promise.resolve(data));
       const createToken = jest.fn(() => 'token');
       const hashPassword = jest.fn(() => Promise.resolve('123456789'));
 
@@ -144,7 +144,7 @@ describe('User', () => {
       const amount = await userService.count();
 
       expect(amount).toBe(2);
-      expect(count).toHaveBeenCalledWith({});
+      expect(count).toHaveBeenCalledWith({ where: {} });
     });
 
     test('Count users with params', async () => {
@@ -157,7 +157,7 @@ describe('User', () => {
       const amount = await userService.count(params);
 
       expect(amount).toBe(2);
-      expect(count).toHaveBeenCalledWith(params);
+      expect(count).toHaveBeenCalledWith({ where: params });
     });
   });
 
@@ -169,7 +169,7 @@ describe('User', () => {
       const input = { email: 'test@strapi.io', password: '123' };
 
       const findOne = jest.fn((_, user) => Promise.resolve(user));
-      const update = jest.fn((_, user) => Promise.resolve(user));
+      const update = jest.fn(({ data }) => Promise.resolve(data));
       const hashPassword = jest.fn(() => Promise.resolve(hash));
 
       global.strapi = {
@@ -186,7 +186,11 @@ describe('User', () => {
       const result = await userService.updateById(id, input);
 
       expect(hashPassword).toHaveBeenCalledWith(input.password);
-      expect(update).toHaveBeenCalledWith({ id }, { email: input.email, password: hash });
+      expect(update).toHaveBeenCalledWith({
+        where: { id },
+        data: { email: input.email, password: hash },
+      });
+
       expect(result).toEqual({
         email: 'test@strapi.io',
         password: 'aoizdnoaizndoainzodiaz',
@@ -210,8 +214,40 @@ describe('User', () => {
       const input = { email: 'test@strapi.io' };
       const result = await userService.updateById(id, input);
 
-      expect(update).toHaveBeenCalledWith({ id }, input);
+      expect(update).toHaveBeenCalledWith({ where: { id }, data: input });
       expect(result).toBe(user);
+    });
+
+    test('Call the update function with the expected params', async () => {
+      const email = 'email@email.fr';
+      const password = 'Testing1234';
+      const hash = 'hash';
+      const userId = 1;
+
+      const findOne = jest.fn(() => ({ id: userId }));
+      const update = jest.fn();
+      const hashPassword = jest.fn(() => hash);
+
+      global.strapi = {
+        query() {
+          return {
+            findOne,
+            update,
+          };
+        },
+        admin: {
+          services: {
+            auth: {
+              hashPassword,
+            },
+          },
+        },
+      };
+
+      await userService.resetPasswordByEmail(email, password);
+      expect(findOne).toHaveBeenCalledWith({ where: { email } });
+      expect(update).toHaveBeenCalledWith({ where: { id: userId }, data: { password: hash } });
+      expect(hashPassword).toHaveBeenCalledWith(password);
     });
   });
 
@@ -220,13 +256,16 @@ describe('User', () => {
       const findOne = jest.fn(() =>
         Promise.resolve({ id: 11, roles: [{ code: SUPER_ADMIN_CODE }] })
       );
+
       const getSuperAdminWithUsersCount = jest.fn(() => Promise.resolve({ id: 1, usersCount: 1 }));
       const badRequest = jest.fn();
+
       global.strapi = {
         query: () => ({ findOne }),
         admin: { services: { role: { getSuperAdminWithUsersCount } } },
         errors: { badRequest },
       };
+
       try {
         await userService.deleteById(2);
       } catch (e) {
@@ -238,18 +277,21 @@ describe('User', () => {
         'You must have at least one user with super admin role.'
       );
     });
+
     test('Can delete a super admin if he/she is not the last one', async () => {
       const user = { id: 2, roles: [{ code: SUPER_ADMIN_CODE }] };
       const findOne = jest.fn(() => Promise.resolve(user));
       const getSuperAdminWithUsersCount = jest.fn(() => Promise.resolve({ id: 1, usersCount: 2 }));
       const deleteFn = jest.fn(() => user);
+
       global.strapi = {
         query: () => ({ findOne, delete: deleteFn }),
         admin: { services: { role: { getSuperAdminWithUsersCount } } },
       };
 
       const res = await userService.deleteById(user.id);
-      expect(deleteFn).toHaveBeenCalledWith({ id: user.id });
+
+      expect(deleteFn).toHaveBeenCalledWith({ where: { id: user.id } });
       expect(res).toEqual(user);
     });
   });
@@ -278,20 +320,26 @@ describe('User', () => {
     });
 
     test('Can delete a super admin if he/she is not the last one', async () => {
-      const users = [
-        { id: 2, roles: [{ code: SUPER_ADMIN_CODE }] },
-        { id: 3, roles: [{ code: SUPER_ADMIN_CODE }] },
-      ];
+      const users = [{ id: 2 }, { id: 3 }];
       const count = jest.fn(() => Promise.resolve(users.length));
       const getSuperAdminWithUsersCount = jest.fn(() => Promise.resolve({ id: 1, usersCount: 3 }));
-      const deleteFn = jest.fn(() => users);
+      const deleteFn = jest
+        .fn()
+        .mockImplementationOnce(() => users[0])
+        .mockImplementationOnce(() => users[1]);
+
       global.strapi = {
         query: () => ({ count, delete: deleteFn }),
         admin: { services: { role: { getSuperAdminWithUsersCount } } },
       };
 
       const res = await userService.deleteByIds([2, 3]);
-      expect(deleteFn).toHaveBeenCalledWith({ id_in: [2, 3] });
+
+      console.log({ res });
+
+      expect(deleteFn).toHaveBeenNthCalledWith(1, { where: { id: 2 } });
+      expect(deleteFn).toHaveBeenNthCalledWith(2, { where: { id: 3 } });
+
       expect(res).toEqual(users);
     });
   });
@@ -390,7 +438,7 @@ describe('User', () => {
     const user = { firstname: 'Kai', lastname: 'Doe', email: 'kaidoe@email.com' };
 
     beforeEach(() => {
-      const findOne = jest.fn(({ id }) =>
+      const findOne = jest.fn(({ where: { id } }) =>
         Promise.resolve(
           {
             1: user,
@@ -433,7 +481,7 @@ describe('User', () => {
 
       const res = await userService.findRegistrationInfo('ABCD');
       expect(res).toBeUndefined();
-      expect(findOne).toHaveBeenCalledWith({ registrationToken: 'ABCD' });
+      expect(findOne).toHaveBeenCalledWith({ where: { registrationToken: 'ABCD' } });
     });
 
     test('Returns correct user registration info', async () => {
@@ -591,70 +639,7 @@ describe('User', () => {
     });
   });
 
-  describe('Assign a role to all', () => {
-    test('mongoose', async () => {
-      const updateMany = jest.fn();
-
-      global.strapi = {
-        query: () => ({
-          model: {
-            orm: 'mongoose',
-            updateMany,
-          },
-        }),
-      };
-
-      await userService.assignARoleToAll(3);
-
-      expect(updateMany).toHaveBeenCalledWith({}, { roles: [3] });
-    });
-
-    test('bookshelf', async () => {
-      const knexFunctions = {};
-      const select = jest.fn(() => knexFunctions);
-      const from = jest.fn(() => knexFunctions);
-      const leftJoin = jest.fn(() => knexFunctions);
-      const where = jest.fn(() => knexFunctions);
-      const pluck = jest.fn(() => [1, 2]);
-      Object.assign(knexFunctions, { select, from, leftJoin, where, pluck });
-      const into = jest.fn();
-      const insert = jest.fn(() => ({ into }));
-
-      global.strapi = {
-        connections: {
-          default: {
-            select,
-            insert,
-          },
-        },
-        query: () => ({
-          model: {
-            orm: 'bookshelf',
-            connection: 'default',
-            associations: [{ alias: 'roles', tableCollectionName: 'strapi_users_roles' }],
-            collectionName: 'strapi_administrators',
-          },
-        }),
-      };
-
-      await userService.assignARoleToAll(3);
-
-      expect(select).toHaveBeenCalledWith('strapi_administrators.id');
-      expect(from).toHaveBeenCalledWith('strapi_administrators');
-      expect(leftJoin).toHaveBeenCalledWith(
-        'strapi_users_roles',
-        'strapi_administrators.id',
-        'strapi_users_roles.user_id'
-      );
-      expect(where).toHaveBeenCalledWith('strapi_users_roles.role_id', null);
-      expect(pluck).toHaveBeenCalledWith('strapi_administrators.id');
-      expect(insert).toHaveBeenCalledWith([
-        { role_id: 3, user_id: 1 },
-        { role_id: 3, user_id: 2 },
-      ]);
-      expect(into).toHaveBeenCalledWith('strapi_users_roles');
-    });
-  });
+  test.todo('Assign a role to all');
 
   describe('displayWarningIfUsersDontHaveRole', () => {
     test('All users have at least one role', async () => {
@@ -670,6 +655,7 @@ describe('User', () => {
 
       expect(warn).toHaveBeenCalledTimes(0);
     });
+
     test('2 users have 0 roles', async () => {
       const count = jest.fn(() => Promise.resolve(2));
       const warn = jest.fn();
@@ -682,66 +668,6 @@ describe('User', () => {
       await userService.displayWarningIfUsersDontHaveRole();
 
       expect(warn).toHaveBeenCalledWith("Some users (2) don't have any role.");
-    });
-  });
-
-  describe('migrateUsers', () => {
-    test("Don't do anything if the migration has already been done", async () => {
-      const updateMany = jest.fn();
-      const exists = jest.fn(() => Promise.resolve(true));
-
-      global.strapi = {
-        query: () => ({ model: { orm: 'mongoose' } }),
-        admin: { services: { role: { exists } } },
-      };
-
-      await userService.migrateUsers();
-
-      expect(updateMany).toHaveBeenCalledTimes(0);
-    });
-    test('Migrate for mongoose', async () => {
-      const updateMany = jest.fn();
-      const exists = jest.fn(() => Promise.resolve(false));
-
-      global.strapi = {
-        query: () => ({ model: { orm: 'mongoose', updateMany } }),
-        admin: { services: { role: { exists } } },
-      };
-
-      await userService.migrateUsers();
-
-      expect(updateMany).toHaveBeenCalledTimes(2);
-      expect(updateMany).toHaveBeenNthCalledWith(
-        1,
-        { blocked: { $in: [false, null] } },
-        { isActive: true }
-      );
-      expect(updateMany).toHaveBeenNthCalledWith(2, { blocked: true }, { isActive: false });
-    });
-    test('Migrate for bookshelf', async () => {
-      const query = jest.fn(() => ({ save }));
-      const save = jest.fn(() => Promise.resolve());
-      const exists = jest.fn(() => Promise.resolve(false));
-
-      global.strapi = {
-        query: () => ({ model: { orm: 'bookshelf', query } }),
-        admin: { services: { role: { exists } } },
-      };
-
-      await userService.migrateUsers();
-
-      expect(query).toHaveBeenCalledTimes(2);
-      expect(save).toHaveBeenCalledTimes(2);
-      expect(save).toHaveBeenNthCalledWith(
-        1,
-        { isActive: true },
-        { method: 'update', patch: true, require: false }
-      );
-      expect(save).toHaveBeenNthCalledWith(
-        2,
-        { isActive: false },
-        { method: 'update', patch: true, require: false }
-      );
     });
   });
 
@@ -766,7 +692,7 @@ describe('User', () => {
         new Error(`User not found for email: ${email}`)
       );
 
-      expect(findOne).toHaveBeenCalledWith({ email }, undefined);
+      expect(findOne).toHaveBeenCalledWith({ where: { email } });
     });
 
     test.each(['abc', 'Abcd', 'Abcdefgh', 'Abcd123'])(
@@ -790,40 +716,8 @@ describe('User', () => {
           )
         );
 
-        expect(findOne).toHaveBeenCalledWith({ email }, undefined);
+        expect(findOne).toHaveBeenCalledWith({ where: { email } });
       }
     );
-  });
-
-  test('Call the update function with the expected params', async () => {
-    const email = 'email@email.fr';
-    const password = 'Testing1234';
-    const hash = 'hash';
-    const userId = 1;
-
-    const findOne = jest.fn(() => ({ id: userId }));
-    const update = jest.fn();
-    const hashPassword = jest.fn(() => hash);
-
-    global.strapi = {
-      query() {
-        return {
-          findOne,
-          update,
-        };
-      },
-      admin: {
-        services: {
-          auth: {
-            hashPassword,
-          },
-        },
-      },
-    };
-
-    await userService.resetPasswordByEmail(email, password);
-    expect(findOne).toHaveBeenCalledWith({ email }, undefined);
-    expect(update).toHaveBeenCalledWith({ id: userId }, { password: hash });
-    expect(hashPassword).toHaveBeenCalledWith(password);
   });
 });

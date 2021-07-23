@@ -19,7 +19,7 @@ const AllowedTypesSelect = ({ name, changeMediaAllowedTypes, styles, value }) =>
   const displayedValue =
     value === null || value.length === 0
       ? formatMessage({ id: getTrad('form.attribute.media.allowed-types.none') })
-      : value
+      : [...value]
           .sort()
           .map(v => upperFirst(v))
           .join(', ');

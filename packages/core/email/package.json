@@ -6,7 +6,8 @@
     "name": "Email",
     "icon": "paper-plane",
     "description": "email.plugin.description",
-    "required": true
+    "required": true,
+    "kind": "plugin"
   },
   "scripts": {
     "test": "echo \"no tests yet\""

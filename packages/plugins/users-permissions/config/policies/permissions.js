@@ -1,6 +1,7 @@
 'use strict';
 
 const _ = require('lodash');
+const { getService } = require('../../utils');
 
 module.exports = async (ctx, next) => {
   let role;
@@ -12,16 +13,14 @@ module.exports = async (ctx, next) => {
 
   if (ctx.request && ctx.request.header && ctx.request.header.authorization) {
     try {
-      const { id } = await strapi.plugins['users-permissions'].services.jwt.getToken(ctx);
+      const { id } = await getService('jwt').getToken(ctx);
 
       if (id === undefined) {
         throw new Error('Invalid token: Token did not contain required fields');
       }
 
       // fetch authenticated user
-      ctx.state.user = await strapi.plugins[
-        'users-permissions'
-      ].services.user.fetchAuthenticatedUser(id);
+      ctx.state.user = await getService('user').fetchAuthenticatedUser(id);
     } catch (err) {
       return handleErrors(ctx, err, 'unauthorized');
     }
@@ -60,20 +59,22 @@ module.exports = async (ctx, next) => {
 
   // Retrieve `public` role.
   if (!role) {
-    role = await strapi.query('role', 'users-permissions').findOne({ type: 'public' }, []);
+    role = await strapi
+      .query('plugins::users-permissions.role')
+      .findOne({ where: { type: 'public' } });
   }
 
   const route = ctx.request.route;
-  const permission = await strapi.query('permission', 'users-permissions').findOne(
-    {
-      role: role.id,
+
+  const permission = await strapi.query('plugins::users-permissions.permission').findOne({
+    where: {
+      role: { id: role.id },
       type: route.plugin || 'application',
       controller: route.controller,
       action: route.action,
       enabled: true,
     },
-    []
-  );
+  });
 
   if (!permission) {
     return handleErrors(ctx, undefined, 'forbidden');

@@ -1,4 +1,4 @@
-import { get, has, isEqual, omit, sortBy, camelCase } from 'lodash';
+import { get, isEqual, omit, sortBy, camelCase } from 'lodash';
 
 import pluginId from '../../../pluginId';
 import makeUnique from '../../../utils/makeUnique';
@@ -18,7 +18,7 @@ const getCreatedAndModifiedComponents = (allComponents, initialComponents) => {
 
 const formatComponent = (component, mainDataUID, isCreatingData = false) => {
   const formattedAttributes = formatAttributes(
-    get(component, 'schema.attributes', {}),
+    get(component, 'schema.attributes', []),
     mainDataUID,
     isCreatingData,
     true
@@ -48,7 +48,7 @@ const formatMainDataType = (data, isComponent = false) => {
   const mainDataUID = get(data, 'uid', null);
 
   const formattedAttributes = formatAttributes(
-    get(data, 'schema.attributes', {}),
+    get(data, 'schema.attributes', []),
     mainDataUID,
     isCreatingData,
     false
@@ -75,10 +75,10 @@ const formatMainDataType = (data, isComponent = false) => {
  * @param {Boolean} isComponent
  */
 const formatAttributes = (attributes, mainDataUID, isCreatingMainData, isComponent) => {
-  return Object.keys(attributes).reduce((acc, current) => {
-    const currentAttribute = get(attributes, current, {});
+  return attributes.reduce((acc, { name, ...rest }) => {
+    const currentAttribute = rest;
     const hasARelationWithMainDataUID = currentAttribute.target === mainDataUID;
-    const isRelationType = has(currentAttribute, 'nature');
+    const isRelationType = currentAttribute.type === 'relation';
     const currentTargetAttribute = get(currentAttribute, 'targetAttribute', null);
 
     if (!hasARelationWithMainDataUID) {
@@ -87,12 +87,14 @@ const formatAttributes = (attributes, mainDataUID, isCreatingMainData, isCompone
           targetAttribute: formatRelationTargetAttribute(currentTargetAttribute),
         });
 
-        acc[current] = removeNullKeys(relationAttr);
+        acc[name] = removeNullKeys(relationAttr);
       } else {
-        acc[current] = removeNullKeys(currentAttribute);
+        acc[name] = removeNullKeys(currentAttribute);
       }
     }
 
+    // TODO check with @alexandrebodin if needed
+    // Not sure this is needed
     if (hasARelationWithMainDataUID) {
       let target = currentAttribute.target;
 
@@ -105,7 +107,7 @@ const formatAttributes = (attributes, mainDataUID, isCreatingMainData, isCompone
         targetAttribute: formatRelationTargetAttribute(currentTargetAttribute),
       });
 
-      acc[current] = removeNullKeys(formattedRelationAttribute);
+      acc[name] = removeNullKeys(formattedRelationAttribute);
     }
 
     return acc;

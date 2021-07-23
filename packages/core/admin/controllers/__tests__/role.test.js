@@ -60,7 +60,7 @@ describe('Role controller', () => {
               findOne: findOneRole,
             },
             permission: {
-              find: findPermissions,
+              findMany: findPermissions,
               sanitizePermission,
             },
           },
@@ -70,7 +70,7 @@ describe('Role controller', () => {
       await roleController.getPermissions(ctx);
 
       expect(findOneRole).toHaveBeenCalledWith({ id: ctx.params.id });
-      expect(findPermissions).toHaveBeenCalledWith({ role: ctx.params.id, _limit: -1 });
+      expect(findPermissions).toHaveBeenCalledWith({ where: { role: { id: ctx.params.id } } });
       expect(ctx.body).toEqual({
         data: permissions,
       });

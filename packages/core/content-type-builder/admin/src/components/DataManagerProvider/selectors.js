@@ -18,7 +18,7 @@ const dataManagerProviderDomain = () => state =>
 
 const makeSelectDataManagerProvider = () =>
   createSelector(dataManagerProviderDomain(), substate => {
-    return substate.toJS();
+    return substate;
   });
 
 export default makeSelectDataManagerProvider;

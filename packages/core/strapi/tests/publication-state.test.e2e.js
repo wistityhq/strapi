@@ -56,9 +56,9 @@ const contentTypes = {
         type: 'string',
       },
       categories: {
-        nature: 'manyWay',
+        type: 'relation',
+        relation: 'oneToMany',
         target: 'application::category.category',
-        unique: false,
       },
       comp: {
         component: 'default.comp',
@@ -67,7 +67,6 @@ const contentTypes = {
       },
     },
     draftAndPublish: true,
-    connection: 'default',
     name: 'product',
     description: '',
     collectionName: '',
@@ -79,7 +78,6 @@ const contentTypes = {
       },
     },
     draftAndPublish: true,
-    connection: 'default',
     name: 'country',
     description: '',
     collectionName: '',
@@ -91,7 +89,6 @@ const contentTypes = {
       },
     },
     draftAndPublish: true,
-    connection: 'default',
     name: 'category',
     description: '',
     collectionName: '',
@@ -103,7 +100,8 @@ const components = {
     name: 'comp',
     attributes: {
       countries: {
-        nature: 'manyWay',
+        type: 'relation',
+        relation: 'oneToMany',
         target: 'application::country.country',
       },
     },
@@ -125,7 +123,7 @@ const lengthFor = (name, { mode = 'live' } = {}) => {
 
 const getQueryFromMode = mode => {
   if (['live', 'preview'].includes(mode)) {
-    return `?_publicationState=${mode}`;
+    return `?publicationState=${mode}`;
   }
 
   return '';
@@ -191,7 +189,10 @@ describe('Publication State', () => {
       beforeEach(async () => {
         const res = await rq({
           method: 'GET',
-          url: `/${pluralizedModelName}?_publicationState=live`,
+          url: `/${pluralizedModelName}?publicationState=live`,
+          qs: {
+            populate: ['categories', 'comp.countries'],
+          },
         });
         products = res.body;
       });

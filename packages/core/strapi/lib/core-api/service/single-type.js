@@ -4,7 +4,7 @@
  * Returns a single type service to handle default core-api actions
  */
 const createSingleTypeService = ({ model, strapi, utils }) => {
-  const { modelName } = model;
+  const { uid } = model;
   const { sanitizeInput, getFetchParams } = utils;
 
   return {
@@ -13,11 +13,8 @@ const createSingleTypeService = ({ model, strapi, utils }) => {
      *
      * @return {Promise}
      */
-    find(params, populate) {
-      return strapi.entityService.find(
-        { params: getFetchParams(params), populate },
-        { model: modelName }
-      );
+    find({ params } = {}) {
+      return strapi.entityService.find(uid, { params: getFetchParams(params) });
     },
 
     /**
@@ -25,28 +22,24 @@ const createSingleTypeService = ({ model, strapi, utils }) => {
      *
      * @return {Promise}
      */
-    async createOrUpdate(data, { files, query } = {}) {
-      const entity = await this.find(query);
+    async createOrUpdate({ params, data, files } = {}) {
+      const entity = await this.find({ params });
+
       const sanitizedData = sanitizeInput(data);
 
       if (!entity) {
-        const count = await strapi.query(modelName).count();
+        const count = await strapi.query(uid).count();
         if (count >= 1) {
           throw strapi.errors.badRequest('singleType.alreadyExists');
         }
 
-        return strapi.entityService.create({ data: sanitizedData, files }, { model: modelName });
+        return strapi.entityService.create(uid, { params, data: sanitizedData, files });
       } else {
-        return strapi.entityService.update(
-          {
-            params: {
-              id: entity.id,
-            },
-            data: sanitizedData,
-            files,
-          },
-          { model: modelName }
-        );
+        return strapi.entityService.update(uid, entity.id, {
+          params,
+          data: sanitizedData,
+          files,
+        });
       }
     },
 
@@ -55,12 +48,12 @@ const createSingleTypeService = ({ model, strapi, utils }) => {
      *
      * @return {Promise}
      */
-    async delete(params) {
-      const entity = await this.find(params);
+    async delete({ params } = {}) {
+      const entity = await this.find({ params });
 
       if (!entity) return;
 
-      return strapi.entityService.delete({ params: { id: entity.id } }, { model: modelName });
+      return strapi.entityService.delete(uid, entity.id);
     },
   };
 };

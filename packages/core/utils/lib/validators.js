@@ -16,8 +16,27 @@ function isNotNull(msg = '${path} cannot be null.') {
   return this.test('defined', msg, isNotNullTest);
 }
 
+function isFunction(message = '${path} is not a function') {
+  return this.test('is a function', message, value => _.isUndefined(value) || _.isFunction(value));
+}
+
+function isCamelCase(message = '${path} is not in camel case (anExampleOfCamelCase)') {
+  return this.test('is in camelCase', message, value => value === _.camelCase(value));
+}
+
+function onlyContainsFunctions(message = '${path} contains values that are not functions') {
+  return this.test(
+    'only contains functions',
+    message,
+    value => _.isUndefined(value) || (value && Object.values(value).every(_.isFunction))
+  );
+}
+
 yup.addMethod(yup.mixed, 'notNil', isNotNill);
 yup.addMethod(yup.mixed, 'notNull', isNotNull);
+yup.addMethod(yup.mixed, 'isFunction', isFunction);
+yup.addMethod(yup.string, 'isCamelCase', isCamelCase);
+yup.addMethod(yup.object, 'onlyContainsFunctions', onlyContainsFunctions);
 
 class StrapiIDSchema extends MixedSchemaType {
   constructor() {

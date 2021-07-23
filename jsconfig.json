@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6"
+  },
+  "include": ["packages/**/*"],
+  "exclude": ["node_modules", "**/node_modules/*"]
+}

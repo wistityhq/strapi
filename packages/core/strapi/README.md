@@ -52,7 +52,7 @@ Strapi is a free and open-source headless CMS delivering your content anywhere y
 
 - **Keep control over your data**. With Strapi, you know where your data is stored, and you keep full control at all times.
 - **Self-hosted**. You can host and scale Strapi projects the way you want. You can choose any hosting platform you want: AWS, Render, Netlify, Heroku, a VPS, or a dedicated server. You can scale as you grow, 100% independent.
-- **Database agnostic**. You can choose the database you prefer. Strapi works with SQL & NoSQL databases: MongoDB, PostgreSQL, MySQL, MariaDB, and SQLite.
+- **Database agnostic**. Strapi works with SQL databases. You can choose the database you prefer: PostgreSQL, MySQL, MariaDB, and SQLite.
 - **Customizable**. You can quickly build your logic by fully customizing APIs, routes, or plugins to fit your needs perfectly.
 
 ## Getting Started
@@ -102,7 +102,6 @@ Complete installation requirements can be found in the documentation under <a hr
 
 **Database:**
 
-- MongoDB >= 3.6 ([dropping MongoDB support](https://forum.strapi.io/t/dropping-mongodb-support/) in next major version)
 - MySQL >= 5.6
 - MariaDB >= 10.1
 - PostgreSQL >= 10
@@ -118,7 +117,7 @@ Complete installation requirements can be found in the documentation under <a hr
 - **Blazing Fast:** Built on top of Node.js, Strapi delivers amazing performance.
 - **Front-end Agnostic:** Use any front-end framework (React, Vue, Angular, etc.), mobile apps or even IoT.
 - **Powerful CLI:** Scaffold projects and APIs on the fly.
-- **SQL & NoSQL databases:** Works with MongoDB ([dropping MongoDB support](https://forum.strapi.io/t/dropping-mongodb-support/) in next major version), PostgreSQL, MySQL, MariaDB, and SQLite.
+- **SQL databases:** Works with PostgreSQL, MySQL, MariaDB, and SQLite.
 
 **[See more on our website](https://strapi.io/overview)**.
 

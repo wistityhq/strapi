@@ -19,7 +19,7 @@ const configurationService = createConfigurationService({
   },
 });
 
-module.exports = {
+module.exports = ({ strapi }) => ({
   findAllComponents() {
     const { toContentManagerModel } = getService('data-mapper');
 
@@ -89,4 +89,4 @@ module.exports = {
   syncConfigurations() {
     return configurationService.syncConfigurations();
   },
-};
+});

@@ -1,6 +1,6 @@
 'use strict';
 
-const { formatContentType } = require('../ContentTypes');
+const { formatContentType } = require('../content-types');
 
 describe('Content types service', () => {
   describe('format ContentType', () => {
@@ -8,7 +8,6 @@ describe('Content types service', () => {
       uid: 'test-uid',
       kind: 'singleType',
       plugin: 'some-plugin',
-      connection: 'default',
       modelName: 'my-name',
       collectionName: 'tests',
       info: {

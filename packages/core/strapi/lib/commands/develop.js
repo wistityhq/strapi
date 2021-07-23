@@ -5,6 +5,7 @@ const cluster = require('cluster');
 const fs = require('fs-extra');
 const chokidar = require('chokidar');
 const execa = require('execa');
+const { getOr } = require('lodash/fp');
 
 const { createLogger } = require('@strapi/logger');
 const loadConfiguration = require('../core/app-configuration');
@@ -17,10 +18,10 @@ const strapi = require('../index');
 module.exports = async function({ build, watchAdmin, polling, browser }) {
   const dir = process.cwd();
   const config = loadConfiguration(dir);
-  const logger = createLogger(config.get('logger', {}));
+  const logger = createLogger(config.logger, {});
 
-  const adminWatchIgnoreFiles = config.get('server.admin.watchIgnoreFiles', []);
-  const serveAdminPanel = config.get('server.admin.serveAdminPanel', true);
+  const adminWatchIgnoreFiles = getOr([], 'server.admin.watchIgnoreFiles')(config);
+  const serveAdminPanel = getOr(true, 'server.admin.serveAdminPanel')(config);
 
   const buildExists = fs.existsSync(path.join(dir, 'build'));
   // Don't run the build process if the admin is in watch mode

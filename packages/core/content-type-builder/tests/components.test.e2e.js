@@ -123,7 +123,6 @@ describe('Content Type Builder - Components', () => {
           schema: expect.objectContaining({
             name: expect.any(String),
             description: expect.any(String),
-            connection: expect.any(String),
             collectionName: expect.any(String),
             attributes: expect.objectContaining({}),
           }),
@@ -160,7 +159,6 @@ describe('Content Type Builder - Components', () => {
             icon: 'default',
             name: 'Some Component',
             description: '',
-            connection: 'default',
             collectionName: 'components_default_some_components',
             pluginOptions: {
               pluginName: {

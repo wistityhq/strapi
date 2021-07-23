@@ -27,6 +27,7 @@ describe('Entity service', () => {
       'searchPage',
     ])('Can decorate', async method => {
       const instance = createEntityService({
+        strapi: {},
         db: {},
         eventHub: new EventEmitter(),
       });
@@ -52,28 +53,32 @@ describe('Entity service', () => {
       };
 
       const fakeQuery = {
-        find: jest.fn(() => Promise.resolve([data])),
+        findOne: jest.fn(() => Promise.resolve(data)),
       };
 
       const fakeDB = {
-        getModel: jest.fn(() => {
-          return { kind: 'singleType', privateAttributes: [] };
-        }),
         query: jest.fn(() => fakeQuery),
       };
 
+      const fakeStrapi = {
+        getModel: jest.fn(() => {
+          return { kind: 'singleType', privateAttributes: [] };
+        }),
+      };
+
       const instance = createEntityService({
+        strapi: fakeStrapi,
         db: fakeDB,
         eventHub: new EventEmitter(),
       });
 
-      const result = await instance.find({}, { model: 'test-model' });
+      const result = await instance.find('test-model');
 
-      expect(fakeDB.getModel).toHaveBeenCalledTimes(1);
-      expect(fakeDB.getModel).toHaveBeenCalledWith('test-model');
+      expect(fakeStrapi.getModel).toHaveBeenCalledTimes(1);
+      expect(fakeStrapi.getModel).toHaveBeenCalledWith('test-model');
 
       expect(fakeDB.query).toHaveBeenCalledWith('test-model');
-      expect(fakeQuery.find).toHaveBeenCalledWith({ _limit: 1 }, undefined);
+      expect(fakeQuery.findOne).toHaveBeenCalledWith({});
       expect(result).toEqual(data);
     });
   });
@@ -85,7 +90,7 @@ describe('Entity service', () => {
       beforeAll(() => {
         const fakeQuery = {
           count: jest.fn(() => 0),
-          create: jest.fn(data => data),
+          create: jest.fn(({ data }) => data),
         };
 
         const fakeModel = {
@@ -115,11 +120,15 @@ describe('Entity service', () => {
         };
 
         const fakeDB = {
-          getModel: jest.fn(() => fakeModel),
           query: jest.fn(() => fakeQuery),
         };
 
+        const fakeStrapi = {
+          getModel: jest.fn(() => fakeModel),
+        };
+
         instance = createEntityService({
+          strapi: fakeStrapi,
           db: fakeDB,
           eventHub: new EventEmitter(),
           entityValidator,
@@ -129,7 +138,7 @@ describe('Entity service', () => {
       test('should create record with all default attributes', async () => {
         const data = {};
 
-        await expect(instance.create({ data }, { model: 'test-model' })).resolves.toMatchObject({
+        await expect(instance.create('test-model', { data })).resolves.toMatchObject({
           attrStringDefaultRequired: 'default value',
           attrStringDefault: 'default value',
           attrBoolDefaultRequired: true,
@@ -149,7 +158,7 @@ describe('Entity service', () => {
           attrEnumDefault: 'c',
         };
 
-        await expect(instance.create({ data }, { model: 'test-model' })).resolves.toMatchObject({
+        await expect(instance.create('test-model', { data })).resolves.toMatchObject({
           attrStringDefault: 'my value',
           attrBoolDefault: false,
           attrIntDefault: 2,
@@ -173,9 +182,7 @@ describe('Entity service', () => {
           attrEnumDefault: 'a',
         };
 
-        await expect(instance.create({ data }, { model: 'test-model' })).resolves.toMatchObject(
-          data
-        );
+        await expect(instance.create('test-model', { data })).resolves.toMatchObject(data);
       });
     });
   });
