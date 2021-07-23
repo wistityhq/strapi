@@ -1,6 +1,13 @@
-import { fromJS, OrderedMap } from 'immutable';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
+/**
+ *
+ * @params {Object} contentTypeSchema
+ * @params {Object[]} retrievedComponents array of components that are used in the content type
+ * @params {Object} allComponentsSchema All app's components
+ * @params {Boolean} isInContentTypeView
+ * @returns {Object} The modifiedData to set in the reducer
+ */
 const createModifiedDataSchema = (
   contentTypeSchema,
   retrievedComponents,
@@ -23,52 +30,4 @@ const createModifiedDataSchema = (
   return schema;
 };
 
-const orderAllDataAttributesWithImmutable = (allDataSchema, isInContentTypeView) => {
-  const attributesPath = ['schema', 'attributes'];
-  const componentsSchema = allDataSchema.components;
-  const componentsWithImmutableSchema = Object.keys(componentsSchema).reduce((acc, current) => {
-    const currentSchema = get(componentsSchema, [current], {});
-
-    const currentAttributes = get(currentSchema, attributesPath, {});
-
-    const fromJSAttributes = Object.keys(currentAttributes).reduce((acc, current) => {
-      acc[current] = fromJS(currentAttributes[current]);
-
-      return acc;
-    }, {});
-
-    // TODO refacto
-    const currentImmutableSchemas = fromJS(currentSchema).setIn(
-      ['schema', 'attributes'],
-      fromJS(OrderedMap(fromJSAttributes))
-    );
-
-    acc[current] = fromJS(currentImmutableSchemas);
-
-    return acc;
-  }, {});
-  const keyName = isInContentTypeView ? 'contentType' : 'component';
-  const mainSchema = get(allDataSchema, [keyName], {});
-  const mainImmutableSchema = fromJS(mainSchema).setIn(
-    attributesPath,
-    fromJS(
-      OrderedMap(
-        Object.keys(get(mainSchema, attributesPath, {})).reduce((acc, current) => {
-          acc[current] = fromJS(get(mainSchema, [...attributesPath, current], {}));
-
-          return acc;
-        }, {})
-      )
-    )
-  );
-
-  const immutableData = fromJS({
-    components: componentsWithImmutableSchema,
-    [keyName]: mainImmutableSchema,
-  });
-
-  return immutableData;
-};
-
 export default createModifiedDataSchema;
-export { orderAllDataAttributesWithImmutable };

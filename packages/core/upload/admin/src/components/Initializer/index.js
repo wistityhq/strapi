@@ -28,11 +28,6 @@ const Initializer = ({ setPlugin }) => {
         const fileModel = data.find(model => model.uid === 'plugins::upload.file');
         const timestamps = get(fileModel, ['options', 'timestamps']);
 
-        // All connectors must initialise the "timestamps" option as a tuple
-        if (!Array.isArray(timestamps) || timestamps.length !== 2) {
-          throw new Error('Unexpected timestamp field configuration.');
-        }
-
         dispatch(setFileModelTimestamps(timestamps));
 
         ref.current(pluginId);

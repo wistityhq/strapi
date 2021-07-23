@@ -25,7 +25,7 @@ module.exports = {
           createdModel = await modelsUtils.createContentType(contentType);
           ctx.addModel(createdModel);
         },
-        cleanup: () => modelsUtils.deleteContentType(createdModel.modelName),
+        cleanup: () => modelsUtils.deleteContentType(createdModel.uid),
       };
     },
 
@@ -39,7 +39,7 @@ module.exports = {
         },
         async cleanup() {
           for (const model of createdModels) {
-            await modelsUtils.deleteContentType(model.modelName);
+            await modelsUtils.deleteContentType(model.uid);
           }
         },
       };
@@ -59,7 +59,7 @@ module.exports = {
         },
         async cleanup() {
           for (const model of createdModels) {
-            await modelsUtils.deleteContentType(model.modelName);
+            await modelsUtils.deleteContentType(model.uid);
           }
         },
       };

@@ -4,7 +4,7 @@ const { join } = require('path');
 const fse = require('fs-extra');
 const inquirer = require('inquirer');
 const execa = require('execa');
-const { merge, pick } = require('lodash');
+const { merge } = require('lodash');
 
 const stopProcess = require('./utils/stop-process');
 const { trackUsage } = require('./utils/usage');
@@ -93,6 +93,10 @@ async function testDatabaseConnection({ scope, configuration }) {
 
   if (client === 'sqlite') return;
 
+  return;
+
+  // TODO: test DB connection somehow
+
   await installDatabaseTestingDep({
     scope,
     configuration,
@@ -111,17 +115,13 @@ async function testDatabaseConnection({ scope, configuration }) {
   return tester({ scope, connection: configuration.connection });
 }
 
-const SETTINGS_FIELDS = ['database', 'host', 'srv', 'port', 'username', 'password', 'filename'];
-
-const OPTIONS_FIELDS = ['authenticationDatabase'];
-
 async function askDatabaseInfos(scope) {
   const { client } = await inquirer.prompt([
     {
       type: 'list',
       name: 'client',
       message: 'Choose your default database client',
-      choices: ['sqlite', 'postgres', 'mysql', 'mongo'],
+      choices: ['sqlite', 'postgres', 'mysql'],
       default: 'sqlite',
     },
   ]);
@@ -129,17 +129,9 @@ async function askDatabaseInfos(scope) {
   const responses = await inquirer.prompt(dbQuestions[client].map(q => q({ scope, client })));
 
   const connection = merge({}, defaultConfigs[client] || {}, {
-    settings: pick(responses, SETTINGS_FIELDS),
-    options: pick(responses, OPTIONS_FIELDS),
+    client,
+    connection: responses,
   });
-
-  if (responses.ssl === true) {
-    if (client === 'mongo') {
-      connection.options.ssl = true;
-    } else {
-      connection.settings.ssl = true;
-    }
-  }
 
   return {
     client,

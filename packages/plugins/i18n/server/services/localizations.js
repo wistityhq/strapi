@@ -29,7 +29,7 @@ const syncLocalizations = async (entry, { model }) => {
     const updateLocalization = id => {
       const localizations = newLocalizations.filter(localizationId => localizationId !== id);
 
-      return strapi.query(model.uid).update({ id }, { localizations });
+      return strapi.query(model.uid).update({ where: { id }, data: { localizations } });
     };
 
     await Promise.all(entry.localizations.map(({ id }) => updateLocalization(id)));
@@ -52,7 +52,9 @@ const syncNonLocalizedAttributes = async (entry, { model }) => {
       return;
     }
 
-    const updateLocalization = id => strapi.query(model.uid).update({ id }, nonLocalizedAttributes);
+    const updateLocalization = id => {
+      return strapi.query(model.uid).update({ where: { id }, data: nonLocalizedAttributes });
+    };
 
     await Promise.all(entry.localizations.map(({ id }) => updateLocalization(id)));
   }

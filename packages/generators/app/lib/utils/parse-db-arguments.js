@@ -5,7 +5,7 @@ const stopProcess = require('./stop-process');
 
 const DB_ARGS = ['dbclient', 'dbhost', 'dbport', 'dbname', 'dbusername', 'dbpassword'];
 
-const VALID_CLIENTS = ['sqlite', 'mysql', 'postgres', 'mongo'];
+const VALID_CLIENTS = ['sqlite', 'mysql', 'postgres'];
 
 module.exports = function parseDatabaseArguments({ scope, args }) {
   const argKeys = Object.keys(args);
@@ -29,29 +29,19 @@ module.exports = function parseDatabaseArguments({ scope, args }) {
   scope.dbforce = args.dbforce !== undefined;
 
   const database = {
-    settings: {
-      client: args.dbclient,
+    client: args.dbclient,
+    connection: {
       host: args.dbhost,
-      srv: args.dbsrv,
       port: args.dbport,
       database: args.dbname,
       username: args.dbusername,
       password: args.dbpassword,
       filename: args.dbfile,
     },
-    options: {},
   };
 
-  if (args.dbauth !== undefined) {
-    database.options.authenticationDatabase = args.dbauth;
-  }
-
   if (args.dbssl !== undefined) {
-    if (args.dbclient === 'mongo') {
-      database.options.ssl = args.dbssl === 'true';
-    } else {
-      database.settings.ssl = args.dbssl === 'true';
-    }
+    database.connection.ssl = args.dbssl === 'true';
   }
 
   scope.database = database;

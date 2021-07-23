@@ -46,37 +46,21 @@ const setModelConfiguration = async (key, value) => {
 };
 
 const deleteKey = key => {
-  return strapi.query('core_store').delete({ key: `plugin_content_manager_configuration_${key}` });
+  return strapi
+    .query('strapi::core-store')
+    .delete({ where: { key: `plugin_content_manager_configuration_${key}` } });
 };
 
-function findByKeyQuery({ model }, key) {
-  if (model.orm === 'mongoose') {
-    return model
-      .find({
-        key: { $regex: `${key}.*` },
-      })
-      .then(results => results.map(({ value }) => JSON.parse(value)));
-  }
-
-  return model
-    .query(qb => {
-      qb.where('key', 'like', `${key}%`);
-    })
-    .fetchAll()
-    .then(config => config && config.toJSON())
-    .then(results => results.map(({ value }) => JSON.parse(value)));
-}
-
-const findByKey = key => strapi.query('core_store').custom(findByKeyQuery)(key);
-const moveKey = (oldKey, newKey) => {
-  return strapi.query('core_store').update(
-    {
-      key: `plugin_content_manager_configuration_${oldKey}`,
+const findByKey = async key => {
+  const results = await strapi.query('strapi::core-store').findMany({
+    where: {
+      key: {
+        $startsWith: key,
+      },
     },
-    {
-      key: `plugin_content_manager_configuration_${newKey}`,
-    }
-  );
+  });
+
+  return results.map(({ value }) => JSON.parse(value));
 };
 
 const getAllConfigurations = () => findByKey('plugin_content_manager_configuration');
@@ -88,6 +72,5 @@ module.exports = {
   setModelConfiguration,
 
   deleteKey,
-  moveKey,
   keys,
 };

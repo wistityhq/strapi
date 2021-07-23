@@ -12,9 +12,7 @@
       "default": "something"
     },
     "media": {
-      "model": "file",
-      "via": "related",
-      "plugin": "upload"
+      "type": "media"
     },
     "is_available": {
       "type": "boolean",

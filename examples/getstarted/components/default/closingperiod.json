@@ -18,9 +18,7 @@
       "required": true
     },
     "media": {
-      "model": "file",
-      "via": "related",
-      "plugin": "upload",
+      "type": "media",
       "required": false
     },
     "dish": {

@@ -9,8 +9,8 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const CLITable = require('cli-table3');
 const { models, getAbsoluteAdminUrl, getAbsoluteServerUrl } = require('@strapi/utils');
-const { createDatabaseManager } = require('@strapi/database');
 const { createLogger } = require('@strapi/logger');
+const { Database } = require('@strapi/database');
 const loadConfiguration = require('./core/app-configuration');
 
 const utils = require('./utils');
@@ -36,11 +36,6 @@ const LIFECYCLES = {
   BOOTSTRAP: 'bootstrap',
 };
 
-/**
- * Construct an Strapi instance.
- *
- * @constructor
- */
 class Strapi {
   constructor(opts = {}) {
     this.reload = this.reload();
@@ -277,13 +272,13 @@ class Strapi {
         cb();
       }
 
-      if (
-        (this.config.environment === 'development' &&
-          this.config.get('server.admin.autoOpen', true) !== false) ||
-        !isInitialised
-      ) {
-        await utils.openBrowser.call(this);
-      }
+      // if (
+      //   (this.config.environment === 'development' &&
+      //     this.config.get('server.admin.autoOpen', true) !== false) ||
+      //   !isInitialised
+      // ) {
+      //   await utils.openBrowser.call(this);
+      // }
     };
 
     const listenSocket = this.config.get('server.socket');
@@ -301,10 +296,12 @@ class Strapi {
   }
 
   stopWithError(err, customMessage) {
+    console.log(err);
     this.log.debug(`⛔️ Server wasn't able to start properly.`);
     if (customMessage) {
       this.log.error(customMessage);
     }
+
     this.log.error(err);
     return this.stop();
   }
@@ -356,13 +353,26 @@ class Strapi {
     });
 
     // Init core store
-    this.models['core_store'] = coreStoreModel(this.config);
-    this.models['strapi_webhooks'] = webhookModel(this.config);
-
-    this.db = createDatabaseManager(this);
 
     await this.runLifecyclesFunctions(LIFECYCLES.REGISTER);
-    await this.db.initialize();
+
+    // TODO: i18N must have added the new fileds before we init the DB
+
+    const contentTypes = [
+      // todo: move corestore and webhook to real models instead of content types to avoid adding extra attributes
+      coreStoreModel,
+      webhookModel,
+      ...Object.values(strapi.contentTypes),
+      ...Object.values(strapi.components),
+    ];
+
+    // TODO: create in RootProvider
+    this.db = await Database.init({
+      ...this.config.get('database'),
+      models: Database.transformContentTypes(contentTypes),
+    });
+
+    await this.db.schema.sync();
 
     this.store = createCoreStore({
       environment: this.config.environment,
@@ -376,6 +386,7 @@ class Strapi {
     this.entityValidator = entityValidator;
 
     this.entityService = createEntityService({
+      strapi: this,
       db: this.db,
       eventHub: this.eventHub,
       entityValidator: this.entityValidator,
@@ -477,7 +488,7 @@ class Strapi {
     const adminFunc = _.get(this.admin.config, configPath);
     return execLifecycle(adminFunc).catch(err => {
       strapi.log.error(`${lifecycleName} function in admin failed`);
-      strapi.log.error(err);
+      console.error(err);
       strapi.stop();
     });
   }
@@ -490,17 +501,17 @@ class Strapi {
     Object.freeze(this.api);
   }
 
-  getModel(modelKey, plugin) {
-    return this.db.getModel(modelKey, plugin);
+  getModel(uid) {
+    return this.contentTypes[uid] || this.components[uid];
   }
 
   /**
    * Binds queries with a specific model
-   * @param {string} entity - entity name
-   * @param {string} plugin - plugin name or null
+   * @param {string} uid
+   * @returns {}
    */
-  query(entity, plugin) {
-    return this.db.query(entity, plugin);
+  query(uid) {
+    return this.db.query(uid);
   }
 }
 
@@ -509,3 +520,5 @@ module.exports = options => {
   global.strapi = strapi;
   return strapi;
 };
+
+module.exports.Strapi = Strapi;

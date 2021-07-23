@@ -50,10 +50,8 @@ describe('Entity service decorator', () => {
           update() {},
         };
       },
-      db: {
-        getModel(uid) {
-          return models[uid || 'test-model'];
-        },
+      getModel(uid) {
+        return models[uid || 'test-model'];
       },
       store: () => ({ get: () => 'en' }),
     };
@@ -73,9 +71,9 @@ describe('Entity service decorator', () => {
       const service = decorator(defaultService);
 
       const input = { populate: ['test'] };
-      await service.wrapOptions(input, { model: 'test-model' });
+      await service.wrapOptions(input, { uid: 'test-model' });
 
-      expect(defaultService.wrapOptions).toHaveBeenCalledWith(input, { model: 'test-model' });
+      expect(defaultService.wrapOptions).toHaveBeenCalledWith(input, { uid: 'test-model' });
     });
 
     test('Does not wrap options if model is not localized', async () => {
@@ -85,7 +83,7 @@ describe('Entity service decorator', () => {
       const service = decorator(defaultService);
 
       const input = { populate: ['test'] };
-      const output = await service.wrapOptions(input, { model: 'non-localized-model' });
+      const output = await service.wrapOptions(input, { uid: 'non-localized-model' });
 
       expect(output).toStrictEqual(input);
     });
@@ -97,7 +95,7 @@ describe('Entity service decorator', () => {
       const service = decorator(defaultService);
 
       const input = { populate: ['test'] };
-      const output = await service.wrapOptions(input, { model: 'test-model' });
+      const output = await service.wrapOptions(input, { uid: 'test-model' });
 
       expect(output.populate).toStrictEqual(input.populate);
     });
@@ -109,24 +107,20 @@ describe('Entity service decorator', () => {
       const service = decorator(defaultService);
 
       const input = { populate: ['test'] };
-      const output = await service.wrapOptions(input, { model: 'test-model' });
+      const output = await service.wrapOptions(input, { uid: 'test-model' });
 
-      expect(output).toMatchObject({ params: { locale: 'en' } });
+      expect(output).toMatchObject({ params: { filters: { $and: [{ locale: 'en' }] } } });
     });
 
     const testData = [
-      ['findOne', { id: 1 }],
-      ['update', { id: 1 }],
-      ['delete', { id: 1 }],
-      ['delete', { id_in: [1] }],
-      ['findOne', { _where: { id: 1 } }],
-      ['update', { _where: { id: 1 } }],
-      ['delete', { _where: { id: 1 } }],
-      ['delete', { _where: { id_in: [1] } }],
-      ['findOne', { _where: [{ id: 1 }] }],
-      ['update', { _where: [{ id: 1 }] }],
-      ['delete', { _where: [{ id: 1 }] }],
-      ['delete', { _where: [{ id_in: [1] }] }],
+      ['findOne', { filters: { id: 1 } }],
+      ['update', { filters: { id: 1 } }],
+      ['delete', { filters: { id: 1 } }],
+      ['delete', { filters: { id: { $in: [1] } } }],
+      ['findOne', { filters: [{ id: 1 }] }],
+      ['update', { filters: [{ id: 1 }] }],
+      ['delete', { filters: [{ id: 1 }] }],
+      ['delete', { filters: [{ id: { $in: [1] } }] }],
     ];
 
     test.each(testData)(
@@ -138,7 +132,7 @@ describe('Entity service decorator', () => {
         const service = decorator(defaultService);
 
         const input = Object.assign({ populate: ['test'], params });
-        const output = await service.wrapOptions(input, { model: 'test-model', action });
+        const output = await service.wrapOptions(input, { uid: 'test-model', action });
 
         expect(output).toEqual({ populate: ['test'], params });
       }
@@ -152,13 +146,13 @@ describe('Entity service decorator', () => {
 
       const input = {
         params: {
-          _locale: 'fr',
+          locale: 'fr',
         },
         populate: ['test'],
       };
-      const output = await service.wrapOptions(input, { model: 'test-model' });
+      const output = await service.wrapOptions(input, { uid: 'test-model' });
 
-      expect(output).toMatchObject({ params: { locale: 'fr' } });
+      expect(output).toMatchObject({ params: { filters: { $and: [{ locale: 'fr' }] } } });
     });
   });
 
@@ -175,9 +169,9 @@ describe('Entity service decorator', () => {
       const service = decorator(defaultService);
 
       const input = { data: { title: 'title ' } };
-      await service.create(input, { model: 'test-model' });
+      await service.create('test-model', input);
 
-      expect(defaultService.create).toHaveBeenCalledWith(input, { model: 'test-model' });
+      expect(defaultService.create).toHaveBeenCalledWith('test-model', input);
     });
 
     test('Calls syncLocalizations if model is localized', async () => {
@@ -193,9 +187,9 @@ describe('Entity service decorator', () => {
       const service = decorator(defaultService);
 
       const input = { data: { title: 'title ' } };
-      await service.create(input, { model: 'test-model' });
+      await service.create('test-model', input);
 
-      expect(defaultService.create).toHaveBeenCalledWith(input, { model: 'test-model' });
+      expect(defaultService.create).toHaveBeenCalledWith('test-model', input);
       expect(syncLocalizations).toHaveBeenCalledWith(entry, { model });
     });
 
@@ -212,9 +206,9 @@ describe('Entity service decorator', () => {
       const service = decorator(defaultService);
 
       const input = { data: { title: 'title ' } };
-      const output = await service.create(input, { model: 'non-localized-model' });
+      const output = await service.create('non-localized-model', input);
 
-      expect(defaultService.create).toHaveBeenCalledWith(input, { model: 'non-localized-model' });
+      expect(defaultService.create).toHaveBeenCalledWith('non-localized-model', input);
       expect(syncLocalizations).not.toHaveBeenCalled();
       expect(output).toStrictEqual(entry);
     });
@@ -232,10 +226,10 @@ describe('Entity service decorator', () => {
 
       const service = decorator(defaultService);
 
-      const input = { params: { id: 1 }, data: { title: 'title ' } };
-      await service.update(input, { model: 'test-model' });
+      const input = { data: { title: 'title ' } };
+      await service.update('test-model', 1, input);
 
-      expect(defaultService.update).toHaveBeenCalledWith(input, { model: 'test-model' });
+      expect(defaultService.update).toHaveBeenCalledWith('test-model', 1, input);
     });
 
     test('Calls syncNonLocalizedAttributes if model is localized', async () => {
@@ -250,10 +244,10 @@ describe('Entity service decorator', () => {
 
       const service = decorator(defaultService);
 
-      const input = { params: { id: 1 }, data: { title: 'title ' } };
-      const output = await service.update(input, { model: 'test-model' });
+      const input = { data: { title: 'title ' } };
+      const output = await service.update('test-model', 1, input);
 
-      expect(defaultService.update).toHaveBeenCalledWith(input, { model: 'test-model' });
+      expect(defaultService.update).toHaveBeenCalledWith('test-model', 1, input);
       expect(syncNonLocalizedAttributes).toHaveBeenCalledWith(entry, { model });
       expect(output).toStrictEqual(entry);
     });
@@ -270,10 +264,10 @@ describe('Entity service decorator', () => {
 
       const service = decorator(defaultService);
 
-      const input = { params: { id: 1 }, data: { title: 'title ' } };
-      await service.update(input, { model: 'non-localized-model' });
+      const input = { data: { title: 'title ' } };
+      await service.update('non-localized-model', 1, input);
 
-      expect(defaultService.update).toHaveBeenCalledWith(input, { model: 'non-localized-model' });
+      expect(defaultService.update).toHaveBeenCalledWith('non-localized-model', 1, input);
       expect(syncNonLocalizedAttributes).not.toHaveBeenCalled();
     });
   });

@@ -19,7 +19,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find: async () => [],
+              findMany: async () => [],
             };
           },
         },
@@ -56,7 +56,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find: async () => [],
+              findMany: async () => [],
             };
           },
         },
@@ -82,7 +82,7 @@ describe('Test uid service', () => {
     });
 
     test('Uses targetField value for generation', async () => {
-      const find = jest.fn(async () => {
+      const findMany = jest.fn(async () => {
         return [{ slug: 'test-title' }];
       });
 
@@ -104,7 +104,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find,
+              findMany,
             };
           },
         },
@@ -121,7 +121,7 @@ describe('Test uid service', () => {
       expect(uid).toBe('test-title-1');
 
       // change find response
-      global.strapi.db.query = () => ({ find: jest.fn(async () => []) });
+      global.strapi.db.query = () => ({ findMany: jest.fn(async () => []) });
 
       const uidWithEmptyTarget = await uidService.generateUIDField({
         contentTypeUID: 'my-model',
@@ -154,7 +154,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find: async () => [],
+              findMany: async () => [],
             };
           },
         },
@@ -191,7 +191,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find: async () => [],
+              findMany: async () => [],
             };
           },
         },
@@ -228,7 +228,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find: async () => [],
+              findMany: async () => [],
             };
           },
         },
@@ -261,7 +261,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find: async () => [],
+              findMany: async () => [],
             };
           },
         },
@@ -279,7 +279,7 @@ describe('Test uid service', () => {
 
   describe('findUniqueUID', () => {
     test('Finds closest match', async () => {
-      const find = jest.fn(async () => {
+      const findMany = jest.fn(async () => {
         return [
           { slug: 'my-test-model' },
           { slug: 'my-test-model-1' },
@@ -302,7 +302,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find,
+              findMany,
             };
           },
         },
@@ -318,7 +318,7 @@ describe('Test uid service', () => {
     });
 
     test('Calls db find', async () => {
-      const find = jest.fn(async () => {
+      const findMany = jest.fn(async () => {
         return [];
       });
 
@@ -336,7 +336,7 @@ describe('Test uid service', () => {
         db: {
           query() {
             return {
-              find,
+              findMany,
             };
           },
         },
@@ -348,9 +348,8 @@ describe('Test uid service', () => {
         value: 'my-test-model',
       });
 
-      expect(find).toHaveBeenCalledWith({
-        slug_contains: 'my-test-model',
-        _limit: -1,
+      expect(findMany).toHaveBeenCalledWith({
+        where: { slug: { $contains: 'my-test-model' } },
       });
     });
   });
@@ -375,7 +374,7 @@ describe('Test uid service', () => {
         value: 'my-test-model',
       });
 
-      expect(count).toHaveBeenCalledWith({ slug: 'my-test-model' });
+      expect(count).toHaveBeenCalledWith({ where: { slug: 'my-test-model' } });
       expect(isAvailable).toBe(true);
     });
   });

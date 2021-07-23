@@ -2,6 +2,8 @@ export const ADD_COMPONENTS_TO_DYNAMIC_ZONE =
   'ContentTypeBuilder/FormModal/ADD_COMPONENTS_TO_DYNAMIC_ZONE';
 export const ON_CHANGE = 'ContentTypeBuilder/FormModal/ON_CHANGE';
 export const ON_CHANGE_ALLOWED_TYPE = 'ContentTypeBuilder/FormModal/ON_CHANGE_ALLOWED_TYPE';
+export const ON_CHANGE_RELATION_TARGET = 'ContentTypeBuilder/FormModal/ON_CHANGE_RELATION_TARGET';
+export const ON_CHANGE_RELATION_TYPE = 'ContentTypeBuilder/FormModal/ON_CHANGE_RELATION_TYPE';
 export const RESET_PROPS = 'ContentTypeBuilder/FormModal/RESET_PROPS';
 export const RESET_PROPS_AND_SET_FORM_FOR_ADDING_AN_EXISTING_COMPO =
   'ContentTypeBuilder/FormModal/RESET_PROPS_AND_SET_FORM_FOR_ADDING_AN_EXISTING_COMPO';

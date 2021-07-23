@@ -26,7 +26,7 @@ module.exports = {
       params: { id },
     } = ctx;
 
-    const file = await strapi.plugins.upload.services.upload.fetch({ id });
+    const file = await strapi.plugins.upload.services.upload.findOne({ id });
 
     if (!file) {
       return ctx.notFound('file.notFound');
@@ -46,7 +46,7 @@ module.exports = {
       params: { id },
     } = ctx;
 
-    const file = await strapi.plugins['upload'].services.upload.fetch({ id });
+    const file = await strapi.plugins['upload'].services.upload.findOne({ id });
 
     if (!file) {
       return ctx.notFound('file.notFound');

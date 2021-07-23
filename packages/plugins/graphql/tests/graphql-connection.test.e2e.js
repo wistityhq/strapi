@@ -19,7 +19,6 @@ const postModel = {
       type: 'integer',
     },
   },
-  connection: 'default',
   name: 'post',
   description: '',
   collectionName: '',

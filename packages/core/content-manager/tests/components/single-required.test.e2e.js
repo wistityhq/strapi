@@ -59,6 +59,9 @@ describe.each([
             name: 'someString',
           },
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(res.statusCode).toBe(200);
@@ -76,6 +79,9 @@ describe.each([
           field: {
             name: 'someValue',
           },
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -95,6 +101,9 @@ describe.each([
           body: {
             field: value,
           },
+          qs: {
+            populate: ['field'],
+          },
         });
 
         expect(res.statusCode).toBe(400);
@@ -106,6 +115,9 @@ describe.each([
         body: {
           field: null,
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(res.statusCode).toBe(400);
@@ -114,6 +126,9 @@ describe.each([
     test('Throws when the component is not provided', async () => {
       const res = await rq.post('/', {
         body: {},
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(res.statusCode).toBe(400);
@@ -122,7 +137,11 @@ describe.each([
 
   describe('GET entries', () => {
     test('Should return entries with their nested components', async () => {
-      const res = await rq.get('/');
+      const res = await rq.get('/', {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(res.statusCode).toBe(200);
 
@@ -161,18 +180,28 @@ describe.each([
               name: 'someString',
             },
           },
+          qs: {
+            populate: ['field'],
+          },
         });
 
         const updateRes = await rq.put(`/${res.body.id}`, {
           body: {
             field: value,
           },
+          qs: {
+            populate: ['field'],
+          },
         });
 
         expect(updateRes.statusCode).toBe(400);
 
         // shouldn't have been updated
-        const getRes = await rq.get(`/${res.body.id}`);
+        const getRes = await rq.get(`/${res.body.id}`, {
+          qs: {
+            populate: ['field'],
+          },
+        });
 
         expect(getRes.statusCode).toBe(200);
         expect(getRes.body).toMatchObject({
@@ -189,10 +218,16 @@ describe.each([
             name: 'someString',
           },
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
         body: {},
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(updateRes.statusCode).toBe(200);
@@ -201,7 +236,11 @@ describe.each([
         field: res.body.field,
       });
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject({
@@ -217,17 +256,27 @@ describe.each([
             name: 'someString',
           },
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
         body: {
           field: null,
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(updateRes.statusCode).toBe(400);
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject(res.body);
@@ -240,6 +289,9 @@ describe.each([
             name: 'someString',
           },
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
@@ -247,6 +299,9 @@ describe.each([
           field: {
             name: 'new String',
           },
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -259,7 +314,11 @@ describe.each([
         },
       });
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject({
@@ -277,6 +336,9 @@ describe.each([
             name: 'someString',
           },
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
@@ -291,12 +353,15 @@ describe.each([
       expect(updateRes.statusCode).toBe(400);
     });
 
-    test('Updates component if previsous component id is sent', async () => {
+    test('Updates component if previous component id is sent', async () => {
       const res = await rq.post('/', {
         body: {
           field: {
             name: 'someString',
           },
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -306,6 +371,9 @@ describe.each([
             id: res.body.field.id, // send old id to update the previous component
             name: 'new String',
           },
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -320,7 +388,11 @@ describe.each([
       expect(updateRes.statusCode).toBe(200);
       expect(updateRes.body).toMatchObject(expectedResult);
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject(expectedResult);
@@ -335,14 +407,25 @@ describe.each([
             name: 'someString',
           },
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
-      const deleteRes = await rq.delete(`/${res.body.id}`);
+      const deleteRes = await rq.delete(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(deleteRes.statusCode).toBe(200);
       expect(deleteRes.body).toMatchObject(res.body);
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(404);
     });

@@ -1,9 +1,9 @@
 'use strict';
 
-const jwtService = require('../../services/Jwt');
-const providersService = require('../../services/Providers');
-const userService = require('../../services/User');
-const usersPermissionsService = require('../../services/UsersPermissions');
+const jwtService = require('../../services/jwt');
+const providersService = require('../../services/providers');
+const userService = require('../../services/user');
+const usersPermissionsService = require('../../services/users-permissions');
 
 module.exports = {
   jwt: jwtService,

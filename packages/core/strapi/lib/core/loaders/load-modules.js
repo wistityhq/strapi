@@ -26,7 +26,7 @@ module.exports = async strapi => {
     loadAdmin(strapi),
     // loadPlugins(strapi),
     loadMiddlewares(strapi),
-    loadHooks(strapi),
+    loadHooks(strapi.config),
     loadExtensions(strapi),
     loadComponents(strapi),
   ]);

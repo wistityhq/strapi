@@ -27,6 +27,8 @@ const DEFAULT_TYPES = [
   'datetime',
   'timestamp',
   'boolean',
+
+  'relation',
 ];
 
 const VALID_UID_TARGETS = ['string', 'text'];

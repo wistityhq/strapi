@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = {
+  CONTENT_TYPE_SECTION: 'contentTypes',
   SUPER_ADMIN_CODE: 'strapi-super-admin',
   EDITOR_CODE: 'strapi-editor',
   AUTHOR_CODE: 'strapi-author',

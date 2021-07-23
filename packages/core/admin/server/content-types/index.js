@@ -1,8 +1,8 @@
 'use strict';
 
-const permission = require('../../models/Permission.settings');
-const role = require('../../models/Role.settings');
-const user = require('../../models/User.settings');
+const permission = require('../../models/Permission');
+const role = require('../../models/Role');
+const user = require('../../models/User');
 
 module.exports = [
   {

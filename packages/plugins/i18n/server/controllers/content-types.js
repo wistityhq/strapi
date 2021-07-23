@@ -33,16 +33,22 @@ module.exports = {
 
     let params = modelDef.kind === 'singleType' ? {} : { id };
 
-    const entity = await strapi.query(model).findOne(params);
+    const entity = await strapi
+      .query(model)
+      .findOne({ where: params, populate: ['localizations'] });
 
     if (!entity) {
       return ctx.notFound();
     }
 
-    const permissions = await strapi.admin.services.permission.find({
-      action_in: [READ_ACTION, CREATE_ACTION],
-      subject: model,
-      role_in: user.roles.map(prop('id')),
+    const permissions = await strapi.admin.services.permission.findMany({
+      where: {
+        action: [READ_ACTION, CREATE_ACTION],
+        subject: model,
+        role: {
+          id: user.roles.map(prop('id')),
+        },
+      },
     });
 
     const localePermissions = permissions

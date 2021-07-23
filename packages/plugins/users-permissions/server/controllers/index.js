@@ -1,8 +1,8 @@
 'use strict';
 
-const authController = require('../../controllers/Auth');
-const userController = require('../../controllers/User');
-const usersPermissionsController = require('../../controllers/UsersPermissions');
+const authController = require('../../controllers/auth');
+const userController = require('../../controllers/user');
+const usersPermissionsController = require('../../controllers/users-permissions');
 
 module.exports = {
   auth: authController,

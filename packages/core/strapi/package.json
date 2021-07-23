@@ -1,7 +1,7 @@
 {
   "name": "@strapi/strapi",
   "version": "3.6.5",
-  "description": "An open source headless CMS solution to create and manage your own API. It provides a powerful dashboard and features to make your life easier. Databases supported: MongoDB, MySQL, MariaDB, PostgreSQL, SQLite",
+  "description": "An open source headless CMS solution to create and manage your own API. It provides a powerful dashboard and features to make your life easier. Databases supported: MySQL, MariaDB, PostgreSQL, SQLite",
   "homepage": "https://strapi.io",
   "directories": {
     "lib": "./lib",
@@ -121,7 +121,6 @@
     "jamstack",
     "javascript",
     "headless",
-    "MongoDB",
     "MySQL",
     "MariaDB",
     "PostgreSQL",

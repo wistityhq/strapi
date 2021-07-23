@@ -111,8 +111,15 @@ describe('localizations service', () => {
       await syncLocalizations(entry, { model });
 
       expect(update).toHaveBeenCalledTimes(localizations.length);
-      expect(update).toHaveBeenNthCalledWith(1, { id: 2 }, { localizations: [1, 3] });
-      expect(update).toHaveBeenNthCalledWith(2, { id: 3 }, { localizations: [1, 2] });
+      expect(update).toHaveBeenNthCalledWith(1, {
+        where: { id: 2 },
+        data: { localizations: [1, 3] },
+      });
+
+      expect(update).toHaveBeenNthCalledWith(2, {
+        where: { id: 3 },
+        data: { localizations: [1, 2] },
+      });
     });
   });
 
@@ -181,7 +188,7 @@ describe('localizations service', () => {
       await syncNonLocalizedAttributes(entry, { model });
 
       expect(update).toHaveBeenCalledTimes(1);
-      expect(update).toHaveBeenCalledWith({ id: 2 }, { stars: 1 });
+      expect(update).toHaveBeenCalledWith({ where: { id: 2 }, data: { stars: 1 } });
     });
   });
 });

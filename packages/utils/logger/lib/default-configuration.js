@@ -8,7 +8,8 @@ const createDefaultConfiguration = () => {
   return {
     level: LEVEL,
     levels: LEVELS,
-    transports: [new transports.Console({ level: LEVEL_LABEL, format: prettyPrint() })],
+    format: prettyPrint(),
+    transports: [new transports.Console({ level: LEVEL_LABEL })],
   };
 };
 

@@ -326,7 +326,7 @@ describe('Admin User CRUD (e2e)', () => {
     expect(res.statusCode).toBe(404);
     expect(res.body).toMatchObject({
       error: 'Not Found',
-      message: 'entry.notFound',
+      message: 'User does not exist',
       statusCode: 404,
     });
   });
@@ -347,8 +347,13 @@ describe('Admin User CRUD (e2e)', () => {
 
   test('16. Finds a list of users (missing user)', async () => {
     const res = await rq({
-      url: `/admin/users?email=${testData.user.email}`,
+      url: `/admin/users`,
       method: 'GET',
+      qs: {
+        filters: {
+          email: testData.user.email,
+        },
+      },
     });
 
     expect(res.statusCode).toBe(200);

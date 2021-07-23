@@ -21,7 +21,6 @@
     "@strapi/helper-plugin": "3.6.5",
     "@strapi/utils": "3.6.5",
     "fs-extra": "^9.1.0",
-    "immutable": "^3.8.2",
     "lodash": "4.17.21",
     "pluralize": "^8.0.0",
     "react": "^16.14.0",
@@ -32,9 +31,8 @@
     "react-router-dom": "^5.0.0",
     "reactstrap": "8.4.1",
     "redux": "^4.0.1",
-    "redux-immutable": "^4.0.0",
     "reselect": "^4.0.0",
-    "yup": "^0.27.0"
+    "yup": "^0.32.9"
   },
   "author": {
     "name": "Strapi team",

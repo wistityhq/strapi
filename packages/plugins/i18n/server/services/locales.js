@@ -6,16 +6,16 @@ const { getService } = require('../utils');
 
 const { getCoreStore } = require('../utils');
 
-const find = (...args) => strapi.query('locale', 'i18n').find(...args);
+const find = params => strapi.query('plugins::i18n.locale').findMany({ where: params });
 
-const findById = id => strapi.query('locale', 'i18n').findOne({ id });
+const findById = id => strapi.query('plugins::i18n.locale').findOne({ where: { id } });
 
-const findByCode = code => strapi.query('locale', 'i18n').findOne({ code });
+const findByCode = code => strapi.query('plugins::i18n.locale').findOne({ where: { code } });
 
-const count = params => strapi.query('locale', 'i18n').count(params);
+const count = params => strapi.query('plugins::i18n.locale').count({ where: params });
 
 const create = async locale => {
-  const result = await strapi.query('locale', 'i18n').create(locale);
+  const result = await strapi.query('plugins::i18n.locale').create({ data: locale });
 
   getService('metrics').sendDidUpdateI18nLocalesEvent();
 
@@ -23,7 +23,9 @@ const create = async locale => {
 };
 
 const update = async (params, updates) => {
-  const result = await strapi.query('locale', 'i18n').update(params, updates);
+  const result = await strapi
+    .query('plugins::i18n.locale')
+    .update({ where: params, data: updates });
 
   getService('metrics').sendDidUpdateI18nLocalesEvent();
 
@@ -31,11 +33,11 @@ const update = async (params, updates) => {
 };
 
 const deleteFn = async ({ id }) => {
-  const localeToDelete = await strapi.query('locale', 'i18n').findOne({ id });
+  const localeToDelete = await findById(id);
 
   if (localeToDelete) {
     await deleteAllLocalizedEntriesFor({ locale: localeToDelete.code });
-    const result = await strapi.query('locale', 'i18n').delete({ id });
+    const result = await strapi.query('plugins::i18n.locale').delete({ where: { id } });
 
     getService('metrics').sendDidUpdateI18nLocalesEvent();
 
@@ -65,7 +67,7 @@ const setIsDefault = async locales => {
 };
 
 const initDefaultLocale = async () => {
-  const existingLocalesNb = await strapi.query('locale', 'i18n').count();
+  const existingLocalesNb = await strapi.query('plugins::i18n.locale').count();
   if (existingLocalesNb === 0) {
     await create(DEFAULT_LOCALE);
     await setDefaultLocale({ code: DEFAULT_LOCALE.code });
@@ -78,7 +80,8 @@ const deleteAllLocalizedEntriesFor = async ({ locale }) => {
   const localizedModels = Object.values(strapi.contentTypes).filter(isLocalizedContentType);
 
   for (const model of localizedModels) {
-    await strapi.query(model.uid).delete({ locale }, { returning: false });
+    // FIXME: delete many content & their associations
+    await strapi.query(model.uid).deleteMany({ where: { locale } });
   }
 };
 

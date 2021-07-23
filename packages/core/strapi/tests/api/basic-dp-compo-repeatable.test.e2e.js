@@ -43,7 +43,6 @@ const productWithCompoAndDP = {
       repeatable: true,
     },
   },
-  connection: 'default',
   draftAndPublish: true,
   name: 'product-with-compo-and-dp',
   description: '',
@@ -81,6 +80,9 @@ describe('Core API - Basic + compo + draftAndPublish', () => {
       method: 'POST',
       url: '/product-with-compo-and-dps',
       body: product,
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);
@@ -93,6 +95,9 @@ describe('Core API - Basic + compo + draftAndPublish', () => {
     const res = await rq({
       method: 'GET',
       url: '/product-with-compo-and-dps',
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);
@@ -119,6 +124,9 @@ describe('Core API - Basic + compo + draftAndPublish', () => {
       method: 'PUT',
       url: `/product-with-compo-and-dps/${data.productsWithCompoAndDP[0].id}`,
       body: product,
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);
@@ -132,6 +140,9 @@ describe('Core API - Basic + compo + draftAndPublish', () => {
     const res = await rq({
       method: 'DELETE',
       url: `/product-with-compo-and-dps/${data.productsWithCompoAndDP[0].id}`,
+      qs: {
+        populate: ['compo'],
+      },
     });
 
     expect(res.statusCode).toBe(200);

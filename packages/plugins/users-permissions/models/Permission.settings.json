@@ -1,4 +1,5 @@
 {
+  "collectionName": "up_permissions",
   "info": {
     "name": "permission",
     "description": "",
@@ -37,9 +38,10 @@
       "configurable": false
     },
     "role": {
-      "model": "role",
-      "via": "permissions",
-      "plugin": "users-permissions",
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugins::users-permissions.role",
+      "inversedBy": "permissions",
       "configurable": false
     }
   }

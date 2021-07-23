@@ -2,7 +2,7 @@
 
 const { difference, keys, intersection, isEmpty } = require('lodash/fp');
 const { getService } = require('../../utils');
-const migrateForMongoose = require('./migrate-for-mongoose');
+
 const migrateForBookshelf = require('./migrate-for-bookshelf');
 
 // Migration when i18n is disabled on a field of a content-type that have i18n enabled
@@ -22,11 +22,7 @@ const after = async ({ model, definition, previousDefinition, ORM }) => {
     return;
   }
 
-  if (model.orm === 'bookshelf') {
-    await migrateForBookshelf({ ORM, model, attributesToMigrate });
-  } else if (model.orm === 'mongoose') {
-    await migrateForMongoose({ model, attributesToMigrate });
-  }
+  await migrateForBookshelf({ ORM, model, attributesToMigrate });
 };
 
 const before = () => {};

@@ -6,17 +6,10 @@ const { contentTypes: contentTypesUtils } = require('@strapi/utils');
 const { PUBLISHED_AT_ATTRIBUTE } = contentTypesUtils.constants;
 
 const NON_SORTABLES = ['component', 'json', 'media', 'richtext', 'dynamiczone'];
-const SORTABLE_RELATIONS = ['oneWay', 'oneToOne', 'manyToOne'];
+const SORTABLE_RELATIONS = ['oneToOne', 'manyToOne'];
 
 const NON_LISTABLES = ['component', 'json', 'password', 'richtext', 'dynamiczone'];
-const LISTABLE_RELATIONS = [
-  'oneWay',
-  'oneToOne',
-  'oneToMany',
-  'manyToOne',
-  'manyToMany',
-  'manyWay',
-];
+const LISTABLE_RELATIONS = ['oneToOne', 'oneToMany', 'manyToOne', 'manyToMany'];
 
 // hidden fields are fields that are configured to be hidden from list, and edit views
 const isHidden = (schema, name) => {

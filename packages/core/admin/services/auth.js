@@ -26,7 +26,7 @@ const validatePassword = (password, hash) => bcrypt.compare(password, hash);
  * @param {string} options.password
  */
 const checkCredentials = async ({ email, password }) => {
-  const user = await strapi.query('user', 'admin').findOne({ email });
+  const user = await strapi.query('strapi::user').findOne({ where: { email } });
 
   if (!user || !user.password) {
     return [null, false, { message: 'Invalid credentials' }];
@@ -51,7 +51,7 @@ const checkCredentials = async ({ email, password }) => {
  * @param {string} param.email user email for which to reset the password
  */
 const forgotPassword = async ({ email } = {}) => {
-  const user = await strapi.query('user', 'admin').findOne({ email, isActive: true });
+  const user = await strapi.query('strapi::user').findOne({ where: { email, isActive: true } });
 
   if (!user) {
     return;
@@ -91,8 +91,8 @@ const forgotPassword = async ({ email } = {}) => {
  */
 const resetPassword = async ({ resetPasswordToken, password } = {}) => {
   const matchingUser = await strapi
-    .query('user', 'admin')
-    .findOne({ resetPasswordToken, isActive: true });
+    .query('strapi::user')
+    .findOne({ where: { resetPasswordToken, isActive: true } });
 
   if (!matchingUser) {
     throw strapi.errors.badRequest();

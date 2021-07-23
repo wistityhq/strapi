@@ -7,22 +7,25 @@
   },
   "options": {
     "draftAndPublish": false,
-    "increments": true,
-    "timestamps": true,
     "comment": ""
   },
   "attributes": {
-    "authore": {
-      "plugin": "users-permissions",
-      "model": "user"
+    "author": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugins::users-permissions.user"
     },
     "review": {
-      "model": "review",
-      "via": "likes"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "application::review.review",
+      "inversedBy": "likes"
     },
     "address": {
-      "via": "likes",
-      "model": "address"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "application::address.address",
+      "inversedBy": "likes"
     }
   }
 }

@@ -28,10 +28,19 @@ const findCreatorRoles = entity => {
 
   if (has(createdByPath, entity)) {
     const creatorId = prop(createdByPath, entity);
-    return strapi.query('role', 'admin').find({ 'users.id': creatorId }, []);
+    return strapi.query('strapi::role').findMany({ where: { users: { id: creatorId } } });
   }
 
   return [];
+};
+
+const getDefaultPopulate = (uid, populate) => {
+  if (populate) return populate;
+  const { attributes } = strapi.getModel(uid);
+
+  return Object.keys(attributes).filter(attributeName => {
+    return ['relation', 'component', 'dynamiczone'].includes(attributes[attributeName].type);
+  });
 };
 
 module.exports = ({ strapi }) => ({
@@ -44,40 +53,56 @@ module.exports = ({ strapi }) => ({
     return assoc(`${CREATED_BY_ATTRIBUTE}.roles`, roles, entity);
   },
 
-  find(params, model, populate) {
-    return strapi.entityService.find({ params, populate }, { model });
+  find(opts, uid, populate) {
+    const params = { ...opts, populate: getDefaultPopulate(uid, populate) };
+
+    return strapi.entityService.find(uid, { params });
   },
 
-  findPage(params, model, populate) {
-    return strapi.entityService.findPage({ params, populate }, { model });
+  findPage(opts, uid, populate) {
+    const params = { ...opts, populate: getDefaultPopulate(uid, populate) };
+
+    return strapi.entityService.findPage(uid, { params });
   },
 
-  findWithRelationCounts(params, model, populate) {
-    return strapi.entityService.findWithRelationCounts({ params, populate }, { model });
+  findWithRelationCounts(opts, uid, populate) {
+    const params = { ...opts, populate: getDefaultPopulate(uid, populate) };
+
+    return strapi.entityService.findWithRelationCounts(uid, { params });
   },
 
-  search(params, model, populate) {
-    return strapi.entityService.search({ params, populate }, { model });
+  search(opts, uid, populate) {
+    const params = { ...opts, populate: getDefaultPopulate(uid, populate) };
+
+    return strapi.entityService.search(uid, { params });
   },
 
-  searchPage(params, model, populate) {
-    return strapi.entityService.searchPage({ params, populate }, { model });
+  searchPage(opts, uid, populate) {
+    const params = { ...opts, populate: getDefaultPopulate(uid, populate) };
+
+    return strapi.entityService.searchPage(uid, { params });
   },
 
-  searchWithRelationCounts(params, model, populate) {
-    return strapi.entityService.searchWithRelationCounts({ params, populate }, { model });
+  searchWithRelationCounts(opts, uid, populate) {
+    const params = { ...opts, populate: getDefaultPopulate(uid, populate) };
+
+    return strapi.entityService.searchWithRelationCounts(uid, { params });
   },
 
-  count(params, model) {
-    return strapi.entityService.count({ params }, { model });
+  count(opts, uid) {
+    const params = { ...opts };
+
+    return strapi.entityService.count(uid, { params });
   },
 
-  async findOne(id, model, populate) {
-    return strapi.entityService.findOne({ params: { id }, populate }, { model });
+  async findOne(id, uid, populate) {
+    const params = { populate: getDefaultPopulate(uid, populate) };
+
+    return strapi.entityService.findOne(uid, id, { params });
   },
 
-  async findOneWithCreatorRoles(id, model, populate) {
-    const entity = await this.findOne(id, model, populate);
+  async findOneWithCreatorRoles(id, uid, populate) {
+    const entity = await this.findOne(id, uid, populate);
 
     if (!entity) {
       return entity;
@@ -86,55 +111,64 @@ module.exports = ({ strapi }) => ({
     return this.assocCreatorRoles(entity);
   },
 
-  async create(body, model) {
-    const modelDef = strapi.getModel(model);
+  async create(body, uid) {
+    const modelDef = strapi.getModel(uid);
     const publishData = { ...body };
 
     if (hasDraftAndPublish(modelDef)) {
       publishData[PUBLISHED_AT_ATTRIBUTE] = null;
     }
 
-    return strapi.entityService.create({ data: publishData }, { model });
+    const params = { populate: getDefaultPopulate(uid) };
+
+    return strapi.entityService.create(uid, { params, data: publishData });
   },
 
-  update(entity, body, model) {
-    const params = { id: entity.id };
+  update(entity, body, uid) {
     const publishData = omitPublishedAtField(body);
 
-    return strapi.entityService.update({ params, data: publishData }, { model });
+    const params = { populate: getDefaultPopulate(uid) };
+
+    return strapi.entityService.update(uid, entity.id, { params, data: publishData });
   },
 
-  delete(entity, model) {
-    const params = { id: entity.id };
-    return strapi.entityService.delete({ params }, { model });
+  delete(entity, uid) {
+    const params = { populate: getDefaultPopulate(uid) };
+
+    return strapi.entityService.delete(uid, entity.id, { params });
   },
 
-  findAndDelete(params, model) {
-    return strapi.entityService.delete({ params }, { model });
+  // FIXME: handle relations
+  deleteMany(opts, uid) {
+    const params = { ...opts };
+
+    return strapi.entityService.deleteMany(uid, { params });
   },
 
-  publish: emitEvent(ENTRY_PUBLISH, async (entity, model) => {
+  publish: emitEvent(ENTRY_PUBLISH, async (entity, uid) => {
     if (entity[PUBLISHED_AT_ATTRIBUTE]) {
       throw strapi.errors.badRequest('already.published');
     }
 
     // validate the entity is valid for publication
-    await strapi.entityValidator.validateEntityCreation(strapi.getModel(model), entity);
+    await strapi.entityValidator.validateEntityCreation(strapi.getModel(uid), entity);
 
-    const params = { id: entity.id };
     const data = { [PUBLISHED_AT_ATTRIBUTE]: new Date() };
 
-    return strapi.entityService.update({ params, data }, { model });
+    const params = { populate: getDefaultPopulate(uid) };
+
+    return strapi.entityService.update(uid, entity.id, { params, data });
   }),
 
-  unpublish: emitEvent(ENTRY_UNPUBLISH, (entity, model) => {
+  unpublish: emitEvent(ENTRY_UNPUBLISH, (entity, uid) => {
     if (!entity[PUBLISHED_AT_ATTRIBUTE]) {
       throw strapi.errors.badRequest('already.draft');
     }
 
-    const params = { id: entity.id };
     const data = { [PUBLISHED_AT_ATTRIBUTE]: null };
 
-    return strapi.entityService.update({ params, data }, { model });
+    const params = { populate: getDefaultPopulate(uid) };
+
+    return strapi.entityService.update(uid, entity.id, { params, data });
   }),
 });

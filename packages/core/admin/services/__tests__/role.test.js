@@ -8,7 +8,7 @@ const { create: createPermission, toPermission } = require('../../domain/permiss
 describe('Role', () => {
   describe('create', () => {
     test('Creates a role', async () => {
-      const dbCreate = jest.fn(role => Promise.resolve(role));
+      const dbCreate = jest.fn(({ data }) => Promise.resolve(data));
       const dbCount = jest.fn(() => Promise.resolve(0));
 
       global.strapi = {
@@ -23,7 +23,7 @@ describe('Role', () => {
 
       const createdRole = await roleService.create(input);
 
-      expect(dbCreate).toHaveBeenCalledWith(input);
+      expect(dbCreate).toHaveBeenCalledWith({ data: input });
       expect(createdRole).toStrictEqual(input);
     });
   });
@@ -35,7 +35,7 @@ describe('Role', () => {
         name: 'super_admin',
         description: "Have all permissions. Can't be delete",
       };
-      const dbFindOne = jest.fn(({ id }) => Promise.resolve(_.find([role], { id })));
+      const dbFindOne = jest.fn(({ where: { id } }) => Promise.resolve(_.find([role], { id })));
 
       global.strapi = {
         query: () => ({ findOne: dbFindOne }),
@@ -43,7 +43,7 @@ describe('Role', () => {
 
       const foundRole = await roleService.findOne({ id: role.id });
 
-      expect(dbFindOne).toHaveBeenCalledWith({ id: role.id }, []);
+      expect(dbFindOne).toHaveBeenCalledWith({ where: { id: role.id } });
       expect(foundRole).toStrictEqual(role);
     });
 
@@ -54,7 +54,7 @@ describe('Role', () => {
         description: "Have all permissions. Can't be delete",
         usersCount: 0,
       };
-      const dbFindOne = jest.fn(({ id }) =>
+      const dbFindOne = jest.fn(({ where: { id } }) =>
         Promise.resolve(_.find([_.omit(role, ['usersCount'])], { id }))
       );
       const dbCount = jest.fn(() => Promise.resolve(0));
@@ -64,8 +64,8 @@ describe('Role', () => {
 
       const foundRole = await roleService.findOneWithUsersCount({ id: role.id });
 
-      expect(dbFindOne).toHaveBeenCalledWith({ id: role.id }, []);
-      expect(dbCount).toHaveBeenCalledWith({ roles: [role.id] });
+      expect(dbFindOne).toHaveBeenCalledWith({ where: { id: role.id } });
+      expect(dbCount).toHaveBeenCalledWith({ where: { roles: { id: role.id } } });
       expect(foundRole).toStrictEqual(role);
     });
   });
@@ -82,12 +82,12 @@ describe('Role', () => {
       const dbFind = jest.fn(() => Promise.resolve(roles));
 
       global.strapi = {
-        query: () => ({ find: dbFind }),
+        query: () => ({ findMany: dbFind }),
       };
 
       const foundRoles = await roleService.find();
 
-      expect(dbFind).toHaveBeenCalledWith({}, []);
+      expect(dbFind).toHaveBeenCalledWith({ where: {} });
       expect(foundRoles).toStrictEqual(roles);
     });
   });
@@ -108,12 +108,12 @@ describe('Role', () => {
       const dbCount = jest.fn(() => Promise.resolve(0));
 
       global.strapi = {
-        query: () => ({ find: dbFind, count: dbCount }),
+        query: () => ({ findMany: dbFind, count: dbCount }),
       };
 
       const foundRoles = await roleService.findAllWithUsersCount();
 
-      expect(dbFind).toHaveBeenCalledWith({ _limit: -1 }, []);
+      expect(dbFind).toHaveBeenCalledWith({});
       expect(foundRoles).toStrictEqual(roles);
     });
   });
@@ -125,11 +125,13 @@ describe('Role', () => {
         name: 'super_admin',
         description: 'AAA',
       };
+
       const expectedUpdatedRole = {
         id: 1,
         name: 'super_admin_updated',
         description: 'AAA_updated',
       };
+
       const dbUpdate = jest.fn(() => Promise.resolve(expectedUpdatedRole));
       const dbCount = jest.fn(() => Promise.resolve(0));
 
@@ -147,15 +149,16 @@ describe('Role', () => {
         }
       );
 
-      expect(dbUpdate).toHaveBeenCalledWith(
-        {
+      expect(dbUpdate).toHaveBeenCalledWith({
+        where: {
           id: role.id,
         },
-        {
+        data: {
           name: expectedUpdatedRole.name,
           description: expectedUpdatedRole.description,
-        }
-      );
+        },
+      });
+
       expect(updatedRole).toStrictEqual(expectedUpdatedRole);
     });
 
@@ -173,9 +176,10 @@ describe('Role', () => {
 
       await roleService.update({ id: 1 }, { code: 'new_code' });
 
-      expect(dbUpdate).toHaveBeenCalledWith({ id: 1 }, {});
+      expect(dbUpdate).toHaveBeenCalledWith({ where: { id: 1 }, data: {} });
     });
   });
+
   describe('count', () => {
     test('getUsersCount', async () => {
       const roleId = 1;
@@ -186,7 +190,7 @@ describe('Role', () => {
 
       const usersCount = await roleService.getUsersCount(roleId);
 
-      expect(dbCount).toHaveBeenCalledWith({ roles: [roleId] });
+      expect(dbCount).toHaveBeenCalledWith({ where: { roles: { id: roleId } } });
       expect(usersCount).toEqual(0);
     });
   });
@@ -223,8 +227,9 @@ describe('Role', () => {
 
       const deletedRoles = await roleService.deleteByIds([role.id]);
 
-      expect(dbCount).toHaveBeenCalledWith({ roles: [role.id] });
-      expect(dbDelete).toHaveBeenCalledWith({ id_in: [role.id] });
+      expect(dbCount).toHaveBeenCalledWith({ where: { roles: { id: role.id } } });
+      expect(dbDelete).toHaveBeenCalledWith({ where: { id: role.id } });
+
       expect(deletedRoles).toStrictEqual([role]);
     });
 
@@ -246,7 +251,11 @@ describe('Role', () => {
       const dbCount = jest.fn(() => Promise.resolve(0));
       const dbFindOne = jest.fn(() => ({ id: 3, code: SUPER_ADMIN_CODE }));
       const rolesIds = roles.map(r => r.id);
-      const dbDelete = jest.fn(() => Promise.resolve(roles));
+      const dbDelete = jest
+        .fn()
+        .mockImplementationOnce(() => Promise.resolve(roles[0]))
+        .mockImplementationOnce(() => Promise.resolve(roles[1]));
+
       const dbGetUsersCount = jest.fn(() => Promise.resolve(0));
       const dbDeleteByRolesIds = jest.fn(() => Promise.resolve());
 
@@ -270,10 +279,11 @@ describe('Role', () => {
 
       const deletedRoles = await roleService.deleteByIds(rolesIds);
 
-      expect(dbCount).toHaveBeenNthCalledWith(1, { roles: [rolesIds[0]] });
-      expect(dbCount).toHaveBeenNthCalledWith(2, { roles: [rolesIds[1]] });
+      expect(dbCount).toHaveBeenNthCalledWith(1, { where: { roles: { id: rolesIds[0] } } });
+      expect(dbCount).toHaveBeenNthCalledWith(2, { where: { roles: { id: rolesIds[1] } } });
       expect(dbCount).toHaveBeenCalledTimes(2);
-      expect(dbDelete).toHaveBeenCalledWith({ id_in: rolesIds });
+      expect(dbDelete).toHaveBeenNthCalledWith(1, { where: { id: rolesIds[0] } });
+      expect(dbDelete).toHaveBeenNthCalledWith(2, { where: { id: rolesIds[1] } });
       expect(deletedRoles).toStrictEqual(roles);
     });
 
@@ -347,6 +357,7 @@ describe('Role', () => {
       expect(count).toHaveBeenCalledWith(params);
     });
   });
+
   describe('createRolesIfNoneExist', () => {
     test("Don't create roles if one already exist", async () => {
       const count = jest.fn(() => Promise.resolve(1));
@@ -358,6 +369,7 @@ describe('Role', () => {
 
       expect(create).toHaveBeenCalledTimes(0);
     });
+
     test('Create 3 roles if none exist', async () => {
       const actions = [
         {
@@ -414,7 +426,7 @@ describe('Role', () => {
 
       const count = jest.fn(() => Promise.resolve(0));
       let id = 1;
-      const create = jest.fn(role => ({ ...role, id: id++ }));
+      const create = jest.fn(({ data }) => ({ ...data, id: id++ }));
       const values = jest.fn(() => actions);
       const createMany = jest.fn();
       const assignARoleToAll = jest.fn();
@@ -441,23 +453,29 @@ describe('Role', () => {
       expect(create).toHaveBeenCalledTimes(3);
 
       expect(create).toHaveBeenNthCalledWith(1, {
-        name: 'Super Admin',
-        code: 'strapi-super-admin',
-        description: 'Super Admins can access and manage all features and settings.',
+        data: {
+          name: 'Super Admin',
+          code: 'strapi-super-admin',
+          description: 'Super Admins can access and manage all features and settings.',
+        },
       });
 
       expect(assignARoleToAll).toHaveBeenCalledWith(1);
 
       expect(create).toHaveBeenNthCalledWith(2, {
-        name: 'Editor',
-        code: 'strapi-editor',
-        description: 'Editors can manage and publish contents including those of other users.',
+        data: {
+          name: 'Editor',
+          code: 'strapi-editor',
+          description: 'Editors can manage and publish contents including those of other users.',
+        },
       });
 
       expect(create).toHaveBeenNthCalledWith(3, {
-        name: 'Author',
-        code: 'strapi-author',
-        description: 'Authors can manage the content they have created.',
+        data: {
+          name: 'Author',
+          code: 'strapi-author',
+          description: 'Authors can manage the content they have created.',
+        },
       });
 
       expect(getPermissionsWithNestedFields).toHaveBeenCalledWith(actions, {
@@ -603,7 +621,7 @@ describe('Role', () => {
       ];
       const values = jest.fn(() => actions);
       const getAllConditions = jest.fn(() => []);
-      const find = jest.fn(() => [{ action: 'action-2', id: 2, properties: {} }]);
+      const findMany = jest.fn(() => [{ action: 'action-2', id: 2, properties: {} }]);
       const getPermissionsWithNestedFields = jest.fn(() => [
         {
           ...permissions[0],
@@ -619,7 +637,7 @@ describe('Role', () => {
           services: {
             permission: {
               createMany,
-              find,
+              findMany,
               actionProvider: { values },
               conditionProvider: { getAll: getAllConditions },
               deleteByIds,
@@ -650,7 +668,7 @@ describe('Role', () => {
       const createMany = jest.fn(() => Promise.resolve([]));
       const getSuperAdmin = jest.fn(() => Promise.resolve({ id: 0 }));
       const sendDidUpdateRolePermissions = jest.fn();
-      const find = jest.fn(() => Promise.resolve([{ id: 3 }]));
+      const findMany = jest.fn(() => Promise.resolve([{ id: 3 }]));
       const deleteByIds = jest.fn();
       const values = jest.fn(() => []);
 
@@ -658,7 +676,7 @@ describe('Role', () => {
         admin: {
           services: {
             metrics: { sendDidUpdateRolePermissions },
-            permission: { find, createMany, actionProvider: { values }, deleteByIds },
+            permission: { findMany, createMany, actionProvider: { values }, deleteByIds },
             role: { getSuperAdmin },
           },
         },
@@ -677,7 +695,7 @@ describe('Role', () => {
       const createMany = jest.fn(() => Promise.resolve([]));
       const getSuperAdmin = jest.fn(() => Promise.resolve({ id: 0 }));
       const sendDidUpdateRolePermissions = jest.fn();
-      const find = jest.fn(() => Promise.resolve([]));
+      const findMany = jest.fn(() => Promise.resolve([]));
       const values = jest.fn(() => permissions.map(perm => ({ actionId: perm.action })));
       const conditionProviderHas = jest.fn(cond => cond === 'cond');
 
@@ -687,7 +705,7 @@ describe('Role', () => {
             metrics: { sendDidUpdateRolePermissions },
             role: { getSuperAdmin },
             permission: {
-              find,
+              findMany,
               createMany,
               actionProvider: { values },
               conditionProvider: {

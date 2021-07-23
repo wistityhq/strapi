@@ -3,7 +3,7 @@
 const path = require('path');
 const fse = require('fs-extra');
 const _ = require('lodash');
-const { toUID, isConfigurable } = require('../../utils/attributes');
+const { isConfigurable } = require('../../utils/attributes');
 
 module.exports = function createSchemaHandler(infos) {
   const { category, modelName, plugin, uid, dir, filename, schema } = infos;
@@ -141,13 +141,9 @@ module.exports = function createSchemaHandler(infos) {
       const { attributes } = state.schema;
 
       Object.keys(attributes).forEach(key => {
-        const attr = attributes[key];
-        const target = attr.model || attr.collection;
-        const plugin = attr.plugin;
+        const attribute = attributes[key];
 
-        const relationUID = toUID(target, plugin);
-
-        if (relationUID === uid) {
+        if (attribute.target === uid) {
           this.deleteAttribute(key);
         }
       });
@@ -230,7 +226,6 @@ module.exports = function createSchemaHandler(infos) {
           filePath,
           {
             kind: state.schema.kind,
-            connection: state.schema.connection,
             collectionName: state.schema.collectionName,
             info: state.schema.info,
             options: state.schema.options,

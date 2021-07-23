@@ -24,13 +24,14 @@ const productModel = {
       unique: true,
     },
     categories: {
-      nature: 'oneToMany',
-      private: false,
+      type: 'relation',
+      relation: 'oneToMany',
       target: 'application::category.category',
       targetAttribute: 'product',
     },
     shops: {
-      nature: 'manyWay',
+      type: 'relation',
+      relation: 'oneToMany',
       target: 'application::shop.shop',
     },
   },
@@ -60,6 +61,8 @@ const shopModel = {
   name: 'shop',
 };
 
+const PRODUCT_SHOP_COUNT = 12;
+const PRODUCT_CATEGORY_COUNT = 5;
 const fixtures = {
   shop: [
     { name: 'SH.A', metadata: 'foobar' },
@@ -92,8 +95,8 @@ const fixtures = {
   product: ({ shop, category }) => [
     {
       name: 'PD.A',
-      categories: category.slice(0, 5).map(prop('id')),
-      shops: shop.slice(0, 12).map(prop('id')),
+      categories: category.slice(0, PRODUCT_CATEGORY_COUNT).map(prop('id')),
+      shops: shop.slice(0, PRODUCT_SHOP_COUNT).map(prop('id')),
     },
   ],
 };
@@ -155,16 +158,24 @@ describe('x-to-many RF Preview', () => {
   });
 
   describe('Default Behavior', () => {
-    test.each(['shops', 'categories'])('Should return a preview for the %s field', async field => {
+    test('Should return a preview for the shops field', async () => {
       const product = data.product[0];
 
-      const { body, statusCode } = await rq.get(`${cmProductUrl}/${product.id}/${field}`);
-
-      const expected = product[field].slice(0, 10);
+      const { body, statusCode } = await rq.get(`${cmProductUrl}/${product.id}/shops`);
 
       expect(statusCode).toBe(200);
-      expect(body.results).toHaveLength(expected.length);
-      expect(difference(toIds(body.results), toIds(product[field]))).toHaveLength(0);
+      expect(body.results).toHaveLength(10);
+      expect(difference(toIds(body.results), toIds(data.shop))).toHaveLength(0);
+    });
+
+    test('Should return a preview for the categories field', async () => {
+      const product = data.product[0];
+
+      const { body, statusCode } = await rq.get(`${cmProductUrl}/${product.id}/categories`);
+
+      expect(statusCode).toBe(200);
+      expect(body.results).toHaveLength(5);
+      expect(difference(toIds(body.results), toIds(data.category))).toHaveLength(0);
     });
   });
 
@@ -188,9 +199,7 @@ describe('x-to-many RF Preview', () => {
 
       expect(pagination.page).toBe(page);
       expect(pagination.pageSize).toBe(pageSize);
-      expect(results).toHaveLength(
-        Math.min(pageSize, product.shops.length - pageSize * (page - 1))
-      );
+      expect(results).toHaveLength(Math.min(pageSize, PRODUCT_SHOP_COUNT - pageSize * (page - 1)));
     });
   });
 });

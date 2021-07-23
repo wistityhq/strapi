@@ -7,8 +7,6 @@
   },
   "options": {
     "draftAndPublish": false,
-    "increments": true,
-    "timestamps": true,
     "comment": ""
   },
   "attributes": {
@@ -16,12 +14,16 @@
       "type": "text"
     },
     "menusections": {
-      "via": "menu",
-      "collection": "menusection"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "application::menusection.menusection",
+      "mappedBy": "menu"
     },
     "restaurant": {
-      "via": "menu",
-      "model": "restaurant"
+      "type": "relation",
+      "target": "application::restaurant.restaurant",
+      "relation": "oneToOne",
+      "mappedBy": "menu"
     }
   }
 }

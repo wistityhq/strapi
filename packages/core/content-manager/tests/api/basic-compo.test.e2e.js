@@ -42,7 +42,6 @@ const productWithCompo = {
       required: true,
     },
   },
-  connection: 'default',
   name: 'product with compo',
   description: '',
   collectionName: '',

@@ -22,7 +22,6 @@ const postModel = {
       type: 'string',
     },
   },
-  connection: 'default',
   name: 'post',
   description: '',
   collectionName: '',

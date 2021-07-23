@@ -14,7 +14,7 @@ module.exports = async function({ file: filePath, pretty }) {
 
   const app = await strapi().load();
 
-  const count = await app.query('core_store').count();
+  const count = await app.query('strapi::core-store').count();
 
   const exportData = [];
 
@@ -22,8 +22,8 @@ module.exports = async function({ file: filePath, pretty }) {
 
   for (let page = 0; page < pageCount; page++) {
     const results = await app
-      .query('core_store')
-      .find({ _limit: CHUNK_SIZE, _start: page * CHUNK_SIZE, _sort: 'key' });
+      .query('strapi::core-store')
+      .findMany({ limit: CHUNK_SIZE, offset: page * CHUNK_SIZE, orderBy: 'key' });
 
     results
       .filter(result => result.key.startsWith('plugin_'))

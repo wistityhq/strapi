@@ -24,7 +24,7 @@ describe('Auth', () => {
       const input = { email: 'test@strapi.io', password: 'pcw123' };
       const res = await checkCredentials(input);
 
-      expect(findOne).toHaveBeenCalledWith({ email: input.email });
+      expect(findOne).toHaveBeenCalledWith({ where: { email: input.email } });
       expect(res).toEqual([null, false, { message: 'Invalid credentials' }]);
     });
 
@@ -48,7 +48,7 @@ describe('Auth', () => {
       const input = { email: 'test@strapi.io', password: 'wrong-password' };
       const res = await checkCredentials(input);
 
-      expect(findOne).toHaveBeenCalledWith({ email: input.email });
+      expect(findOne).toHaveBeenCalledWith({ where: { email: input.email } });
       expect(res).toEqual([null, false, { message: 'Invalid credentials' }]);
     });
 
@@ -73,7 +73,7 @@ describe('Auth', () => {
       const input = { email: 'test@strapi.io', password: 'test-password' };
       const res = await checkCredentials(input);
 
-      expect(findOne).toHaveBeenCalledWith({ email: input.email });
+      expect(findOne).toHaveBeenCalledWith({ where: { email: input.email } });
       expect(res).toEqual([null, false, { message: 'User not active' }]);
     });
 
@@ -98,7 +98,7 @@ describe('Auth', () => {
       const input = { email: 'test@strapi.io', password: 'test-password' };
       const res = await checkCredentials(input);
 
-      expect(findOne).toHaveBeenCalledWith({ email: input.email });
+      expect(findOne).toHaveBeenCalledWith({ where: { email: input.email } });
       expect(res).toEqual([null, user]);
     });
   });
@@ -126,7 +126,7 @@ describe('Auth', () => {
       const input = { email: 'test@strapi.io' };
       await forgotPassword(input);
 
-      expect(findOne).toHaveBeenCalledWith({ email: input.email, isActive: true });
+      expect(findOne).toHaveBeenCalledWith({ where: { email: input.email, isActive: true } });
     });
 
     test('Will return silently in case the user is not found', async () => {
@@ -257,7 +257,7 @@ describe('Auth', () => {
 
       expect.assertions(2);
       return resetPassword({ resetPasswordToken, password: 'Test1234' }).catch(() => {
-        expect(findOne).toHaveBeenCalledWith({ resetPasswordToken, isActive: true });
+        expect(findOne).toHaveBeenCalledWith({ where: { resetPasswordToken, isActive: true } });
         expect(badRequest).toHaveBeenCalled();
       });
     });

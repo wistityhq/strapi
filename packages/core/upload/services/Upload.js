@@ -51,6 +51,11 @@ const combineFilters = params => {
 };
 
 module.exports = ({ strapi }) => ({
+  emitEvent(event, data) {
+    const modelDef = strapi.getModel('file', 'upload');
+    strapi.eventHub.emit(event, { media: sanitizeEntity(data, { model: modelDef }) });
+  },
+
   formatFileInfo({ filename, type, size }, fileInfo = {}, metas = {}) {
     const ext = path.extname(filename);
     const basename = path.basename(fileInfo.name || filename, ext);
@@ -188,7 +193,7 @@ module.exports = ({ strapi }) => ({
   },
 
   async updateFileInfo(id, { name, alternativeText, caption }, { user } = {}) {
-    const dbFile = await this.fetch({ id });
+    const dbFile = await this.findOne({ id });
 
     if (!dbFile) {
       throw strapi.errors.notFound('file not found');
@@ -212,7 +217,7 @@ module.exports = ({ strapi }) => ({
       generateResponsiveFormats,
     } = strapi.plugins.upload.services['image-manipulation'];
 
-    const dbFile = await this.fetch({ id });
+    const dbFile = await this.findOne({ id });
 
     if (!dbFile) {
       throw strapi.errors.notFound('file not found');
@@ -285,9 +290,13 @@ module.exports = ({ strapi }) => ({
     }
     sendMediaMetrics(fileValues);
 
-    const res = await strapi.query('file', 'upload').update(params, fileValues);
-    const modelDef = strapi.getModel('file', 'upload');
-    strapi.eventHub.emit(MEDIA_UPDATE, { media: sanitizeEntity(res, { model: modelDef }) });
+    //
+    const res = await strapi
+      .query('plugins::upload.file')
+      .update({ where: params, data: fileValues });
+
+    this.emitEvent(MEDIA_UPDATE, res);
+
     return res;
   },
 
@@ -299,32 +308,35 @@ module.exports = ({ strapi }) => ({
     }
     sendMediaMetrics(fileValues);
 
-    const res = await strapi.query('file', 'upload').create(fileValues);
-    const modelDef = strapi.getModel('file', 'upload');
-    strapi.eventHub.emit(MEDIA_CREATE, { media: sanitizeEntity(res, { model: modelDef }) });
+    const res = await strapi.query('plugins::upload.file').create({ data: fileValues });
+
+    this.emitEvent(MEDIA_CREATE, res);
+
     return res;
   },
 
-  fetch(params, populate) {
-    return strapi.query('file', 'upload').findOne(params, populate);
+  findOne(params, populate) {
+    return strapi.query('plugins::upload.file').findOne({ where: params, populate });
   },
 
   fetchAll(params, populate) {
     combineFilters(params);
-    return strapi.query('file', 'upload').find(params, populate);
+    return strapi.query('plugins::upload.file').findMany({ ...params, populate });
   },
 
+  // FIXME: to impl
   search(params, populate) {
-    return strapi.query('file', 'upload').search(params, populate);
+    return strapi.query('plugins::upload.file').search({ ...params, populate });
   },
 
+  // FIXME: to impl
   countSearch(params) {
-    return strapi.query('file', 'upload').countSearch(params);
+    return strapi.query('plugins::upload.file').countSearch({ ...params });
   },
 
   count(params) {
     combineFilters(params);
-    return strapi.query('file', 'upload').count(params);
+    return strapi.query('plugins::upload.file').count({ ...params });
   },
 
   async remove(file) {
@@ -343,14 +355,13 @@ module.exports = ({ strapi }) => ({
       }
     }
 
-    const media = await strapi.query('file', 'upload').findOne({
-      id: file.id,
+    const media = await strapi.query('plugins::upload.file').findOne({
+      where: { id: file.id },
     });
 
-    const modelDef = strapi.getModel('file', 'upload');
-    strapi.eventHub.emit(MEDIA_DELETE, { media: sanitizeEntity(media, { model: modelDef }) });
+    this.emitEvent(MEDIA_DELETE, media);
 
-    return strapi.query('file', 'upload').delete({ id: file.id });
+    return strapi.query('plugins::upload.file').delete({ where: { id: file.id } });
   },
 
   async uploadToEntity(params, files, source) {

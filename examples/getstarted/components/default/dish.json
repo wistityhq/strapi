@@ -18,16 +18,16 @@
       "type": "float"
     },
     "picture": {
-      "model": "file",
-      "via": "related",
-      "plugin": "upload",
+      "type": "media",
       "required": false
     },
     "very_long_description": {
       "type": "richtext"
     },
     "categories": {
-      "collection": "category"
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "application::category.category"
     }
   }
 }

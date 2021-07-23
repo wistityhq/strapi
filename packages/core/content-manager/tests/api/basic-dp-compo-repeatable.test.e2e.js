@@ -45,7 +45,6 @@ const productWithCompoAndDP = {
       repeatable: true,
     },
   },
-  connection: 'default',
   draftAndPublish: true,
   name: 'product with compo and DP',
   description: '',

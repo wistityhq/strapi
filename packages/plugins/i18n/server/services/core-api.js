@@ -132,17 +132,17 @@ const createLocalizationHandler = contentType => {
 
     const sanitizedFiles = sanitizeInputFiles(files);
 
-    const newEntry = await strapi.entityService.create(
-      { data: sanitizedData, files: sanitizedFiles },
-      { model: contentType.uid }
-    );
+    const newEntry = await strapi.entityService.create(contentType.uid, {
+      data: sanitizedData,
+      files: sanitizedFiles,
+    });
 
     ctx.body = sanitizeEntity(newEntry, { model: strapi.getModel(contentType.uid) });
   };
 
   if (isSingleType(contentType)) {
     return async function(ctx) {
-      const entry = await strapi.query(contentType.uid).findOne();
+      const entry = await strapi.query(contentType.uid).findOne({ populate: ['localizations'] });
 
       if (!entry) {
         throw strapi.errors.notFound('baseEntryId.invalid');
@@ -155,7 +155,9 @@ const createLocalizationHandler = contentType => {
   return async function(ctx) {
     const { id: baseEntryId } = ctx.params;
 
-    const entry = await strapi.query(contentType.uid).findOne({ id: baseEntryId });
+    const entry = await strapi
+      .query(contentType.uid)
+      .findOne({ where: { id: baseEntryId }, populate: ['localizations'] });
 
     if (!entry) {
       throw strapi.errors.notFound('baseEntryId.invalid');

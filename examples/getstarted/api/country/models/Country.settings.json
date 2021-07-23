@@ -6,8 +6,6 @@
   },
   "options": {
     "draftAndPublish": false,
-    "increments": true,
-    "timestamps": ["created_at", "updated_at"],
     "comment": ""
   },
   "attributes": {

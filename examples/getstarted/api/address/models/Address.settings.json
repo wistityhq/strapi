@@ -6,12 +6,7 @@
     "description": ""
   },
   "options": {
-    "draftAndPublish": true,
-    "increments": true,
-    "timestamps": [
-      "created_at",
-      "updated_at"
-    ],
+    "draftAndPublish": false,
     "comment": ""
   },
   "pluginOptions": {
@@ -29,19 +24,14 @@
       }
     },
     "categories": {
-      "collection": "category",
-      "via": "addresses",
-      "dominant": true
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "application::category.category",
+      "inversedBy": "addresses"
     },
     "cover": {
-      "model": "file",
-      "via": "related",
-      "allowedTypes": [
-        "files",
-        "images",
-        "videos"
-      ],
-      "plugin": "upload",
+      "type": "media",
+      "allowedTypes": ["files", "images", "videos"],
       "required": false,
       "pluginOptions": {
         "i18n": {
@@ -50,12 +40,9 @@
       }
     },
     "images": {
-      "collection": "file",
-      "via": "related",
-      "allowedTypes": [
-        "images"
-      ],
-      "plugin": "upload",
+      "type": "media",
+      "multiple": true,
+      "allowedTypes": ["images"],
       "required": false,
       "pluginOptions": {
         "i18n": {
@@ -73,9 +60,35 @@
         }
       }
     },
+    "left": {
+      "relation": "manyToMany",
+      "type": "relation",
+      "inversedBy": "right",
+      "target": "application::address.address"
+    },
+    "right": {
+      "relation": "manyToMany",
+      "type": "relation",
+      "mappedBy": "left",
+      "target": "application::address.address"
+    },
+    "left_1": {
+      "relation": "manyToMany",
+      "type": "relation",
+      "inversedBy": "right_1",
+      "target": "application::address.address"
+    },
     "likes": {
-      "collection": "like",
-      "via": "address"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "application::like.like",
+      "mappedBy": "address"
+    },
+    "right_1": {
+      "relation": "manyToMany",
+      "type": "relation",
+      "mappedBy": "left_1",
+      "target": "application::address.address"
     },
     "json": {
       "type": "json",

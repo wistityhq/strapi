@@ -1,15 +1,13 @@
 'use strict';
 
-const builder = require('../../controllers/Builder');
-const componentcategories = require('../../controllers/ComponentCategories');
-const components = require('../../controllers/Components');
-const connections = require('../../controllers/Connections');
-const contenttypes = require('../../controllers/ContentTypes');
+const builder = require('../../controllers/builder');
+const componentcategories = require('../../controllers/component-categories');
+const components = require('../../controllers/components');
+const contenttypes = require('../../controllers/content-types');
 
 module.exports = {
   builder,
   componentcategories,
   components,
-  connections,
   contenttypes,
 };

@@ -3,19 +3,13 @@
 const { getService } = require('../../../utils');
 const { getDefaultLocale } = require('../utils');
 
+// FIXME:
 const updateLocale = (model, ORM, locale) => {
   if (model.orm === 'bookshelf') {
     return ORM.knex
       .update({ locale })
       .from(model.collectionName)
       .where({ locale: null });
-  }
-
-  if (model.orm === 'mongoose') {
-    return model.updateMany(
-      { $or: [{ locale: { $exists: false } }, { locale: null }] },
-      { locale }
-    );
   }
 };
 

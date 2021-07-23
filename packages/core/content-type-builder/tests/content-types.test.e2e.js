@@ -27,15 +27,15 @@ describe('Content Type Builder - Content types', () => {
   });
 
   afterAll(async () => {
-    const modelsName = [
-      'test-collection-type',
-      'test-collection',
-      'test-single-type',
-      'ct-with-dp',
+    const modelsUIDs = [
+      'application::test-collection-type.test-collection-type',
+      'application::test-collection.test-collection',
+      'application::test-single-type.test-single-type',
+      'application::ct-with-dp.ct-with-dp',
     ];
 
-    await modelsUtils.cleanupModels(modelsName, { strapi });
-    await modelsUtils.deleteContentTypes(modelsName, { strapi });
+    await modelsUtils.cleanupModels(modelsUIDs, { strapi });
+    await modelsUtils.deleteContentTypes(modelsUIDs, { strapi });
 
     await strapi.destroy();
   });
@@ -182,7 +182,8 @@ describe('Content Type Builder - Content types', () => {
             name: 'test-st',
             attributes: {
               relation: {
-                nature: 'oneToOne',
+                type: 'relation',
+                relation: 'oneTo',
                 target: 'plugins::users-permissions.user',
                 targetAttribute: 'test',
               },
@@ -194,8 +195,8 @@ describe('Content Type Builder - Content types', () => {
       expect(res.statusCode).toBe(400);
       expect(res.body).toMatchObject({
         error: {
-          ['contentType.attributes.relation.nature']: expect.arrayContaining([
-            expect.stringMatching('must be one of the following values: oneWay, manyWay'),
+          ['contentType.attributes.relation.relation']: expect.arrayContaining([
+            expect.stringMatching('must be one of the following values: oneToOne, oneToMany'),
           ]),
         },
       });
@@ -272,9 +273,9 @@ describe('Content Type Builder - Content types', () => {
             attributes: {
               relation: {
                 private: true,
-                nature: 'oneWay',
+                type: 'relation',
+                relation: 'oneToOne',
                 target: 'plugins::users-permissions.user',
-                targetAttribute: 'test',
               },
             },
           },

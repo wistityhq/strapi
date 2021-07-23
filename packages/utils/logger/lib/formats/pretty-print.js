@@ -2,6 +2,7 @@
 
 const { format } = require('winston');
 const { isString } = require('lodash/fp');
+const logErrors = require('./log-errors');
 
 const { combine, timestamp, colorize, printf } = format;
 
@@ -26,6 +27,8 @@ module.exports = ({ timestamps = true, colors = true } = {}) => {
   if (colors) {
     handlers.push(colorize());
   }
+
+  handlers.push(logErrors());
 
   handlers.push(
     printf(({ level, message, timestamp }) => {

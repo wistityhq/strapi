@@ -3,141 +3,105 @@
     {
       "method": "GET",
       "path": "/reserved-names",
-      "handler": "Builder.getReservedNames",
+      "handler": "builder.getReservedNames",
       "config": {
-        "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
-      }
-    },
-    {
-      "method": "GET",
-      "path": "/connections",
-      "handler": "Connections.getConnections",
-      "config": {
-        "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "GET",
       "path": "/content-types",
-      "handler": "ContentTypes.getContentTypes",
+      "handler": "content-types.getContentTypes",
       "config": {
-        "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "GET",
       "path": "/content-types/:uid",
-      "handler": "ContentTypes.getContentType",
+      "handler": "content-types.getContentType",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "POST",
       "path": "/content-types",
-      "handler": "ContentTypes.createContentType",
+      "handler": "content-types.createContentType",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "PUT",
       "path": "/content-types/:uid",
-      "handler": "ContentTypes.updateContentType",
+      "handler": "content-types.updateContentType",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "DELETE",
       "path": "/content-types/:uid",
-      "handler": "ContentTypes.deleteContentType",
+      "handler": "content-types.deleteContentType",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "GET",
       "path": "/components",
-      "handler": "Components.getComponents",
+      "handler": "components.getComponents",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "GET",
       "path": "/components/:uid",
-      "handler": "Components.getComponent",
+      "handler": "components.getComponent",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "POST",
       "path": "/components",
-      "handler": "Components.createComponent",
+      "handler": "components.createComponent",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "PUT",
       "path": "/components/:uid",
-      "handler": "Components.updateComponent",
+      "handler": "components.updateComponent",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "DELETE",
       "path": "/components/:uid",
-      "handler": "Components.deleteComponent",
+      "handler": "components.deleteComponent",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "PUT",
       "path": "/component-categories/:name",
-      "handler": "ComponentCategories.editCategory",
+      "handler": "component-categories.editCategory",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     },
     {
       "method": "DELETE",
       "path": "/component-categories/:name",
-      "handler": "ComponentCategories.deleteCategory",
+      "handler": "component-categories.deleteCategory",
       "config": {
-      "policies": [
-          ["admin::hasPermissions", ["plugins::content-type-builder.read"]]
-        ]
+        "policies": [["admin::hasPermissions", ["plugins::content-type-builder.read"]]]
       }
     }
   ]

@@ -69,10 +69,14 @@ describe('content-types service', () => {
               type: 'integer',
             },
             relation: {
-              model: 'user',
+              type: 'relation',
+              relation: 'oneToOne',
+              target: 'user',
             },
             secondRelation: {
-              collection: 'user',
+              type: 'relation',
+              relation: 'oneToMany',
+              target: 'user',
             },
           },
         })
@@ -103,7 +107,9 @@ describe('content-types service', () => {
               visible: false,
             },
             localizations: {
-              collection: 'test-model',
+              type: 'relation',
+              relation: 'oneToMany',
+              target: 'test-model',
               visible: false,
             },
             published_at: {
@@ -212,7 +218,11 @@ describe('content-types service', () => {
         expect(e.message).toBe("The related entity doesn't exist");
       }
 
-      expect(findOne).toHaveBeenCalledWith(kind === 'singleType' ? {} : { id: relatedEntityId });
+      expect(findOne).toHaveBeenCalledWith(
+        kind === 'singleType'
+          ? { populate: ['localizations'] }
+          : { where: { id: relatedEntityId }, populate: ['localizations'] }
+      );
       expect.assertions(2);
     });
 
@@ -240,7 +250,11 @@ describe('content-types service', () => {
         expect(e.message).toBe('The entity already exists in this locale');
       }
 
-      expect(findOne).toHaveBeenCalledWith(kind === 'singleType' ? {} : { id: relatedEntityId });
+      expect(findOne).toHaveBeenCalledWith(
+        kind === 'singleType'
+          ? { populate: ['localizations'] }
+          : { where: { id: relatedEntityId }, populate: ['localizations'] }
+      );
       expect.assertions(2);
     });
 
@@ -273,7 +287,11 @@ describe('content-types service', () => {
         expect(e.message).toBe('The entity already exists in this locale');
       }
 
-      expect(findOne).toHaveBeenCalledWith(kind === 'singleType' ? {} : { id: relatedEntityId });
+      expect(findOne).toHaveBeenCalledWith(
+        kind === 'singleType'
+          ? { populate: ['localizations'] }
+          : { where: { id: relatedEntityId }, populate: ['localizations'] }
+      );
       expect.assertions(2);
     });
 
@@ -303,7 +321,11 @@ describe('content-types service', () => {
       const foundEntity = await getAndValidateRelatedEntity(relatedEntityId, model, locale);
 
       expect(foundEntity).toEqual(relatedEntity);
-      expect(findOne).toHaveBeenCalledWith(kind === 'singleType' ? {} : { id: relatedEntityId });
+      expect(findOne).toHaveBeenCalledWith(
+        kind === 'singleType'
+          ? { populate: ['localizations'] }
+          : { where: { id: relatedEntityId }, populate: ['localizations'] }
+      );
       expect.assertions(2);
     });
   });
@@ -351,7 +373,7 @@ describe('content-types service', () => {
             type: 'integer',
           },
           relation: {
-            model: 'user',
+            type: 'relation',
           },
           description: {
             type: 'string',
@@ -402,7 +424,7 @@ describe('content-types service', () => {
             type: 'integer',
           },
           relation: {
-            model: 'user',
+            type: 'relation',
           },
           description: {
             type: 'string',
@@ -433,8 +455,8 @@ describe('content-types service', () => {
       };
 
       global.strapi = {
-        db: {
-          getModelsByAttribute: jest.fn(() => [compoModel]),
+        components: {
+          compo: compoModel,
         },
       };
 
@@ -450,7 +472,7 @@ describe('content-types service', () => {
             type: 'integer',
           },
           relation: {
-            model: 'user',
+            type: 'relation',
           },
           component: {
             type: 'component',

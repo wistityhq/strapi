@@ -8,14 +8,6 @@ const { createContentType } = require('../domain/content-type');
 const { createCoreApi } = require('../../core-api');
 
 module.exports = function(strapi) {
-  // Set connections.
-  strapi.connections = {};
-
-  const defaultConnection = strapi.config.get('database.defaultConnection');
-
-  // Set current connections.
-  strapi.config.connections = strapi.config.get('database.connections', {});
-
   strapi.contentTypes = {};
 
   // Set models.
@@ -49,12 +41,6 @@ module.exports = function(strapi) {
     }
     return acc;
   }, {});
-
-  // Set components
-  Object.keys(strapi.components).forEach(componentName => {
-    const component = strapi.components[componentName];
-    component.connection = component.connection || defaultConnection;
-  });
 
   // Set controllers.
   strapi.controllers = Object.keys(strapi.api || []).reduce((acc, key) => {

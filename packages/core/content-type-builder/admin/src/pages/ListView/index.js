@@ -6,7 +6,6 @@ import { BackHeader, ListWrapper, useTracking } from '@strapi/helper-plugin';
 import { useIntl } from 'react-intl';
 import { Header } from '@buffetjs/custom';
 import ListViewContext from '../../contexts/ListViewContext';
-import convertAttrObjToArray from '../../utils/convertAttrObjToArray';
 import getAttributeDisplayedType from '../../utils/getAttributeDisplayedType';
 import pluginId from '../../pluginId';
 import getTrad from '../../utils/getTrad';
@@ -57,8 +56,8 @@ const ListView = () => {
   const isTemporary = get(modifiedData, [firstMainDataPath, 'isTemporary'], false);
   const contentTypeKind = get(modifiedData, [firstMainDataPath, 'schema', 'kind'], null);
 
-  const attributes = get(modifiedData, mainDataTypeAttributesPath, {});
-  const attributesLength = Object.keys(attributes).length;
+  const attributes = get(modifiedData, mainDataTypeAttributesPath, []);
+  const attributesLength = attributes.length;
   const currentDataName = get(initialData, [firstMainDataPath, 'schema', 'name'], '');
   const isFromPlugin = has(initialData, [firstMainDataPath, 'plugin']);
   const hasModelBeenModified = !isEqual(modifiedData, initialData);
@@ -302,7 +301,7 @@ const ListView = () => {
               <ListWrapper style={{ marginBottom: 80 }}>
                 <ListHeader actions={listActions} title={listTitle} />
                 <List
-                  items={convertAttrObjToArray(attributes)}
+                  items={attributes}
                   customRowComponent={props => <CustomRow {...props} />}
                   addComponentToDZ={handleClickAddComponentToDZ}
                   targetUid={targetUid}

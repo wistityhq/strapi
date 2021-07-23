@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, isEmpty } from 'lodash';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import { useIntl } from 'react-intl';
+import getRelationType from '../../utils/getRelationType';
 import RelationFormBox from '../RelationFormBox';
 import RelationFormNaturePicker from '../RelationFormNaturePicker';
 import Wrapper from './Wrapper';
@@ -14,6 +16,8 @@ const RelationForm = ({ errors, mainBoxHeader, modifiedData, naturePickerType, o
     return isEmpty(errorId) ? null : formatMessage({ id: errorId });
   };
 
+  const relationType = getRelationType(modifiedData.relation, modifiedData.targetAttribute);
+
   return (
     <Wrapper>
       <RelationFormBox
@@ -25,14 +29,13 @@ const RelationForm = ({ errors, mainBoxHeader, modifiedData, naturePickerType, o
         value={get(modifiedData, 'name', '')}
       />
       <RelationFormNaturePicker
-        oneThatIsCreatingARelationWithAnother={mainBoxHeader}
-        target={modifiedData.target}
-        nature={modifiedData.nature}
         naturePickerType={naturePickerType}
-        onChange={onChange}
+        oneThatIsCreatingARelationWithAnother={mainBoxHeader}
+        relationType={relationType}
+        target={modifiedData.target}
       />
       <RelationFormBox
-        disabled={['oneWay', 'manyWay'].includes(modifiedData.nature)}
+        disabled={['oneWay', 'manyWay'].includes(relationType)}
         error={getError('targetAttribute')}
         name="targetAttribute"
         onChange={onChange}

@@ -17,7 +17,9 @@ module.exports = strapi => ({
 
         if (isValid) {
           // request is made by an admin
-          const admin = await strapi.query('user', 'admin').findOne({ id: payload.id }, ['roles']);
+          const admin = await strapi
+            .query('strapi::user')
+            .findOne({ where: { id: payload.id }, populate: ['roles'] });
 
           if (!admin || !(admin.isActive === true)) {
             return ctx.forbidden('Invalid credentials');

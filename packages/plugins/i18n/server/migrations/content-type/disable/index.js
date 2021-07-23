@@ -4,7 +4,6 @@ const { getDefaultLocale } = require('../utils');
 const { getService } = require('../../../utils');
 
 const migrateForBookshelf = require('./migrate-for-bookshelf');
-const migrateForMongoose = require('./migrate-for-mongoose');
 
 const after = () => {};
 
@@ -18,14 +17,7 @@ const before = async ({ model, definition, previousDefinition, ORM }, context) =
 
   const defaultLocale = await getDefaultLocale(model, ORM);
 
-  if (model.orm === 'bookshelf') {
-    await migrateForBookshelf(
-      { ORM, defaultLocale, definition, previousDefinition, model },
-      context
-    );
-  } else if (model.orm === 'mongoose') {
-    await migrateForMongoose({ ORM, defaultLocale, model });
-  }
+  await migrateForBookshelf({ ORM, defaultLocale, definition, previousDefinition, model }, context);
 };
 
 module.exports = {

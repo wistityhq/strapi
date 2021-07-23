@@ -21,9 +21,10 @@
     "@buffetjs/styles": "3.3.5",
     "@buffetjs/utils": "3.3.5",
     "@purest/providers": "^1.0.2",
+    "@strapi/helper-plugin": "3.6.5",
+    "@strapi/utils": "3.6.5",
     "bcryptjs": "^2.4.3",
     "grant-koa": "5.4.8",
-    "immutable": "^3.8.2",
     "jsonwebtoken": "^8.1.0",
     "koa2-ratelimit": "^0.9.0",
     "lodash": "4.17.21",
@@ -37,8 +38,6 @@
     "reactstrap": "8.4.1",
     "redux-saga": "^0.16.0",
     "request": "^2.83.0",
-    "@strapi/helper-plugin": "3.6.5",
-    "@strapi/utils": "3.6.5",
     "uuid": "^3.1.0"
   },
   "devDependencies": {

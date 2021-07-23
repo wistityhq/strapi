@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FormattedMessage } from 'react-intl';
-import { get, truncate } from 'lodash';
+import { useDispatch } from 'react-redux';
+import get from 'lodash/get';
+import truncate from 'lodash/truncate';
 import pluralize from 'pluralize';
 import useDataManager from '../../hooks/useDataManager';
+import { ON_CHANGE_RELATION_TYPE } from '../FormModal/constants';
 import ManyToMany from '../../icons/ManyToMany';
 import ManyToOne from '../../icons/ManyToOne';
 import ManyWay from '../../icons/ManyWay';
@@ -23,12 +26,13 @@ const relations = {
 };
 
 const RelationFormNaturePicker = ({
-  nature,
   naturePickerType,
-  onChange,
   oneThatIsCreatingARelationWithAnother,
+  relationType,
   target,
 }) => {
+  const dispatch = useDispatch();
+
   const { contentTypes, modifiedData } = useDataManager();
   const ctRelations = ['oneWay', 'oneToOne', 'oneToMany', 'manyToOne', 'manyToMany', 'manyWay'];
   const componentRelations = ['oneWay', 'manyWay'];
@@ -38,7 +42,7 @@ const RelationFormNaturePicker = ({
       : naturePickerType;
   const relationsType = dataType === 'collectionType' ? ctRelations : componentRelations;
 
-  const areDisplayedNamesInverted = nature === 'manyToOne';
+  const areDisplayedNamesInverted = relationType === 'manyToOne';
   const targetLabel = get(contentTypes, [target, 'schema', 'name'], 'unknown');
   const leftTarget = areDisplayedNamesInverted
     ? targetLabel
@@ -46,37 +50,36 @@ const RelationFormNaturePicker = ({
   const rightTarget = areDisplayedNamesInverted
     ? oneThatIsCreatingARelationWithAnother
     : targetLabel;
-  const leftDisplayedValue = pluralize(leftTarget, nature === 'manyToMany' ? 2 : 1);
+  const leftDisplayedValue = pluralize(leftTarget, relationType === 'manyToMany' ? 2 : 1);
   const restrictedRelations = get(contentTypes, [target, 'schema', 'restrictRelationsTo'], null);
 
   const rightDisplayedValue = pluralize(
     rightTarget,
-    ['manyToMany', 'oneToMany', 'manyToOne', 'manyWay'].includes(nature) ? 2 : 1
+    ['manyToMany', 'oneToMany', 'manyToOne', 'manyWay'].includes(relationType) ? 2 : 1
   );
 
   return (
     <Wrapper>
       <div className="nature-container">
         <div className="nature-buttons">
-          {relationsType.map(relationNature => {
-            const Asset = relations[relationNature];
+          {relationsType.map(relation => {
+            const Asset = relations[relation];
             const isEnabled =
-              restrictedRelations === null || restrictedRelations.includes(relationNature);
+              restrictedRelations === null || restrictedRelations.includes(relation);
 
             return (
               <Asset
-                key={relationNature}
-                isSelected={nature === relationNature}
+                key={relation}
+                isSelected={relationType === relation}
                 style={{ cursor: isEnabled ? 'pointer' : 'not-allowed' }}
                 onClick={() => {
                   if (isEnabled) {
-                    onChange({
+                    dispatch({
+                      type: ON_CHANGE_RELATION_TYPE,
                       target: {
-                        name: 'nature',
-                        value: relationNature,
-                        targetContentType: target,
                         oneThatIsCreatingARelationWithAnother,
-                        type: 'relation',
+                        targetContentType: target,
+                        value: relation,
                       },
                     });
                   }
@@ -88,7 +91,7 @@ const RelationFormNaturePicker = ({
         <div className="nature-txt">
           <span>{truncate(leftDisplayedValue, { length: 24 })}</span>
           &nbsp;
-          <FormattedMessage id={getTrad(`relation.${nature}`)} />
+          <FormattedMessage id={getTrad(`relation.${relationType}`)} />
           &nbsp;
           <span>{truncate(rightDisplayedValue, { length: 24 })}</span>
         </div>
@@ -97,15 +100,10 @@ const RelationFormNaturePicker = ({
   );
 };
 
-RelationFormNaturePicker.defaultProps = {
-  nature: 'oneWay',
-};
-
 RelationFormNaturePicker.propTypes = {
-  nature: PropTypes.string,
   naturePickerType: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
   oneThatIsCreatingARelationWithAnother: PropTypes.string.isRequired,
+  relationType: PropTypes.string.isRequired,
   target: PropTypes.string.isRequired,
 };
 

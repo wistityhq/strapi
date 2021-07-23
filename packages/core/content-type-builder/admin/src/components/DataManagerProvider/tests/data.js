@@ -9,28 +9,30 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: 'components_closingperiods',
-        attributes: {
-          label: {
+        attributes: [
+          {
+            name: 'label',
             type: 'string',
           },
-          start_date: {
+
+          {
+            name: 'start_date',
             type: 'date',
             required: true,
           },
-          end_date: {
+          {
+            name: 'end_date',
             type: 'date',
             required: true,
           },
-          media: {
+          {
+            name: 'media',
             type: 'media',
             multiple: false,
             required: false,
           },
-          dish: {
-            component: 'default.dish',
-            type: 'component',
-          },
-        },
+          { name: 'dish', component: 'default.dish', type: 'component' },
+        ],
       },
     },
     'default.dish': {
@@ -42,33 +44,39 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: 'components_dishes',
-        attributes: {
-          name: {
+        attributes: [
+          {
+            name: 'name',
             type: 'string',
             required: true,
             default: 'My super dish',
           },
-          description: {
+          {
+            name: 'description',
             type: 'text',
           },
-          price: {
+          {
+            name: 'price',
             type: 'float',
           },
-          picture: {
+          {
+            name: 'picture',
             type: 'media',
             multiple: false,
             required: false,
           },
-          very_long_description: {
+          {
+            name: 'very_long_description',
             type: 'richtext',
           },
-          category: {
-            nature: 'oneWay',
+          {
+            name: 'category',
+            relation: 'oneToOne',
             target: 'application::category.category',
-            dominant: false,
-            unique: false,
+            targetAttribute: null,
+            type: 'relation',
           },
-        },
+        ],
       },
     },
     'default.openingtimes': {
@@ -80,16 +88,18 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: 'components_openingtimes',
-        attributes: {
-          label: {
+        attributes: [
+          {
+            name: 'label',
             type: 'string',
             required: true,
             default: 'something',
           },
-          time: {
+          {
+            name: 'time',
             type: 'string',
           },
-        },
+        ],
       },
     },
     'default.restaurantservice': {
@@ -101,23 +111,21 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: 'components_restaurantservices',
-        attributes: {
-          name: {
+        attributes: [
+          {
+            name: 'name',
             type: 'string',
             required: true,
             default: 'something',
           },
-          media: {
+          {
+            name: 'media',
             type: 'media',
             multiple: false,
             required: false,
           },
-          is_available: {
-            type: 'boolean',
-            required: true,
-            default: true,
-          },
-        },
+          { name: 'is_available', type: 'boolean', required: true, default: true },
+        ],
       },
     },
   },
@@ -130,14 +138,15 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: 'myplugin_test',
-        attributes: {
-          type: {
+        attributes: [
+          {
+            name: 'type',
             type: 'string',
             required: true,
             unique: true,
             configurable: true,
           },
-        },
+        ],
       },
     },
     'plugins::users-permissions.role': {
@@ -148,33 +157,34 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          name: {
+        attributes: [
+          {
+            name: 'name',
             type: 'string',
             minLength: 3,
             required: true,
             configurable: false,
           },
-          description: { type: 'string', configurable: false },
-          type: { type: 'string', unique: true, configurable: false },
-          permissions: {
-            nature: 'oneToMany',
+          { type: 'string', configurable: false, name: 'description' },
+          { name: 'type', type: 'string', unique: true, configurable: false },
+          {
+            name: 'permissions',
+            relation: 'oneToMany',
             target: 'plugins::users-permissions.permission',
             plugin: 'users-permissions',
-            dominant: false,
             targetAttribute: 'role',
             configurable: false,
-            unique: false,
+            type: 'relation',
           },
-          users: {
-            nature: 'oneToMany',
+          {
+            name: 'users',
+            relation: 'oneToMany',
             target: 'plugins::users-permissions.user',
             plugin: 'users-permissions',
-            dominant: false,
+            type: 'relation',
             targetAttribute: 'role',
-            unique: false,
           },
-        },
+        ],
       },
     },
     'application::address.address': {
@@ -184,20 +194,21 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          geolocation: { type: 'json', required: true },
-          city: { type: 'string', required: true },
-          postal_coder: { type: 'string' },
-          category: {
-            nature: 'oneWay',
+        attributes: [
+          { name: 'geolocation', type: 'json', required: true },
+          { name: 'city', type: 'string', required: true },
+          { name: 'postal_coder', type: 'string' },
+          {
+            name: 'category',
+            relation: 'oneToOne',
             target: 'application::category.category',
-            dominant: false,
-            unique: false,
+            targetAttribute: null,
+            type: 'relation',
           },
-          cover: { type: 'media', multiple: false, required: false },
-          images: { type: 'media', multiple: true, required: false },
-          full_name: { type: 'string', required: true },
-        },
+          { name: 'cover', type: 'media', multiple: false, required: false },
+          { name: 'images', type: 'media', multiple: true, required: false },
+          { name: 'full_name', type: 'string', required: true },
+        ],
       },
     },
     'application::menusection.menusection': {
@@ -207,21 +218,22 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          name: { type: 'string', required: true, minLength: 6 },
-          dishes: {
+        attributes: [
+          { name: 'name', type: 'string', required: true, minLength: 6 },
+          {
+            name: 'dishes',
             component: 'default.dish',
             type: 'component',
             repeatable: true,
           },
-          menu: {
-            nature: 'manyToOne',
+          {
+            name: 'menu',
+            relation: 'manyToOne',
             target: 'application::menu.menu',
-            dominant: false,
             targetAttribute: 'menusections',
-            unique: false,
+            type: 'relation',
           },
-        },
+        ],
       },
     },
     'application::country.country': {
@@ -231,10 +243,10 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          name: { type: 'string', required: true, minLength: 3 },
-          code: { type: 'string', maxLength: 3, unique: true, minLength: 2 },
-        },
+        attributes: [
+          { name: 'name', type: 'string', required: true, minLength: 3 },
+          { name: 'code', type: 'string', maxLength: 3, unique: true, minLength: 2 },
+        ],
       },
     },
     'plugins::users-permissions.user': {
@@ -245,45 +257,48 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          username: {
+        attributes: [
+          {
+            name: 'username',
             type: 'string',
             minLength: 3,
             unique: true,
             configurable: false,
             required: true,
           },
-          email: {
+          {
+            name: 'email',
             type: 'email',
             minLength: 6,
             configurable: false,
             required: true,
           },
-          provider: { type: 'string', configurable: false },
-          password: {
+          { name: 'provider', type: 'string', configurable: false },
+          {
+            name: 'password',
             type: 'password',
             minLength: 6,
             configurable: false,
             private: true,
           },
-          resetPasswordToken: {
+          {
+            name: 'resetPasswordToken',
             type: 'string',
             configurable: false,
             private: true,
           },
-          confirmed: { type: 'boolean', default: false, configurable: false },
-          blocked: { type: 'boolean', default: false, configurable: false },
-          role: {
-            nature: 'manyToOne',
+          { name: 'confirmed', type: 'boolean', default: false, configurable: false },
+          { name: 'blocked', type: 'boolean', default: false, configurable: false },
+          {
+            name: 'role',
+            relation: 'manyToOne',
             target: 'plugins::users-permissions.role',
             plugin: 'users-permissions',
-            dominant: false,
             targetAttribute: 'users',
-            configurable: false,
-            unique: false,
+            type: 'relation',
           },
-          picture: { type: 'media', multiple: false, required: false },
-        },
+          { name: 'picture', type: 'media', multiple: false, required: false },
+        ],
       },
     },
     'application::review.review': {
@@ -293,30 +308,32 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          comment: { type: 'text', required: true },
-          rating: { type: 'integer', required: true, min: 1, max: 5 },
-          likes: {
-            nature: 'oneToMany',
+        attributes: [
+          { name: 'comment', type: 'text', required: true },
+          { name: 'rating', type: 'integer', required: true, min: 1, max: 5 },
+          {
+            name: 'likes',
+            relation: 'oneToMany',
             target: 'application::like.like',
-            dominant: false,
             targetAttribute: 'review',
-            unique: false,
+            type: 'relation',
           },
-          author: {
-            nature: 'oneWay',
+          {
+            name: 'author',
+            relation: 'oneToOne',
             target: 'plugins::users-permissions.user',
+            targetAttribute: null,
             plugin: 'users-permissions',
-            dominant: false,
-            unique: false,
+            type: 'relation',
           },
-          restaurant: {
-            nature: 'oneWay',
+          {
+            name: 'restaurant',
+            relation: 'oneToOne',
             target: 'application::restaurant.restaurant',
-            dominant: false,
-            unique: false,
+            targetAttribute: null,
+            type: 'relation',
           },
-        },
+        ],
       },
     },
     'application::like.like': {
@@ -326,22 +343,23 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          author: {
-            nature: 'oneWay',
+        attributes: [
+          {
+            name: 'author',
+            relation: 'oneToOne',
             target: 'plugins::users-permissions.user',
+            targetAttribute: null,
             plugin: 'users-permissions',
-            dominant: false,
-            unique: false,
+            type: 'relation',
           },
-          review: {
-            nature: 'manyToOne',
+          {
+            name: 'review',
+            relation: 'manyToOne',
             target: 'application::review.review',
-            dominant: false,
             targetAttribute: 'likes',
-            unique: false,
+            type: 'relation',
           },
-        },
+        ],
       },
     },
     'application::category.category': {
@@ -351,9 +369,7 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          name: { type: 'string' },
-        },
+        attributes: [{ name: 'name', type: 'string' }],
       },
     },
     'plugins::users-permissions.permission': {
@@ -364,22 +380,21 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          type: { type: 'string', required: true, configurable: false },
-          controller: { type: 'string', required: true, configurable: false },
-          action: { type: 'string', required: true, configurable: false },
-          enabled: { type: 'boolean', required: true, configurable: false },
-          policy: { type: 'string', configurable: false },
-          role: {
-            nature: 'manyToOne',
+        attributes: [
+          { name: 'type', type: 'string', required: true, configurable: false },
+          { name: 'controller', type: 'string', required: true, configurable: false },
+          { name: 'action', type: 'string', required: true, configurable: false },
+          { name: 'enabled', type: 'boolean', required: true, configurable: false },
+          { name: 'policy', type: 'string', configurable: false },
+          {
+            name: 'role',
+            relation: 'manyToOne',
             target: 'plugins::users-permissions.role',
             plugin: 'users-permissions',
-            dominant: false,
             targetAttribute: 'permissions',
-            configurable: false,
-            unique: false,
+            type: 'relation',
           },
-        },
+        ],
       },
     },
     'application::menu.menu': {
@@ -389,23 +404,23 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          description: { type: 'text' },
-          menusections: {
-            nature: 'oneToMany',
+        attributes: [
+          { name: 'description', type: 'text' },
+          {
+            name: 'menusections',
+            relation: 'oneToMany',
             target: 'application::menusection.menusection',
-            dominant: false,
             targetAttribute: 'menu',
-            unique: false,
+            type: 'relation',
           },
-          restaurant: {
-            nature: 'oneToOne',
+          {
+            name: 'restaurant',
+            relation: 'oneToOne',
             target: 'application::restaurant.restaurant',
-            dominant: false,
             targetAttribute: 'menu',
-            unique: false,
+            type: 'relation',
           },
-        },
+        ],
       },
     },
     'application::restaurant.restaurant': {
@@ -415,53 +430,61 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: '',
-        attributes: {
-          price_range: {
+        attributes: [
+          {
+            name: 'price_range',
             enum: ['very_cheap', 'cheap', 'average', 'expensive', 'very_expensive'],
             type: 'enumeration',
           },
-          closing_period: {
+          {
+            name: 'closing_period',
             component: 'default.closingperiod',
             type: 'component',
           },
-          name: { maxLength: 50, required: true, minLength: 5, type: 'string' },
-          address: {
-            nature: 'oneWay',
+          { name: 'name', maxLength: 50, required: true, minLength: 5, type: 'string' },
+          {
+            name: 'address',
+            relation: 'oneToOne',
             target: 'application::address.address',
-            dominant: false,
-            unique: false,
+            targetAttribute: null,
+            type: 'relation',
           },
-          cover: { type: 'media', multiple: false, required: false },
-          images: { type: 'media', multiple: true, required: false },
-          short_description: { type: 'text' },
-          since: { type: 'date' },
-          categories: {
-            nature: 'manyWay',
+          { name: 'cover', type: 'media', multiple: false, required: false },
+          { name: 'images', type: 'media', multiple: true, required: false },
+          { name: 'short_description', type: 'text' },
+          { name: 'since', type: 'date' },
+          {
+            name: 'categories',
+            relation: 'oneToMany',
             target: 'application::category.category',
-            dominant: false,
-            unique: false,
+            targetAttribute: null,
+            type: 'relation',
           },
-          description: { type: 'richtext', required: true },
-          services: {
+          { name: 'description', type: 'richtext', required: true },
+          {
+            name: 'services',
             component: 'default.restaurantservice',
             repeatable: true,
             type: 'component',
           },
-          menu: {
+          {
+            name: 'menu',
             nature: 'oneToOne',
             target: 'application::menu.menu',
             dominant: false,
             targetAttribute: 'restaurant',
             unique: false,
           },
-          opening_times: {
+          {
+            name: 'opening_times',
             component: 'default.openingtimes',
             type: 'component',
             repeatable: true,
             min: 1,
             max: 10,
           },
-          dz: {
+          {
+            name: 'dz',
             type: 'dynamiczone',
             components: [
               'default.closingperiod',
@@ -470,18 +493,18 @@ const data = {
               'default.restaurantservice',
             ],
           },
-        },
+        ],
       },
     },
     'application::homepage.homepage': {
       uid: 'application::homepage.homepage',
       schema: {
         name: 'homepage',
-        attributes: {
-          title: { type: 'string' },
-          description: { type: 'string' },
-          homepageuidfield: { type: 'uid', targetField: 'description' },
-        },
+        attributes: [
+          { name: 'title', type: 'string' },
+          { name: 'description', type: 'string' },
+          { name: 'homepageuidfield', type: 'uid', targetField: 'description' },
+        ],
       },
     },
   },

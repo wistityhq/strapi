@@ -1,63 +1,40 @@
 const sqlite = {
-  connector: 'bookshelf',
-  settings: {
-    client: 'sqlite',
+  client: 'sqlite',
+  connection: {
     filename: '.tmp/data.db',
   },
-  options: {
-    // debug: true,
-    useNullAsDefault: true,
-  },
+  useNullAsDefault: true,
 };
 
 const postgres = {
-  connector: 'bookshelf',
-  settings: {
-    client: 'postgres',
+  client: 'postgres',
+  connection: {
     database: 'strapi',
     username: 'strapi',
     password: 'strapi',
     port: 5432,
     host: 'localhost',
   },
-  options: {},
+  // debug: true,
 };
 
 const mysql = {
-  connector: 'bookshelf',
-  settings: {
-    client: 'mysql',
+  client: 'mysql',
+  connection: {
     database: 'strapi',
     username: 'strapi',
     password: 'strapi',
     port: 3306,
     host: 'localhost',
   },
-  options: {},
-};
-
-const mongo = {
-  connector: 'mongoose',
-  settings: {
-    database: 'strapi',
-    username: 'root',
-    password: 'strapi',
-    port: 27017,
-    host: 'localhost',
-  },
-  options: {},
 };
 
 const db = {
   mysql,
   sqlite,
   postgres,
-  mongo,
 };
 
 module.exports = {
-  defaultConnection: 'default',
-  connections: {
-    default: process.env.DB ? db[process.env.DB] || db.sqlite : db.sqlite,
-  },
+  connection: process.env.DB ? db[process.env.DB] || db.sqlite : db.sqlite,
 };

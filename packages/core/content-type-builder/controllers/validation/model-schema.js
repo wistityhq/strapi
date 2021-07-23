@@ -4,6 +4,7 @@ const _ = require('lodash');
 const yup = require('yup');
 
 const { modelTypes, FORBIDDEN_ATTRIBUTE_NAMES, typeKinds } = require('../../services/constants');
+const { getService } = require('../../utils');
 const { isValidCollectionName, isValidKey } = require('./common');
 const getTypeValidator = require('./types');
 const getRelationValidator = require('./relations');
@@ -17,7 +18,6 @@ const createSchema = (types, relations, { modelType } = {}) => {
     description: yup.string(),
     draftAndPublish: yup.boolean(),
     pluginOptions: yup.object(),
-    connection: yup.string(),
     collectionName: yup
       .string()
       .nullable()
@@ -45,14 +45,14 @@ const createAttributesValidator = ({ types, modelType, relations }) => {
             return forbiddenValidator();
           }
 
+          if (attribute.type === 'relation') {
+            return getRelationValidator({ types, relations }).test(isValidKey(key));
+          }
+
           if (_.has(attribute, 'type')) {
             return getTypeValidator(attribute, { types, modelType, attributes }).test(
               isValidKey(key)
             );
-          }
-
-          if (_.has(attribute, 'target')) {
-            return yup.object(getRelationValidator(attribute, relations)).test(isValidKey(key));
           }
 
           return typeOrRelationValidator;
@@ -65,14 +65,14 @@ const createAttributesValidator = ({ types, modelType, relations }) => {
 const isForbiddenKey = key => {
   return [
     ...FORBIDDEN_ATTRIBUTE_NAMES,
-    ...strapi.plugins['content-type-builder'].services.builder.getReservedNames().attributes,
+    ...getService('builder').getReservedNames().attributes,
   ].includes(key);
 };
 
 const forbiddenValidator = () => {
   const reservedNames = [
     ...FORBIDDEN_ATTRIBUTE_NAMES,
-    ...strapi.plugins['content-type-builder'].services.builder.getReservedNames().attributes,
+    ...getService('builder').getReservedNames().attributes,
   ];
 
   return yup.mixed().test({

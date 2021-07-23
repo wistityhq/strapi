@@ -5,10 +5,16 @@ const data = {
       schema: {
         name: 'plugins::myplugins.home',
         kind: 'singleType',
-        attributes: {
-          category: { nature: 'oneWay' },
-          address: { type: 'string' },
-        },
+        attributes: [
+          {
+            name: 'category',
+            type: 'relation',
+            relation: 'oneToOne',
+            targetAttribute: null,
+            target: 'category',
+          },
+          { name: 'address', type: 'string' },
+        ],
       },
     },
   },
@@ -18,10 +24,16 @@ const data = {
       schema: {
         name: 'plugins::myplugins.article',
         kind: 'collectionType',
-        attributes: {
-          user: { nature: 'manyToOne' },
-          title: { type: 'string' },
-        },
+        attributes: [
+          {
+            name: 'user',
+            relation: 'manyToOne',
+            type: 'relation',
+            target: 'user',
+            targetAttribute: 'article',
+          },
+          { name: 'category', type: 'string' },
+        ],
       },
     },
   },
@@ -31,10 +43,16 @@ const data = {
       schema: {
         name: 'plugins::myplugins.post',
         kind: 'collectionType',
-        attributes: {
-          user: { nature: 'manyWay' },
-          title: { type: 'string' },
-        },
+        attributes: [
+          {
+            relation: 'oneToMany',
+            targetAttribute: null,
+            type: 'relation',
+            target: 'user',
+            name: 'user',
+          },
+          { type: 'string', name: 'title' },
+        ],
       },
     },
   },

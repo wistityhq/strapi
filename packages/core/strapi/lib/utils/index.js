@@ -1,7 +1,7 @@
 'use strict';
 
 // Dependencies.
-const { isEmpty } = require('lodash');
+const { isEmpty, isNil } = require('lodash');
 const openBrowser = require('./openBrowser');
 
 module.exports = {
@@ -14,9 +14,10 @@ module.exports = {
         return true;
       }
 
-      const numberOfAdministrators = await strapi.query('user', 'admin').find({ _limit: 1 });
+      // test if there is at least one admin
+      const anyAdministrator = await strapi.query('strapi::user').findOne({ select: ['id'] });
 
-      return numberOfAdministrators.length > 0;
+      return !isNil(anyAdministrator);
     } catch (err) {
       strapi.stopWithError(err);
     }

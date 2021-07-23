@@ -4,22 +4,6 @@ const _ = require('lodash');
 const utils = require('@strapi/utils');
 const { isMediaAttribute } = require('@strapi/utils').contentTypes;
 
-const toUID = (name, plugin) => {
-  const modelUID = Object.keys(strapi.contentTypes).find(key => {
-    const ct = strapi.contentTypes[key];
-    if (ct.modelName === name && ct.plugin === plugin) return true;
-  });
-
-  return modelUID;
-};
-
-const fromUID = uid => {
-  const contentType = strapi.contentTypes[uid];
-  const { modelName, plugin } = contentType;
-
-  return { modelName, plugin };
-};
-
 const hasComponent = model => {
   const compoKeys = Object.keys(model.attributes || {}).filter(key => {
     return model.attributes[key].type === 'component';
@@ -30,8 +14,7 @@ const hasComponent = model => {
 
 const isConfigurable = attribute => _.get(attribute, 'configurable', true);
 
-const isRelation = attribute =>
-  _.has(attribute, 'target') || _.has(attribute, 'model') || _.has(attribute, 'collection');
+const isRelation = attribute => _.has(attribute, 'target');
 
 /**
  * Formats a component's attributes
@@ -57,42 +40,37 @@ const formatAttributes = model => {
  * @param {Object} context.component - the associated component
  */
 const formatAttribute = (key, attribute, { model }) => {
-  if (_.has(attribute, 'type')) return attribute;
-
+  // FIXME: remove
   // format relations
-  const relation = (model.associations || []).find(assoc => assoc.alias === key);
-  const { plugin, configurable } = attribute;
-  let targetEntity = attribute.model || attribute.collection;
 
-  if (isMediaAttribute(attribute)) {
+  const { configurable, required, autoPopulate, pluginOptions } = attribute;
+
+  if (attribute.type === 'media') {
     return {
       type: 'media',
-      multiple: attribute.collection ? true : false,
-      required: attribute.required ? true : false,
+      multiple: attribute.multiple ? true : false,
+      required: required ? true : false,
       configurable: configurable === false ? false : undefined,
       allowedTypes: attribute.allowedTypes,
-      pluginOptions: attribute.pluginOptions,
-    };
-  } else {
-    return {
-      nature: relation.nature,
-      target: targetEntity === '*' ? targetEntity : toUID(targetEntity, plugin),
-      plugin: plugin || undefined,
-      dominant: attribute.dominant ? true : false,
-      targetAttribute: attribute.via || undefined,
-      columnName: attribute.columnName || undefined,
-      configurable: configurable === false ? false : undefined,
-      targetColumnName: _.get(
-        strapi.getModel(targetEntity, plugin),
-        ['attributes', attribute.via, 'columnName'],
-        undefined
-      ),
-      private: attribute.private ? true : false,
-      unique: attribute.unique ? true : false,
-      autoPopulate: attribute.autoPopulate,
-      pluginOptions: attribute.pluginOptions,
+      pluginOptions,
     };
   }
+
+  if (attribute.type === 'relation') {
+    return {
+      ...attribute,
+      type: 'relation',
+      target: attribute.target,
+      targetAttribute: attribute.inversedBy || attribute.mappedBy || null,
+      configurable: configurable === false ? false : undefined,
+      private: attribute.private ? true : false,
+      pluginOptions,
+      // FIXME: remove
+      autoPopulate,
+    };
+  }
+
+  return attribute;
 };
 
 // TODO: move to schema builder
@@ -143,8 +121,6 @@ const replaceTemporaryUIDs = uidMap => schema => {
 };
 
 module.exports = {
-  fromUID,
-  toUID,
   hasComponent,
   isRelation,
   isConfigurable,

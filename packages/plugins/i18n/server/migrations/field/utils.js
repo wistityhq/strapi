@@ -27,7 +27,7 @@ const getSortedLocales = async ({ transacting } = {}) => {
   let defaultLocale;
   try {
     const storeRes = await strapi
-      .query('core_store')
+      .query('strapi::core-store')
       .findOne({ key: 'plugin_i18n_default_locale' }, null, { transacting });
     defaultLocale = JSON.parse(storeRes.value);
   } catch (e) {

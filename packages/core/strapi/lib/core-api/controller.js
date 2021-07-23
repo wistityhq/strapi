@@ -33,7 +33,7 @@ const createSingleTypeController = ({ model, service }) => {
      */
     async find(ctx) {
       const { query } = ctx;
-      const entity = await service.find(query);
+      const entity = await service.find({ params: query });
       return sanitize(entity);
     },
 
@@ -48,16 +48,18 @@ const createSingleTypeController = ({ model, service }) => {
       let entity;
       if (ctx.is('multipart')) {
         const { data, files } = parseMultipartData(ctx);
-        entity = await service.createOrUpdate(data, { files, query });
+        entity = await service.createOrUpdate({ params: query, data, files });
       } else {
-        entity = await service.createOrUpdate(body, { query });
+        entity = await service.createOrUpdate({ params: query, data: body });
       }
 
       return sanitize(entity);
     },
 
     async delete(ctx) {
-      const entity = await service.delete(ctx.query);
+      const { query } = ctx;
+
+      const entity = await service.delete({ params: query });
       return sanitize(entity);
     },
   };
@@ -77,12 +79,12 @@ const createCollectionTypeController = ({ model, service }) => {
      * @return {Object|Array}
      */
     async find(ctx) {
-      let entities;
-      if (_.has(ctx.query, '_q')) {
-        entities = await service.search(ctx.query);
-      } else {
-        entities = await service.find(ctx.query);
-      }
+      const { query } = ctx;
+
+      // TODO:  cleanup
+      const entities = _.has(ctx.query, '_q')
+        ? await service.search({ params: query })
+        : await service.find({ params: query });
 
       return sanitize(entities);
     },
@@ -93,8 +95,10 @@ const createCollectionTypeController = ({ model, service }) => {
      * @return {Object}
      */
     async findOne(ctx) {
-      const { query, params } = ctx;
-      const entity = await service.findOne({ ...query, id: params.id });
+      const { id } = ctx.params;
+      const { query } = ctx;
+
+      const entity = await service.findOne(id, { params: query });
 
       return sanitize(entity);
     },
@@ -104,11 +108,15 @@ const createCollectionTypeController = ({ model, service }) => {
      *
      * @return {Number}
      */
-    count(ctx) {
-      if (_.has(ctx.query, '_q')) {
-        return service.countSearch(ctx.query);
-      }
-      return service.count(ctx.query);
+    async count(ctx) {
+      const { query } = ctx;
+
+      // TODO:  impl
+      const count = _.has(ctx.query, '_q')
+        ? await service.countSearch({ params: query })
+        : await service.count({ params: query });
+
+      return count;
     },
 
     /**
@@ -117,13 +125,16 @@ const createCollectionTypeController = ({ model, service }) => {
      * @return {Object}
      */
     async create(ctx) {
-      let entity;
-      if (ctx.is('multipart')) {
-        const { data, files } = parseMultipartData(ctx);
-        entity = await service.create(data, { files });
-      } else {
-        entity = await service.create(ctx.request.body);
-      }
+      // TODO:  impl
+      // if (ctx.is('multipart')) {
+      //   const { data, files } = parseMultipartData(ctx);
+      //   entity = await service.create({ data, files });
+      // } else {
+      // }
+
+      const { body, query } = ctx.request;
+
+      const entity = await service.create({ params: query, data: body });
 
       return sanitize(entity);
     },
@@ -134,14 +145,18 @@ const createCollectionTypeController = ({ model, service }) => {
      * @return {Object}
      */
     async update(ctx) {
-      let entity;
-      if (ctx.is('multipart')) {
-        const { data, files } = parseMultipartData(ctx);
-        entity = await service.update({ id: ctx.params.id }, data, { files });
-      } else {
-        entity = await service.update({ id: ctx.params.id }, ctx.request.body);
-      }
+      // TODO:  impl
+      // let entity;
+      // if (ctx.is('multipart')) {
+      //   const { data, files } = parseMultipartData(ctx);
+      //   entity = await service.update({ id: ctx.params.id }, { data, files });
+      // } else {
+      // }
 
+      const { id } = ctx.params;
+      const { body, query } = ctx.request;
+
+      const entity = await service.update(id, { params: query, data: body });
       return sanitize(entity);
     },
 
@@ -151,7 +166,10 @@ const createCollectionTypeController = ({ model, service }) => {
      * @return {Object}
      */
     async delete(ctx) {
-      const entity = await service.delete({ id: ctx.params.id });
+      const { id } = ctx.params;
+      const { query } = ctx;
+
+      const entity = await service.delete(id, { params: query });
       return sanitize(entity);
     },
   };

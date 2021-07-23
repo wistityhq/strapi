@@ -26,7 +26,9 @@ module.exports = async strapi => {
   engine.registerI18nPermissionsHandlers();
 
   // Hooks & Models
-  registerModelsHooks();
+
+  // TODO: implement
+  // registerModelsHooks();
 
   sendDidInitializeEvent();
 };

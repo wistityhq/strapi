@@ -1,5 +1,10 @@
 'use strict';
 
+const DEFAULT_PORTS = {
+  postgres: 5432,
+  mysql: 3306,
+};
+
 const database = ({ scope }) => ({
   type: 'input',
   name: 'database',
@@ -21,26 +26,11 @@ const host = () => ({
   default: '127.0.0.1',
 });
 
-const srv = () => ({
-  type: 'boolean',
-  name: 'srv',
-  message: '+srv connection:',
-  default: false,
-});
-
 const port = ({ client }) => ({
   type: 'input',
   name: 'port',
-  message: `Port${client === 'mongo' ? ' (It will be ignored if you enable +srv)' : ''}:`,
-  default: () => {
-    const ports = {
-      mongo: 27017,
-      postgres: 5432,
-      mysql: 3306,
-    };
-
-    return ports[client];
-  },
+  message: `Port:`,
+  default: DEFAULT_PORTS[client],
 });
 
 const username = () => ({
@@ -54,12 +44,6 @@ const password = () => ({
   name: 'password',
   message: 'Password:',
   mask: '*',
-});
-
-const authenticationDatabase = () => ({
-  type: 'input',
-  name: 'authenticationDatabase',
-  message: 'Authentication database (Maybe "admin" or blank):',
 });
 
 const ssl = () => ({
@@ -80,5 +64,4 @@ module.exports = {
   sqlite: [filename],
   postgres: [database, host, port, username, password, ssl],
   mysql: [database, host, port, username, password, ssl],
-  mongo: [database, host, srv, port, username, password, authenticationDatabase, ssl],
 };

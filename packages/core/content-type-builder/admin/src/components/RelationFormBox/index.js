@@ -34,7 +34,6 @@ const RelationFormBox = ({
         ) : (
           <RelationTargetPicker
             target={target}
-            onChange={onChange}
             oneThatIsCreatingARelationWithAnother={oneThatIsCreatingARelationWithAnother}
           />
         )}

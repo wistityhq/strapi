@@ -18,7 +18,7 @@ describe('Relations', () => {
 
       const getModel = jest.fn();
       global.strapi = {
-        db: { getModel },
+        getModel,
         plugins: {
           'content-manager': {
             services: {},
@@ -47,7 +47,7 @@ describe('Relations', () => {
       }));
 
       global.strapi = {
-        db: { getModel },
+        getModel,
         plugins: {
           'content-manager': {
             services: {},
@@ -71,12 +71,15 @@ describe('Relations', () => {
         }
       );
 
-      const getModelByAssoc = jest.fn();
-      const getModel = jest.fn(() => ({
-        attributes: { target: { model: 'test' } },
-      }));
+      const getModel = jest
+        .fn()
+        .mockReturnValueOnce({
+          attributes: { target: { type: 'relation', target: 'test' } },
+        })
+        .mockReturnValueOnce(null);
+
       global.strapi = {
-        db: { getModel, getModelByAssoc },
+        getModel,
         plugins: {
           'content-manager': {
             services: {},
@@ -89,7 +92,7 @@ describe('Relations', () => {
       expect(notFound).toHaveBeenCalledWith('target.notFound');
     });
 
-    test('Picks the mainField and primaryKey / id only', async () => {
+    test('Picks the mainField and id only', async () => {
       const notFound = jest.fn();
       const ctx = createContext(
         {
@@ -100,14 +103,12 @@ describe('Relations', () => {
         }
       );
 
-      const getModelByAssoc = jest.fn(() => ({ primaryKey: 'id', attributes: {} }));
-      const getModel = jest.fn(() => ({ attributes: { target: { model: 'test' } } }));
+      const getModel = jest.fn(() => ({
+        attributes: { target: { type: 'relation', target: 'test' } },
+      }));
 
       global.strapi = {
-        db: {
-          getModel,
-          getModelByAssoc,
-        },
+        getModel,
         plugins: {
           'content-manager': {
             services: {
@@ -181,18 +182,20 @@ describe('Relations', () => {
           },
         },
       };
-      const assocModel = { uid: 'application::test.test', primaryKey: 'id', attributes: {} };
+      const assocModel = { uid: 'application::test.test', attributes: {} };
       const notFound = jest.fn();
       const find = jest.fn(() => Promise.resolve(result));
       const findConfiguration = jest.fn(() => Promise.resolve(configuration));
-      const getModelByAssoc = jest.fn(() => assocModel);
-      const getModel = jest.fn(() => ({ attributes: { target: { model: 'test' } } }));
+
+      const getModel = jest
+        .fn()
+        .mockImplementationOnce(() => ({
+          attributes: { target: { type: 'relation', target: 'test' } },
+        }))
+        .mockImplementationOnce(() => assocModel);
 
       global.strapi = {
-        db: {
-          getModel,
-          getModelByAssoc,
-        },
+        getModel,
         plugins: {
           'content-manager': {
             services: {
@@ -215,7 +218,10 @@ describe('Relations', () => {
 
       await relations.find(ctx);
 
-      expect(find).toHaveBeenCalledWith({ _where: { id_nin: [3, 4] } }, assocModel.uid);
+      expect(find).toHaveBeenCalledWith(
+        { filters: { $and: [{ id: { $notIn: [3, 4] } }] } },
+        assocModel.uid
+      );
       expect(ctx.body).toEqual([
         {
           id: 1,

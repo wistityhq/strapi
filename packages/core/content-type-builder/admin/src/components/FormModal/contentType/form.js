@@ -36,20 +36,6 @@ const forms = {
             },
           ],
           [{ type: 'divider' }],
-          [
-            {
-              autoFocus: true,
-              label: {
-                id: getTrad('contentType.collectionName.label'),
-              },
-              description: {
-                id: getTrad('contentType.collectionName.description'),
-              },
-              name: 'collectionName',
-              type: 'text',
-              validations: {},
-            },
-          ],
         ],
       };
     },

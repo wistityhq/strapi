@@ -63,6 +63,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(res.statusCode).toBe(200);
@@ -86,6 +89,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(res.statusCode).toBe(200);
@@ -107,6 +113,9 @@ describe.each([
           body: {
             field: value,
           },
+          qs: {
+            populate: ['field'],
+          },
         });
 
         expect(res.statusCode).toBe(400);
@@ -117,6 +126,9 @@ describe.each([
       const res = await rq.post('/', {
         body: {
           field: [],
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -147,6 +159,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(res.statusCode).toBe(400);
@@ -166,9 +181,16 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
       expect(getRes.statusCode).toBe(200);
       expect(Array.isArray(getRes.body.field)).toBe(true);
 
@@ -181,7 +203,11 @@ describe.each([
     });
 
     test('Should return entries with their nested components', async () => {
-      const res = await rq.get('/');
+      const res = await rq.get('/', {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(res.statusCode).toBe(200);
 
@@ -233,18 +259,28 @@ describe.each([
               },
             ],
           },
+          qs: {
+            populate: ['field'],
+          },
         });
 
         const updateRes = await rq.put(`/${res.body.id}`, {
           body: {
             field: value,
           },
+          qs: {
+            populate: ['field'],
+          },
         });
 
         expect(updateRes.statusCode).toBe(400);
 
         // shouldn't have been updated
-        const getRes = await rq.get(`/${res.body.id}`);
+        const getRes = await rq.get(`/${res.body.id}`, {
+          qs: {
+            populate: ['field'],
+          },
+        });
 
         expect(getRes.statusCode).toBe(200);
         expect(getRes.body).toMatchObject({
@@ -266,6 +302,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(res.body.field[0]).toMatchObject({
@@ -286,6 +325,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(updateRes.statusCode).toBe(200);
@@ -298,7 +340,11 @@ describe.each([
         name: 'someString',
       });
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(Array.isArray(getRes.body.field)).toBe(true);
@@ -323,10 +369,16 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
         body: {},
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(updateRes.statusCode).toBe(200);
@@ -335,7 +387,11 @@ describe.each([
         field: res.body.field,
       });
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject({
@@ -353,17 +409,27 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
         body: {
           field: [],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(updateRes.statusCode).toBe(400);
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject(res.body);
@@ -378,6 +444,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
@@ -403,11 +472,18 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       expect(updateRes.statusCode).toBe(400);
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject(res.body);
@@ -422,6 +498,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
@@ -431,6 +510,9 @@ describe.each([
               name: 'new String',
             },
           ],
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -450,7 +532,11 @@ describe.each([
         ],
       });
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject({
@@ -472,6 +558,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
@@ -482,6 +571,9 @@ describe.each([
               name: 'new String',
             },
           ],
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -503,6 +595,9 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
       const updateRes = await rq.put(`/${res.body.id}`, {
@@ -523,6 +618,9 @@ describe.each([
               name: 'four',
             },
           ],
+        },
+        qs: {
+          populate: ['field'],
         },
       });
 
@@ -549,7 +647,11 @@ describe.each([
       expect(updateRes.statusCode).toBe(200);
       expect(updateRes.body).toMatchObject(expectedResult);
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(200);
       expect(getRes.body).toMatchObject(expectedResult);
@@ -572,14 +674,25 @@ describe.each([
             },
           ],
         },
+        qs: {
+          populate: ['field'],
+        },
       });
 
-      const deleteRes = await rq.delete(`/${res.body.id}`);
+      const deleteRes = await rq.delete(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(deleteRes.statusCode).toBe(200);
       expect(deleteRes.body).toMatchObject(res.body);
 
-      const getRes = await rq.get(`/${res.body.id}`);
+      const getRes = await rq.get(`/${res.body.id}`, {
+        qs: {
+          populate: ['field'],
+        },
+      });
 
       expect(getRes.statusCode).toBe(404);
     });

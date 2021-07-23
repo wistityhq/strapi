@@ -1,4 +1,5 @@
 {
+  "collectionName": "up_roles",
   "info": {
     "name": "role",
     "description": "",
@@ -28,18 +29,18 @@
       "configurable": false
     },
     "permissions": {
-      "collection": "permission",
-      "via": "role",
-      "plugin": "users-permissions",
-      "configurable": false,
-      "isVirtual": true
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugins::users-permissions.permission",
+      "mappedBy": "role",
+      "configurable": false
     },
     "users": {
-      "collection": "user",
-      "via": "role",
-      "configurable": false,
-      "plugin": "users-permissions"
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugins::users-permissions.user",
+      "mappedBy": "role",
+      "configurable": false
     }
-  },
-  "collectionName": "users-permissions_role"
+  }
 }

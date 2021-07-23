@@ -1,6 +1,6 @@
 'use strict';
 
-const fileModel = require('../../models/File.settings');
+const fileModel = require('../../models/File');
 
 module.exports = [
   {

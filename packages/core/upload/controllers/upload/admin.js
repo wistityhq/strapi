@@ -4,6 +4,7 @@ const _ = require('lodash');
 const { contentTypes: contentTypesUtils } = require('@strapi/utils');
 const validateSettings = require('../validation/settings');
 const validateUploadBody = require('../validation/upload');
+const { getService } = require('../../utils');
 
 const { CREATED_BY_ATTRIBUTE } = contentTypesUtils.constants;
 
@@ -37,7 +38,7 @@ module.exports = {
     const method = _.has(ctx.query, '_q') ? 'search' : 'fetchAll';
 
     const query = pm.queryFrom(ctx.query);
-    const files = await strapi.plugins.upload.services.upload[method](query, []);
+    const files = await getService('upload')[method](query, []);
 
     ctx.body = pm.sanitize(files, { withPrivate: false });
   },
@@ -72,7 +73,7 @@ module.exports = {
     const method = _.has(ctx.query, '_q') ? 'countSearch' : 'count';
     const query = pm.queryFrom(ctx.query);
 
-    const count = await strapi.plugins.upload.services.upload[method](query);
+    const count = await getService('upload')[method](query);
 
     ctx.body = { count };
   },
@@ -107,7 +108,7 @@ module.exports = {
 
     const data = await validateSettings(body);
 
-    await strapi.plugins.upload.services.upload.setSettings(data);
+    await getService('upload').setSettings(data);
 
     ctx.body = { data };
   },
@@ -121,7 +122,7 @@ module.exports = {
       return ctx.forbidden();
     }
 
-    const data = await strapi.plugins.upload.services.upload.getSettings();
+    const data = await getService('upload').getSettings();
 
     ctx.body = { data };
   },
@@ -133,7 +134,7 @@ module.exports = {
       request: { body },
     } = ctx;
 
-    const uploadService = strapi.plugins.upload.services.upload;
+    const uploadService = getService('upload');
     const { pm } = await findEntityAndCheckPermissions(userAbility, ACTIONS.update, fileModel, id);
 
     const data = await validateUploadBody(body);
@@ -149,7 +150,7 @@ module.exports = {
       request: { body, files: { files } = {} },
     } = ctx;
 
-    const uploadService = strapi.plugins.upload.services.upload;
+    const uploadService = getService('upload');
     const { pm } = await findEntityAndCheckPermissions(userAbility, ACTIONS.update, fileModel, id);
 
     if (Array.isArray(files)) {
@@ -172,7 +173,7 @@ module.exports = {
       request: { body, files: { files } = {} },
     } = ctx;
 
-    const uploadService = strapi.plugins.upload.services.upload;
+    const uploadService = getService('upload');
     const pm = strapi.admin.services.permission.createPermissionsManager({
       ability: userAbility,
       action: ACTIONS.create,
@@ -191,7 +192,7 @@ module.exports = {
 };
 
 const findEntityAndCheckPermissions = async (ability, action, model, id) => {
-  const file = await strapi.plugins.upload.services.upload.fetch({ id }, []);
+  const file = await getService('upload').findOne({ id }, [CREATED_BY_ATTRIBUTE]);
 
   if (_.isNil(file)) {
     throw strapi.errors.notFound();
@@ -199,7 +200,7 @@ const findEntityAndCheckPermissions = async (ability, action, model, id) => {
 
   const pm = strapi.admin.services.permission.createPermissionsManager({ ability, action, model });
 
-  const author = await strapi.admin.services.user.findOne({ id: file[CREATED_BY_ATTRIBUTE] }, [
+  const author = await strapi.admin.services.user.findOne({ id: file[CREATED_BY_ATTRIBUTE].id }, [
     'roles',
   ]);
 

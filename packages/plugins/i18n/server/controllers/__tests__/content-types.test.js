@@ -79,12 +79,12 @@ describe('i18n - Controller - content-types', () => {
       ];
 
       const findOne = jest.fn(() => Promise.resolve(entity));
-      const find = jest.fn(() => Promise.resolve(permissions));
+      const findMany = jest.fn(() => Promise.resolve(permissions));
       const getModel = jest.fn(() => model);
 
       global.strapi.query = () => ({ findOne });
       global.strapi.getModel = getModel;
-      global.strapi.admin.services.permission = { find };
+      global.strapi.admin.services.permission = { findMany };
       const ctx = {
         state: { user: { roles: [{ id: 1 }, { id: 2 }] } },
         request: {
@@ -96,10 +96,14 @@ describe('i18n - Controller - content-types', () => {
         },
       };
       await getNonLocalizedAttributes(ctx);
-      expect(find).toHaveBeenCalledWith({
-        action_in: ['read', 'create'],
-        subject: 'application::country.country',
-        role_in: [1, 2],
+      expect(findMany).toHaveBeenCalledWith({
+        where: {
+          action: ['read', 'create'],
+          subject: 'application::country.country',
+          role: {
+            id: [1, 2],
+          },
+        },
       });
       expect(ctx.body).toEqual({
         nonLocalizedFields: { name: "Papailhau's Pizza" },

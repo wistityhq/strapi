@@ -25,7 +25,6 @@ const productModel = {
       type: 'string',
     },
   },
-  connection: 'default',
   name: 'product',
   description: '',
   collectionName: '',
@@ -366,7 +365,7 @@ describe('CRUD locales', () => {
       } = await rq({
         url: '/content-manager/collection-types/application::product.product',
         method: 'GET',
-        qs: { _locale: 'fr-FR' },
+        qs: { locale: 'fr-FR' },
       });
 
       expect(createdProducts).toHaveLength(1);
@@ -382,7 +381,7 @@ describe('CRUD locales', () => {
       } = await rq({
         url: '/content-manager/collection-types/application::product.product',
         method: 'GET',
-        qs: { _locale: 'fr-FR' },
+        qs: { locale: 'fr-FR' },
       });
       expect(frenchProducts).toHaveLength(0);
 
@@ -391,7 +390,7 @@ describe('CRUD locales', () => {
       } = await rq({
         url: '/content-manager/collection-types/application::product.product',
         method: 'GET',
-        qs: { _locale: 'en' },
+        qs: { locale: 'en' },
       });
       expect(englishProducts).toHaveLength(1);
 

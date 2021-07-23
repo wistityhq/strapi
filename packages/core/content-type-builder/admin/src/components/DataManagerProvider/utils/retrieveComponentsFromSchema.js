@@ -1,19 +1,19 @@
-import { get } from 'lodash';
+import get from 'lodash/get';
 import makeUnique from '../../../utils/makeUnique';
 
 const retrieveComponentsFromSchema = (attributes, allComponentsData) => {
-  const allComponents = Object.keys(attributes).reduce((acc, current) => {
-    const type = get(attributes, [current, 'type'], '');
+  const allComponents = attributes.reduce((acc, current) => {
+    const type = current.type;
 
     if (type === 'component') {
-      const currentComponentName = attributes[current].component;
+      const currentComponentName = current.component;
       // Push the existing compo
       acc.push(currentComponentName);
 
       const currentComponentAttributes = get(
         allComponentsData,
         [currentComponentName, 'schema', 'attributes'],
-        {}
+        []
       );
 
       // Retrieve the nested ones
@@ -21,9 +21,9 @@ const retrieveComponentsFromSchema = (attributes, allComponentsData) => {
     }
 
     if (type === 'dynamiczone') {
-      const dynamicZoneComponents = attributes[current].components;
+      const dynamicZoneComponents = current.components;
       const componentsFromDZComponents = dynamicZoneComponents.reduce((acc2, currentUid) => {
-        const compoAttrs = get(allComponentsData, [currentUid, 'schema', 'attributes'], {});
+        const compoAttrs = get(allComponentsData, [currentUid, 'schema', 'attributes'], []);
 
         return [...acc2, ...retrieveComponentsFromSchema(compoAttrs, allComponentsData)];
       }, []);

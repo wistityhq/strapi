@@ -5,28 +5,11 @@
  */
 module.exports = {
   sqlite: {
-    connector: 'bookshelf',
-    settings: {
-      client: 'sqlite',
+    connection: {
       filename: '.tmp/data.db',
     },
-    options: {
-      useNullAsDefault: true,
-    },
+    useNullAsDefault: true,
   },
-  postgres: {
-    connector: 'bookshelf',
-    settings: {
-      client: 'postgres',
-    },
-  },
-  mysql: {
-    connector: 'bookshelf',
-    settings: {
-      client: 'mysql',
-    },
-  },
-  mongo: {
-    connector: 'mongoose',
-  },
+  postgres: {},
+  mysql: {},
 };

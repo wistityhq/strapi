@@ -43,7 +43,6 @@ const productWithCompo = {
       repeatable: true,
     },
   },
-  connection: 'default',
   name: 'product with compo',
   description: '',
   collectionName: '',

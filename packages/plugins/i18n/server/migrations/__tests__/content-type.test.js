@@ -74,41 +74,6 @@ describe('i18n - Migration - enable/disable localization on a CT', () => {
           expect(knex.update).toHaveBeenCalledWith({ locale: 'en' });
         });
       });
-      describe('mongoose', () => {
-        test('non i18n => i18n - default locale in core_store', async () => {
-          const previousDefinition = {};
-          const definition = { pluginOptions: { i18n: { localized: true } } };
-          const defaultLocaleRows = [{ value: '"fr"' }];
-          const find = jest.fn(() => Promise.resolve(defaultLocaleRows));
-          const updateMany = jest.fn();
-          const model = { orm: 'mongoose', updateMany };
-          global.strapi.models = { core_store: { find } };
-
-          await after({ model, definition, previousDefinition });
-
-          expect(updateMany).toHaveBeenCalledWith(
-            { $or: [{ locale: { $exists: false } }, { locale: null }] },
-            { locale: 'fr' }
-          );
-        });
-
-        test('non i18n => i18n - default locale not in core_store', async () => {
-          const previousDefinition = {};
-          const definition = { pluginOptions: { i18n: { localized: true } } };
-          const defaultLocaleRows = [];
-          const find = jest.fn(() => Promise.resolve(defaultLocaleRows));
-          const updateMany = jest.fn();
-          const model = { orm: 'mongoose', updateMany };
-          global.strapi.models = { core_store: { find } };
-
-          await after({ model, definition, previousDefinition });
-
-          expect(updateMany).toHaveBeenCalledWith(
-            { $or: [{ locale: { $exists: false } }, { locale: null }] },
-            { locale: 'en' }
-          );
-        });
-      });
     });
   });
 
@@ -220,34 +185,6 @@ describe('i18n - Migration - enable/disable localization on a CT', () => {
           expect(table).not.toHaveBeenCalled();
           expect(context).toEqual({ recreateSqliteTable: true });
           expect(dropTableIfExists).toHaveBeenCalledWith('countries__localizations');
-        });
-      });
-      describe('mongoose', () => {
-        test('i18n => non i18n', async () => {
-          const previousDefinition = { pluginOptions: { i18n: { localized: true } } };
-          const definition = {};
-          const defaultLocaleRows = [{ value: '"fr"' }];
-          const coreStoreFind = jest.fn(() => Promise.resolve(defaultLocaleRows));
-          const updateMany = jest.fn();
-          const deleteMany = jest.fn();
-          const deleteRelations = jest.fn();
-          const model = { orm: 'mongoose', updateMany, deleteMany, deleteRelations };
-          model.sort = jest.fn(() => model);
-          model.find = jest.fn(() => model);
-          model.limit = jest.fn(() => Promise.resolve([{ id: 1 }, { id: 2 }]));
-          global.strapi.models = { core_store: { find: coreStoreFind } };
-
-          await before({ model, definition, previousDefinition });
-
-          expect(deleteRelations).toHaveBeenCalledTimes(2);
-          expect(deleteRelations).toHaveBeenNthCalledWith(1, { id: 1 });
-          expect(deleteRelations).toHaveBeenNthCalledWith(2, { id: 2 });
-          expect(deleteMany).toHaveBeenCalledWith({ locale: { $ne: 'fr' } });
-          expect(updateMany).toHaveBeenCalledWith(
-            {},
-            { $unset: { locale: '' } },
-            { strict: false }
-          );
         });
       });
     });

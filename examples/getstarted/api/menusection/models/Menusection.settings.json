@@ -7,8 +7,6 @@
   },
   "options": {
     "draftAndPublish": false,
-    "increments": true,
-    "timestamps": ["created_at", "updated_at"],
     "comment": ""
   },
   "attributes": {
@@ -24,8 +22,10 @@
       "required": true
     },
     "menu": {
-      "model": "menu",
-      "via": "menusections"
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "application::menu.menu",
+      "inversedBy": "menusections"
     }
   }
 }

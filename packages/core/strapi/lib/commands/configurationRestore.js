@@ -90,13 +90,16 @@ const createReplaceImporter = db => {
     },
 
     async import(conf) {
-      const matching = await db.query('core_store').count({ key: conf.key });
+      const matching = await db.query('strapi::core-store').count({ where: { key: conf.key } });
       if (matching > 0) {
         stats.replaced += 1;
-        await db.query('core_store').update({ key: conf.key }, conf);
+        await db.query('strapi::core-store').update({
+          where: { key: conf.key },
+          data: conf,
+        });
       } else {
         stats.created += 1;
-        await db.query('core_store').create(conf);
+        await db.query('strapi::core-store').create({ data: conf });
       }
     },
   };
@@ -118,13 +121,19 @@ const createMergeImporter = db => {
     },
 
     async import(conf) {
-      const existingConf = await db.query('core_store').find({ key: conf.key });
+      const existingConf = await db
+        .query('strapi::core-store')
+        .findOne({ where: { key: conf.key } });
+
       if (existingConf) {
         stats.merged += 1;
-        await db.query('core_store').update({ key: conf.key }, _.merge(existingConf, conf));
+        await db.query('strapi::core-store').update({
+          where: { key: conf.key },
+          data: _.merge(existingConf, conf),
+        });
       } else {
         stats.created += 1;
-        await db.query('core_store').create(conf);
+        await db.query('strapi::core-store').create({ data: conf });
       }
     },
   };
@@ -146,7 +155,7 @@ const createKeepImporter = db => {
     },
 
     async import(conf) {
-      const matching = await db.query('core_store').count({ key: conf.key });
+      const matching = await db.query('strapi::core-store').count({ where: { key: conf.key } });
       if (matching > 0) {
         stats.untouched += 1;
         // if configuration already exists do not overwrite it
@@ -154,7 +163,7 @@ const createKeepImporter = db => {
       }
 
       stats.created += 1;
-      await db.query('core_store').create(conf);
+      await db.query('strapi::core-store').create({ data: conf });
     },
   };
 };

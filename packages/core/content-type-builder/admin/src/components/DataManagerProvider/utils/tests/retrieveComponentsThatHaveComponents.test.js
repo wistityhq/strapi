@@ -14,19 +14,17 @@ const data = {
       description: '',
       connection: 'default',
       collectionName: 'components_sliders',
-      attributes: {
-        title: {
-          type: 'string',
-          required: true,
-        },
-        slide: {
+      attributes: [
+        { type: 'string', required: true, name: 'title' },
+        {
+          name: 'slide',
           component: 'default.slide',
           type: 'component',
           repeatable: true,
           min: 1,
           max: 5,
         },
-      },
+      ],
     },
   },
   'default.dish': {
@@ -38,39 +36,44 @@ const data = {
       description: '',
       connection: 'default',
       collectionName: 'components_dishes',
-      attributes: {
-        name: {
+      attributes: [
+        {
+          name: 'name',
           type: 'string',
           required: true,
           default: 'My super dish',
         },
-        description: {
+        {
+          name: 'description',
           type: 'text',
         },
-        price: {
+        {
+          name: 'price',
           type: 'float',
         },
-        address: {
-          nature: 'oneWay',
+        {
+          name: 'address',
+          relation: 'oneToOne',
           target: 'application::address.address',
-          dominant: false,
-          unique: false,
+          type: 'relation',
         },
-        addresses: {
-          nature: 'manyWay',
+        {
+          name: 'addresses',
+          relation: 'oneToMany',
           target: 'application::address.address',
-          dominant: false,
-          unique: false,
+          type: 'relation',
         },
-        picture: {
+        {
+          name: 'picture',
           type: 'media',
           multiple: false,
           required: false,
         },
-        very_long_description: {
+        {
+          name: 'very_long_description',
           type: 'richtext',
         },
-      },
+      ],
     },
   },
 };

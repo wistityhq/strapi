@@ -9,18 +9,20 @@ const data = {
         description: '',
         connection: 'default',
         collectionName: 'components_metas',
-        attributes: {
-          meta: {
+        attributes: [
+          {
+            name: 'meta',
             type: 'string',
             required: true,
             default: 'title',
           },
-          value: {
+          {
+            name: 'value',
             type: 'text',
             required: true,
             default: 'A title',
           },
-        },
+        ],
       },
     },
     'blog.quote': {
@@ -32,20 +34,19 @@ const data = {
         icon: 'anchor',
         connection: 'default',
         collectionName: 'components_quotes',
-        attributes: {
-          quote: {
+        attributes: [
+          {
+            name: 'quote',
             type: 'text',
             required: true,
           },
-          author: {
-            model: 'user',
-            plugin: 'users-permissions',
-          },
-          link_to_biography: {
+
+          {
+            name: 'link_to_biography',
             type: 'string',
             required: true,
           },
-        },
+        ],
       },
     },
   },
@@ -58,26 +59,25 @@ const data = {
         schema: {
           name: 'mainCompo',
           icon: 'ad',
-          attributes: {
-            name: {
+          attributes: [
+            {
+              name: 'name',
               type: 'string',
             },
-            testContentType: {
-              dominant: null,
-              columnName: null,
-              nature: 'oneWay',
-              targetAttribute: '-',
+            {
+              name: 'testContentType',
+              relation: 'oneToOne',
+              targetAttribute: null,
               target: 'application::test-content-type.test-content-type',
-              unique: false,
-              targetColumnName: null,
-              required: false,
+              type: 'relation',
             },
-            subCompoField: {
+            {
+              name: 'subCompoField',
               type: 'component',
               repeatable: false,
               component: 'default.nested-compo',
             },
-          },
+          ],
         },
       },
       'default.nested-compo': {
@@ -87,15 +87,17 @@ const data = {
         schema: {
           name: 'nestedCompo',
           icon: 'address-book',
-          attributes: {
-            name: {
+          attributes: [
+            {
+              name: 'name',
               type: 'string',
             },
-            email: {
+            {
+              name: 'email',
               type: 'email',
               default: null,
             },
-          },
+          ],
         },
       },
       'default.metas': {
@@ -107,18 +109,20 @@ const data = {
           description: '',
           connection: 'default',
           collectionName: 'components_metas',
-          attributes: {
-            meta: {
+          attributes: [
+            {
+              name: 'meta',
               type: 'string',
               required: true,
               default: 'title',
             },
-            value: {
+            {
+              name: 'value',
               type: 'text',
               required: true,
               default: 'A title',
             },
-          },
+          ],
         },
       },
       'blog.quote': {
@@ -130,20 +134,18 @@ const data = {
           icon: 'anchor',
           connection: 'default',
           collectionName: 'components_quotes',
-          attributes: {
-            quote: {
+          attributes: [
+            {
+              name: 'quote',
               type: 'string',
               required: true,
             },
-            author: {
-              model: 'user',
-              plugin: 'users-permissions',
-            },
-            link_to_biography: {
+            {
+              name: 'link_to_biography',
               type: 'string',
               required: true,
             },
-          },
+          ],
         },
       },
     },
@@ -185,10 +187,7 @@ const data = {
         },
       },
     },
-    // TODO add test for component
-    // componentToCreate: {
 
-    // },
     contentTypeToCreate: {
       uid: 'application::test-content-type.test-content-type',
       isTemporary: true,
@@ -197,56 +196,51 @@ const data = {
         collectionName: 'test-content-types',
         connection: 'default',
         description: '',
-        attributes: {
-          name: {
+        attributes: [
+          {
+            name: 'name',
             type: 'string',
           },
-          address: {
-            dominant: null,
-            columnName: null,
-            nature: 'oneWay',
-            targetAttribute: '-',
+          {
+            name: 'address',
+            relation: 'oneToOne',
+            targetAttribute: null,
             target: 'application::address.address',
-            unique: false,
-            targetColumnName: null,
-            required: false,
+            type: 'relation',
           },
-          testContentTypes: {
-            dominant: null,
-            columnName: null,
-            nature: 'oneToMany',
+          {
+            name: 'testContentTypes',
+            relation: 'oneToMany',
             targetAttribute: 'testContentType',
             target: 'application::test-content-type.test-content-type',
-            unique: false,
-            targetColumnName: null,
-            required: false,
+            type: 'relation',
           },
-          testContentType: {
-            nature: 'manyToOne',
+          {
+            name: 'testContentType',
+            relation: 'manyToOne',
             target: 'application::test-content-type.test-content-type',
-            unique: false,
-            required: false,
-            dominant: null,
             targetAttribute: 'testContentTypes',
-            columnName: null,
-            targetColumnName: null,
+            type: 'relation',
           },
-          mainCompoField: {
+          {
+            name: 'mainCompoField',
             type: 'component',
             repeatable: false,
             component: 'components.main-compo',
           },
-          existingCompo: {
+          {
+            name: 'existingCompo',
             type: 'component',
             repeatable: true,
             component: 'default.metas',
           },
-          quote: {
+          {
+            name: 'quote',
             type: 'component',
             repeatable: false,
             component: 'blog.quote',
           },
-        },
+        ],
       },
     },
     contentTypeToEdit: {
@@ -256,56 +250,51 @@ const data = {
         collectionName: 'test-content-types',
         connection: 'default',
         description: '',
-        attributes: {
-          name: {
+        attributes: [
+          {
+            name: 'name',
             type: 'string',
           },
-          address: {
-            dominant: null,
-            columnName: null,
-            nature: 'oneWay',
-            targetAttribute: '-',
+          {
+            name: 'address',
+            relation: 'oneToOne',
+            targetAttribute: null,
             target: 'application::address.address',
-            unique: false,
-            targetColumnName: null,
-            required: false,
+            type: 'relation',
           },
-          testContentTypes: {
-            dominant: null,
-            columnName: null,
-            nature: 'oneToMany',
+          {
+            name: 'testContentTypes',
+            relation: 'oneToMany',
             targetAttribute: 'testContentType',
             target: 'application::test-content-type.test-content-type',
-            unique: false,
-            targetColumnName: null,
-            required: false,
+            type: 'relation',
           },
-          testContentType: {
-            nature: 'manyToOne',
+          {
+            name: 'testContentType',
+            relation: 'manyToOne',
             target: 'application::test-content-type.test-content-type',
-            unique: false,
-            required: false,
-            dominant: null,
             targetAttribute: 'testContentTypes',
-            columnName: null,
-            targetColumnName: null,
+            type: 'relation',
           },
-          mainCompoField: {
+          {
+            name: 'mainCompoField',
             type: 'component',
             repeatable: false,
             component: 'components.main-compo',
           },
-          existingCompo: {
+          {
+            name: 'existingCompo',
             type: 'component',
             repeatable: true,
             component: 'default.metas',
           },
-          quote: {
+          {
+            name: 'quote',
             type: 'component',
             repeatable: false,
             component: 'blog.quote',
           },
-        },
+        ],
       },
     },
   },
